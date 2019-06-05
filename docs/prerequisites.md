@@ -34,4 +34,4 @@ We will use some cloud-based services
 1. Clone this repo to your workstation: `git clone https://github.com/rockfordlhotka/Cloud-Native-HOL.git`
    1. There may be some last-minute fixes to the code so we recommend waiting to clone the repository until a day or two prior to the HOL
 
-Arriving with a pre-configured workstation is imperative to do in advance.
+Arriving with a pre-configured workstation is imperative.
