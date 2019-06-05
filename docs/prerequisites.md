@@ -22,6 +22,7 @@ We will use some cloud-based services
 
 1. Windows 10 1809 or later
 1. Visual Studio 2017 or later (preferably 2019)
+1. [Visual Studio Code](https://code.visualstudio.com/)
 1. Install the latest [.NET Core SDK](https://dotnet.microsoft.com/download)
 1. Install [git for Windows](https://git-scm.com/download/win)
 1. Install/activate the [HyperV feature](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v) in Windows
