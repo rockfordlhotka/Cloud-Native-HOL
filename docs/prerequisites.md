@@ -13,12 +13,12 @@ We assume familiarity with
 
 We will use some cloud-based services
 
-1. You should have an active visualstudio.com subscription
+1. You should have an active GitHub or visualstudio.com subscription
 1. (optional) You should have an active Azure subscription with credits remaining (if you have MSDN you have access to some amount of Azure credits every month - and you must have MSDN if you have Visual Studio)
 
 ## The workstation you should bring
 
-Before arriving at the HOL you should make sure your laptop workstation has the following (assuming PC, but if you have a Mac you should have comparable tooling installed)
+**Before arriving at the event** you should make sure your laptop workstation has the following (assuming PC, but if you have a Mac you should have comparable tooling installed)
 
 1. Windows 10 1809 or later
 1. Visual Studio 2017 or later (preferably 2019)
@@ -31,3 +31,7 @@ Before arriving at the HOL you should make sure your laptop workstation has the 
    1. `choco install kubernetes-cli`
    1. `choco install minikube`
    1. `choco install azure-cli`
+1. Clone this repo to your workstation: `git clone https://github.com/rockfordlhotka/Cloud-Native-HOL.git`
+   1. There may be some last-minute fixes to the code so we recommend waiting to clone the repository until a day or two prior to the HOL
+
+Arriving with a pre-configured workstation is imperative to do in advance.
