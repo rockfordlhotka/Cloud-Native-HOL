@@ -1,0 +1,27 @@
+﻿@page
+@model Gateway.Pages.SandwichModel
+@{
+  ViewData["Title"] = "Sandwich";
+}
+
+<h2>Sandwich</h2>
+
+<div class="row">
+  <h3>Select ingredients</h3>
+  @using (Html.BeginForm())
+  {
+    <div>Meat</div>
+    <input asp-for="TheMeat" />
+    <div>Bread</div>
+    <input asp-for="TheBread" />
+    <div>Cheese</div>
+    <input asp-for="TheCheese" />
+    <div>Lettuce?</div>
+    <input asp-for="TheLettuce" />
+    <br/><br/>
+    <input type="submit" name="sendMessage" value="Ask cook to make sandwich" />
+  }
+  <p></p>
+  <p>Reply from sandwich maker:</p>
+  <div style="font-size:24px">@Model.ReplyText</div>
+</div>

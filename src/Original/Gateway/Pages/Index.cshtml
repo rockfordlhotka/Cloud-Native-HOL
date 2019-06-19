@@ -1,0 +1,18 @@
+﻿@page
+@model IndexModel
+@{
+  ViewData["Title"] = "Home page";
+}
+
+<div class="row">
+  <p></p>
+  @using (Html.BeginForm())
+  {
+    <input asp-for="UserInput"/>
+    <input type="submit" name="sendMessage" value="Send message" />
+  }
+  <p></p>
+  <p>Reply from greeter:</p>
+  <div style="font-size:24px">@Model.ReplyText</div>
+</div>
+
