@@ -1,3 +1,4 @@
+docker stop objective_margulis
 # Build and Deploy ASP.NET Core to Docker
 
 In this lab we'll create an ASP.NET Core website that is hosted in a Docker container, and push that container image to a remote repository so it runs in Azure.
@@ -119,7 +120,7 @@ If you select this option and press *ctl-F5* (or *F5*) you'll see that VS opens 
 That's exactly what's happening inside this final docker image. When it runs as a container, the CLI command `dotnet Gateway.dll` is executed, causing your app to run as a self-hosted web server.
 
 ## Docker Images and Containers
-Now that you've run some things via Docker, you can view the image files on your workstation. Type `docker image ls` to get a list. That list should include these items:
+Now that you've run some things via Docker, you can view the images on your workstation. Type `docker image ls` to get a list. That list should include these items:
 
 ```
 $ docker image ls
@@ -131,7 +132,7 @@ hello-world                                latest                   4ab4c602aa5e
 
 There may be others as well, but from Lab00 you should have the `hello-world` image, plus the Microsoft ASP.NET Core base image, plus the newly created `gateway` image.
 
-Images are just files. When an image is *running* it runs within a container. You can see the containers running on your workstation by typing `docker ps`. The result should be something like this:
+An image is NOT a container. An image is data on disk. When an image is *running* it runs within a container. You can see the containers running on your workstation by typing `docker ps`. The result should be something like this:
 
 ```
 $ docker ps
@@ -142,3 +143,233 @@ bef043ed046c        gateway:dev         "tail -f /dev/null"   About an hour ago 
 This container is hosting the gateway web server. 
 
 Notice the port mapping: `0.0.0.0:57786->80/tcp`. This indicates that port 80 from *inside* the container is being mapped to our workstation's port 57786. 
+
+> Note that this image is the one created and managed by Visual Studio. You need to build your own image to move forward.
+
+### Building and Running an Image Manually
+To build the image for use outside the context of the Visual Studio experience do the following:
+
+1. Change directory to the location of your `Gateway.sln` file
+1. Type `docker build -t gateway:v1 -f Gateway/Dockerfile .`
+
+In the console window you'll see the build process as each code block in the docker file is exected. Now do `docker image ls` and see something like this:
+
+```
+$ docker image ls
+REPOSITORY                                 TAG                      IMAGE ID            CREATED             SIZE
+gateway                                    v1                       a018ebd40e6a        6 minutes ago       265MB
+```
+
+You can now execute this image on your local workstation:
+```
+docker run -P -d gateway:v1
+```
+The `-P` switch indicates that Docker should auto-map a local port to all ports exposed by the container. The `-d` switch indicates that the container should run detached from your console window. If you don't use `-d` then your console window will be attached to the container's stdout (which can be good for troubleshooting).
+
+Now do `docker ps` to see the list of running containers. Make note of the port mapped to the container's port 80. It'll probably be something like 32769.
+
+Using that port number, open a browser tab and go to http://localhost:port to interact with the web server running in that container.
+
+When done, you can stop the container(s) using the `docker stop` command, providing either the CONTAINER ID or NAMES value. For example:
+```
+docker stop objective_margulis
+```
+
+## Image Repositories
+When you ran the `hello-world` app in Lab0, that container image was pulled from a cloud repository called Docker Hub (https://hub.docker.com) down to your workstation, and then a container was created from that locally cached image.
+
+That's the normal flow for running images in containers in Docker (and in Kubernetes). Images are maintained in a repository, are pulled to a local cache, and then loaded into containers.
+
+Many public images are maintained in Docker Hub. Microsoft has recently started moving all their base images to their own public repo (`mcr.microsoft.com`).
+
+Most organizations rely on these vendor-provided public repos for base images, just like developers rely on NuGet or npm. However, most organizations maintain _their own images_ in a private repo, just like they do by creating a private NuGet server.
+
+### Create a Private Repository in Azure
+Microsoft Azure, like all major cloud providers, offers a private image repository service. You can create an image repo via the Azure web portal, or via the Azure CLI.
+
+First, you need an Azure resource group to use. If you don't have one, you can create one via the Azure web portal, or command line. For example:
+```
+az group create --name MyGroup --location "East US"
+```
+Replace `MyGroup` with your own resource group name.
+
+From the CLI you can run a command like this:
+```
+az acr create --name MyRepository --resource-group MyGroup --sku Basic --admin-enabled true
+```
+Replace `MyRepository` and `MyGroup` with values appropriate for your subscription.
+
+In the [Azure web portal](https://portal.azure.com) click *Create a resource*, pick *Containers* and then *Container Registry*. ![](azurecontainerregistry.png)
+
+In the details panel provide a registry name, resource group, enable the Admin user, and pick the Basic SKU. ![](azurecontainerpanel.png)
+
+In either case we're enabling the Admin user. That's probably not something you'll do in a production environment, but it makes things simpler for our demo/lab purposes because it allows the use of a simple username/password for connectivity.
+
+The admin credentials can be retrieved using the following command line (or via the web portal):
+```
+az acr credential show -n MyRepository
+```
+Now you can use those credentials to provide the username and password values to log into the repo from Docker:
+```
+docker login myrepository.azurecr.io --username username --password-stdin
+```
+Replace `myrepository`, `username` with your values. Also, once you press enter you'll be on an empty line. Type in (or paste) the password, press ctl-z, then enter. That'll provide the password to the command and you should be logged in.
+
+> Note that Git Bash defaults to shift-insert for paste, and ctl-insert for copy.
+
+At this point you have a remote image repo and Docker can talk to it.
+
+### Push Image to Repository
+Docker can push a locally cached image to a remote repository. To do this you need to "tag" your local image with the name of your remote repo.
+
+Each image can have many tags. Some tags are used to indicate a version number, or the latest version of an image, or a remote repo name. These tags are all just labels referring to the same image.
+
+The `gateway` image you created earlier has the tag `v1`.
+```
+REPOSITORY                                 TAG                      IMAGE ID            CREATED             SIZE
+gateway                                    v1                      6c6a43d12ad4        About an hour ago   260MB
+```
+Add a tag with the name of your remote repo:
+```
+docker tag gateway:v1 myrepository.azurecr.io/lab01/gateway:v1
+```
+Again, replace `myrepository` with your repo name.
+
+If you now type `docker image ls` you should see the new tag. For example:
+```
+$ docker image ls
+REPOSITORY                                 TAG                      IMAGE ID            CREATED             SIZE
+gateway                                    v1                      6c6a43d12ad4        3 hours ago         260MB
+rockyrepo.azurecr.io/lab01/gateway        v1                       6c6a43d12ad4        3 hours ago         260MB
+```
+
+Notice that the IMAGE ID is the same for both entries. That's because this is the same physical image, just with two different tags.
+
+Now that the image has a tag that matches the name of the remote repo, you can push the image to the cloud:
+```
+docker push myrepository.azurecr.io/gateway:v1
+```
+Again, replace `myrepository` with your repo name.
+
+You should see something like this:
+```
+$ docker push rockyrepo.azurecr.io/lab01/gateway:v1
+The push refers to repository [rockyrepo.azurecr.io/lab01/gateway]
+b6dcc5f98c26: Pushed
+8f30ea98205c: Pushing [===>                                               ]  9.903MB/154.4MB
+782e498a7b74: Pushing [==================================================>]  7.171MB
+883b7e18bf71: Pushing [==============>                                    ]  12.37MB/43.75MB
+cf5b3c6798f7: Pushing [=======>                                           ]  8.667MB/55.28MB
+```
+This reveals something pretty interesting about container images: they are actually composed of multiple layered files that get flattened into a single image when run in a container.
+
+What you are seeing here is how each layer of the image is being pushed to the remote repo independently. When the process is complete you should see something like this:
+```
+$ docker push rockyrepo.azurecr.io/lab01/gateway:v1
+The push refers to repository [rockyrepo.azurecr.io/lab01/gateway]
+b6dcc5f98c26: Pushed
+8f30ea98205c: Pushed
+782e498a7b74: Pushed
+883b7e18bf71: Pushed
+cf5b3c6798f7: Pushed
+v1: digest: sha256:c9607f26fce7216e073073d066c0292cfec85f7234de4505f2e2614ff9a2ef80 size: 1370
+```
+You can now list the images in the Azure registry:
+```
+$ az acr repository list -n MyRepository
+```
+Again, replace `MyRepository` with your repo name.
+
+The result should be something like this:
+```
+$ az acr repository list -n RockyRepo
+[
+  "lab01/gateway"
+]
+```
+You can dive even deeper with the `az acr repository show` command. For example:
+```
+$ az acr repository show -n RockyRepo --image lab01/gateway:v1
+{
+  "changeableAttributes": {
+    "deleteEnabled": true,
+    "listEnabled": true,
+    "readEnabled": true,
+    "writeEnabled": true
+  },
+  "createdTime": "2019-07-10T21:23:31.6110695Z",
+  "digest": "sha256:c9607f26fce7216e073073d066c0292cfec85f7234de4505f2e2614ff9a2ef80",
+  "lastUpdateTime": "2019-07-10T21:23:31.6110695Z",
+  "name": "v1",
+  "signed": false
+}
+```
+At this point you've created an ASP.NET Core project, debugged it locally in a Docker container, created a remote repository, and pushed your container image to that remote repo.
+
+## Deploy an Image to an Azure App Service
+There are many ways to run a Docker container. Public and private cloud vendors have provided ways to host and run containers directly within their infrastructure. You can also host containers in cross-platform orchestrators like Kubernetes and Cloud Foundry.
+
+If all you need is to host a single container, then Azure App Service is a very simple and easy hosting option.
+
+First, you need an Azure App Service plan. You can create this via the Azure web portal, or the command line. For example:
+```
+az appservice plan create --name myAppServicePlan --resource-group MyGroup --sku F1 --is-linux
+```
+Replace `myAppServicePlan` and `MyGroup` with appropriate names (you'll probably want to reuse your existing resource group name).
+
+Notice that this specifies the use of Linux, and that is important since the goal is to host a Linux-based container.
+
+If you are using the Azure web portal, once the plan has been created you'll see that it is decorated with a penguin to indicate the use of Linux.
+
+![](linuxbadge.png)
+
+If you are using the CLI, when the plan has been created you'll see the details about the plan in the console window. Note that `kind` is set to `linux`:
+```
+  "kind": "linux",
+```
+Now you can run a container in this plan:
+```
+az webapp create --resource-group MyGroup --plan myAppServicePlan --name MyAppName --deployment-container-image-name myrepository.azurecr.io/lab01/gateway:v1
+```
+Replace `MyGroup`, `myAppServicePlan`, `MyAppName`, and `myrepository` with appropriate values. `MyAppName` just needs to be something unique for this app (and within the `*.azurewebsites.net` domain).
+
+The last (and important) step is to give the App Service the credentials so it can pull the container image from your private repository.
+```
+az webapp config container set --name MyAppName --resource-group MyGroup --docker-custom-image-name myrepository.azurecr.io/lab01/gateway:v1 --docker-registry-server-url https://myrepository.azurecr.io --docker-registry-server-user repositoryusername --docker-registry-server-password repositorypassword
+```
+Replace `MyGroup`, `myAppServicePlan`, `MyAppName`, and `myrepository` with appropriate values just like in the last step. 
+
+The `repositoryusername` and `repositorypassword` values are the ones from way back in this lab when we created the container repository. If you've forgotten, you can run `az acr credential show -n MyRepository` (replacing `MyRepository` with your name).
+
+> If you are unable to get this to work, it may be because the CLI is doing something odd with the special characters in the password value. In this case you can set the password via the Azure web portal.
+
+To set the repository password via the Azure web portal:
+
+![](repopwportal.png)
+
+1. Open the portal and navigate to your App Service
+1. Click the *Configuration* option
+1. Click to edit the `DOCKER_REGISTRY_SERVER_PASSWORD` entry
+1. Paste the password into this value
+1. Save changes
+
+It may take a minute or two for the App Service to pull the container image from the repository and get it running. You should be able to open a browser tab and navigate to `http://MyAppName.azurewebsites.net` to interact with your container (replacing `MyAppName` with your chosen name).
+
+What's really impressive about this, is that you are now interacting with the _exact same image and code_ that you were running locally on your workstation via `docker run`! The only difference is that the image is now hosted in Azure instead of on your workstation.
+
+## Closing Down
+One thing about using public cloud resources such as Azure is that you need to be cost concious. When we're done today you should consider removing all the resources you've set up so you don't have to pay for them to sit idle.
+
+The easiest way to do this is to remove the resource group within which everything is running.
+```
+az group delete --name MyGroup
+```
+As always, replacing `MyGroup` with your resource group name.
+
+**🛑 WARNING!** This will stop and totally remove all resources within the group.
+
+## References
+* [Azure Subscriptions](https://docs.microsoft.com/en-us/azure/guides/developer/azure-developer-guide#understanding-accounts-subscriptions-and-billing)
+* [Build a custom image and run in App Service from a private registry](https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-custom-docker-image)
+* [Docker CLI reference](https://docs.docker.com/engine/reference/commandline/cli/)
+* [Azure CLI reference](https://docs.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest)

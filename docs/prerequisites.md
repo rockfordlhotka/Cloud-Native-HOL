@@ -25,6 +25,7 @@ We will use some cloud-based services
 1. [Visual Studio Code](https://code.visualstudio.com/)
 1. Install the latest [.NET Core SDK](https://dotnet.microsoft.com/download)
 1. Install [git for Windows](https://git-scm.com/download/win)
+   1. (optional) Install git with Chocolatey via `choco install git` as per step 9
 1. Install/activate the [HyperV feature](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v) in Windows
 1. Install [Docker for Windows](https://docs.docker.com/docker-for-windows/)
 1. Install [Chocolatey](https://chocolatey.org)
