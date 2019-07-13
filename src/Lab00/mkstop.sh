@@ -1,0 +1,1 @@
+minikube ssh "sudo poweroff"
