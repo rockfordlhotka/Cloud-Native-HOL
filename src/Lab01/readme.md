@@ -199,9 +199,9 @@ az acr create --name MyRepository --resource-group MyGroup --sku Basic --admin-e
 ```
 Replace `MyRepository` and `MyGroup` with values appropriate for your subscription.
 
-In the [Azure web portal](https://portal.azure.com) click *Create a resource*, pick *Containers* and then *Container Registry*. ![](azurecontainerregistry.png)
+In the [Azure web portal](https://portal.azure.com) click *Create a resource*, pick *Containers* and then *Container Registry*. ![](images/azurecontainerregistry.png)
 
-In the details panel provide a registry name, resource group, enable the Admin user, and pick the Basic SKU. ![](azurecontainerpanel.png)
+In the details panel provide a registry name, resource group, enable the Admin user, and pick the Basic SKU. ![](images/azurecontainerpanel.png)
 
 In either case we're enabling the Admin user. That's probably not something you'll do in a production environment, but it makes things simpler for our demo/lab purposes because it allows the use of a simple username/password for connectivity.
 
@@ -321,7 +321,7 @@ Notice that this specifies the use of Linux, and that is important since the goa
 
 If you are using the Azure web portal, once the plan has been created you'll see that it is decorated with a penguin to indicate the use of Linux.
 
-![](linuxbadge.png)
+![](images/linuxbadge.png)
 
 If you are using the CLI, when the plan has been created you'll see the details about the plan in the console window. Note that `kind` is set to `linux`:
 ```
@@ -345,7 +345,7 @@ The `repositoryusername` and `repositorypassword` values are the ones from way b
 
 To set the repository password via the Azure web portal:
 
-![](repopwportal.png)
+![](images/repopwportal.png)
 
 1. Open the portal and navigate to your App Service
 1. Click the *Configuration* option
