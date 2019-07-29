@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: gateway
-        image: rockyrepo.azurecr.io/lab02/gateway:lab02
+        image: myrepository.azurecr.io/lab02/gateway:lab02
         resources:
           limits:
             memory: "128Mi"
@@ -27,3 +27,5 @@ spec:
         env:
         - name: RABBITMQ__URL
           value: my-rabbitmq
+      imagePullSecrets:
+      - name: acr-auth

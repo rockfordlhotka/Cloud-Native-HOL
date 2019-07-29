@@ -114,6 +114,85 @@ Not all deployments need a service definition, but if your deployment needs an I
 
 Now that you have deployment and service definitions, you can use the `kubectl` command to apply those definitions to your Kuberentes cluster.
 
+#### Set up permissions to ACR from minikube
+
+Before you can have minikube (or any k8s cluster) pull images from your Azure repository you need to provide the k8s cluster with the credentials to the repository. 
+
+In Lab01 you did something similar by providing ACR credentials to the Azure App Service so it could pull your container image from ACR.
+
+To do this for Kubernetes you use the `kubectl` command to create a secret that contains the credentials, and then provide the name of that secret in the `deploy.yaml` file.
+
+Here are the steps:
+
+1. **Using WSL** change directory to src/Lab02
+1. `chmod +x creds.sh`
+1. `./creds.sh myrepository`
+1. Make note of the resulting service principal id and password
+
+> The bash commands used in `creds.sh` won't all work in Git Bash, so a real Linux CLI is required; such as the one provided by WSL. IF YOU DON'T HAVE WSL then you can run this command in Azure itself via the "Try It" button on [this web page](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal).
+
+The output should be something like this:
+
+```text
+Service principal ID: 62cdc8b8-ea83-445a-b1d3-07343f80dbf3
+Service principal password: 35be6aa1-2cf2-40cf-bb81-aa019ad2c214
+```
+
+Now use those values (your actual values) to enter the following `kubectl` command. Make sure to use a local CLI window that is connected to your minikube.
+
+```bash
+kubectl create secret docker-registry acr-auth --docker-server myrepository.azurecr.io --docker-username <principal-id> --docker-password <principal-pw> --docker-email <your@email.com>
+```
+
+That'll create a secret in minikube named `acr-auth` that contains read-only credentials for your Azure repository.
+
+Now edit the `src/Lab02/Start/Gateway/deploy.yaml` file and add
+
+```yaml
+      imagePullSecrets:
+      - name: acr-auth
+```
+
+The final file should look like this:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  selector:
+    matchLabels:
+      app: gateway
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway
+        image: myrepository.azurecr.io/lab02/gateway:lab02
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: RABBITMQ__URL
+          value: my-rabbitmq
+      imagePullSecrets:
+      - name: acr-auth
+```
+
+minikube (the Kubernetes cluster) has a secret named `acr-auth`, and the container spec references that secret. This will allow minikube to successfully pull the container image from the Azure repository when you deploy your image.
+
+#### Deploy image
+
 `kubectl` uses a _desired state_ philosophy. This is to say that your yaml files describe the desired state for your configuration, and when you apply those files the tooling will attempt to change the current state of the k8s cluster to match your desired state.
 
 Right now the `gateway` deployment and service don't exist, so on first run `kubectl` will change the current state to match the state described in your yaml files.
@@ -156,4 +235,4 @@ Of course we need access to the service from localhost, and fortunately minikube
 
 ## References
 
-* [ACR secrets](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
+* [Azure Container Registry authentication with service principals](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal)
