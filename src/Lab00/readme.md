@@ -92,7 +92,7 @@ To fix this on Windows:
 
 This will download version `v1.15.1` of the tool, overwriting the older version in the Docker directory.
 
-For Mac users you can do something similar, or change a symlink as described in this [Stackoverflow thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror).
+For Mac users you can do something similar, or change a symlink as described in this Stackoverflow thread<sup>[1](#1)</sup>.
 
 ## Azure CLI
 
@@ -103,3 +103,7 @@ For Mac users you can do something similar, or change a symlink as described in 
    1. You should get see a browser window
    1. Log into your Microsoft Azure account
    1. The console should now list your subscriptions
+
+## References
+
+* <a name="#1">[1]</a>: [kubectl version SO thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror)
