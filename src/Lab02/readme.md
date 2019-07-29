@@ -233,6 +233,38 @@ Of course we need access to the service from localhost, and fortunately minikube
 
 ### Change number of replicas
 
+At this point you should have the `gateway` deployment and service working in minikube.
+
+You can see that there is one instance (replica) of `gateway` running by typing:
+
+```bash
+$ kubectl get pods
+NAME                       READY   STATUS    RESTARTS   AGE
+gateway-76fb9cd568-6lr94   1/1     Running   0          53m
+```
+
+You can see that just one replica of the image is running at this time.
+
+One of the advantages of Kubernetes is that you can easily spin up multiple instances (replicas) of a deployment.
+
+In a production environment your k8s cluster will normally have multiple nodes, and k8s will attempt to balance the load of your replicas across all available nodes. With minikube there is only one node, but that doesn't stop us from spinning up multiple replicas of a deployment.
+
+Edit the `deploy.yaml` file and edit the `replicas` value to a value of 2.
+
+```yaml
+  replicas: 2
+```
+
+This indicates that our new _desired state_ is to run 2 replicas instead of 1. Use `kubectl` to apply this desired state to the current state of the cluster:
+
+```bash
+kubectl apply -f deploy.yaml
+```
+
+At this point you can run `kubectl get pods` to see that two instances of the image are now running in the cluster. If you were fast enough typing `kubectl get pods` after applying the change you might even see the new pod in a non-running state as it downloads the image and spins up the instance.
+
+Go ahead and explore changing the `replicas` value to 3 and then down to 1. Quickly get the list of pods after each change to see how k8s starts and stops the various pod instances.
+
 ## References
 
 * [Azure Container Registry authentication with service principals](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal)
