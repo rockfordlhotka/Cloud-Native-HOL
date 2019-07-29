@@ -82,6 +82,18 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 ![kubectl version](images/kubectlversion.png)
 
+**NOTE:** It is very likely that your path (Windows and Mac) will have you running `kubectl` from Docker rather than the one directly installed for Kubernetes. This is a problem, because the Docker install is outdated. In the image above you can see that the client is version `v1.10.11`, but the current version is at least `v1.15.1`.
+
+To fix this on Windows:
+
+1. Open a CLI window _as administrator_
+1. Change directory to `/c/Program\ Files/Docker/Docker/resources/bin`
+1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.1/bin/windows/amd64/kubectl.exe`
+
+This will download version `v1.15.1` of the tool, overwriting the older version in the Docker directory.
+
+For Mac users you can do something similar, or change a symlink as described in this Stackoverflow thread<sup>[1](#1)</sup>.
+
 ## Azure CLI
 
 1. Open the Git Bash CLI
@@ -91,3 +103,7 @@ This should ensure that you have a local copy of the latest content from GitHub.
    1. You should get see a browser window
    1. Log into your Microsoft Azure account
    1. The console should now list your subscriptions
+
+## References
+
+* <a name="#1">[1]</a>: [kubectl version SO thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror)
