@@ -151,19 +151,19 @@ Notice the port mapping: `0.0.0.0:57786->80/tcp`. This indicates that port 80 fr
 To build the image for use outside the context of the Visual Studio experience do the following:
 
 1. Change directory to the location of your `Gateway.sln` file
-1. Type `docker build -t gateway:v1 -f Gateway/Dockerfile .`
+1. Type `docker build -t gateway:lab01 -f Gateway/Dockerfile .`
 
 In the console window you'll see the build process as each code block in the docker file is exected. Now do `docker image ls` and see something like this:
 
 ```
 $ docker image ls
 REPOSITORY                                 TAG                      IMAGE ID            CREATED             SIZE
-gateway                                    v1                       a018ebd40e6a        6 minutes ago       265MB
+gateway                                    lab01                    a018ebd40e6a        6 minutes ago       265MB
 ```
 
 You can now execute this image on your local workstation:
 ```
-docker run -P -d gateway:v1
+docker run -P -d gateway:lab01
 ```
 The `-P` switch indicates that Docker should auto-map a local port to all ports exposed by the container. The `-d` switch indicates that the container should run detached from your console window. If you don't use `-d` then your console window will be attached to the container's stdout (which can be good for troubleshooting).
 
@@ -225,14 +225,14 @@ Docker can push a locally cached image to a remote repository. To do this you ne
 
 Each image can have many tags. Some tags are used to indicate a version number, or the latest version of an image, or a remote repo name. These tags are all just labels referring to the same image.
 
-The `gateway` image you created earlier has the tag `v1`.
+The `gateway` image you created earlier has the tag `lab01`.
 ```
 REPOSITORY                                 TAG                      IMAGE ID            CREATED             SIZE
-gateway                                    v1                      6c6a43d12ad4        About an hour ago   260MB
+gateway                                    lab01                    6c6a43d12ad4        About an hour ago   260MB
 ```
 Add a tag with the name of your remote repo:
 ```
-docker tag gateway:v1 myrepository.azurecr.io/lab01/gateway:v1
+docker tag gateway:lab01 myrepository.azurecr.io/lab01/gateway:lab01
 ```
 Again, replace `myrepository` with your repo name.
 
@@ -240,21 +240,21 @@ If you now type `docker image ls` you should see the new tag. For example:
 ```
 $ docker image ls
 REPOSITORY                                 TAG                      IMAGE ID            CREATED             SIZE
-gateway                                    v1                      6c6a43d12ad4        3 hours ago         260MB
-rockyrepo.azurecr.io/lab01/gateway        v1                       6c6a43d12ad4        3 hours ago         260MB
+gateway                                    lab01                    6c6a43d12ad4        3 hours ago         260MB
+rockyrepo.azurecr.io/lab01/gateway         lab01                    6c6a43d12ad4        3 hours ago         260MB
 ```
 
 Notice that the IMAGE ID is the same for both entries. That's because this is the same physical image, just with two different tags.
 
 Now that the image has a tag that matches the name of the remote repo, you can push the image to the cloud:
 ```
-docker push myrepository.azurecr.io/gateway:v1
+docker push myrepository.azurecr.io/gateway:lab01
 ```
 Again, replace `myrepository` with your repo name.
 
 You should see something like this:
 ```
-$ docker push rockyrepo.azurecr.io/lab01/gateway:v1
+$ docker push rockyrepo.azurecr.io/lab01/gateway:lab01
 The push refers to repository [rockyrepo.azurecr.io/lab01/gateway]
 b6dcc5f98c26: Pushed
 8f30ea98205c: Pushing [===>                                               ]  9.903MB/154.4MB
@@ -266,14 +266,14 @@ This reveals something pretty interesting about container images: they are actua
 
 What you are seeing here is how each layer of the image is being pushed to the remote repo independently. When the process is complete you should see something like this:
 ```
-$ docker push rockyrepo.azurecr.io/lab01/gateway:v1
+$ docker push rockyrepo.azurecr.io/lab01/gateway:lab01
 The push refers to repository [rockyrepo.azurecr.io/lab01/gateway]
 b6dcc5f98c26: Pushed
 8f30ea98205c: Pushed
 782e498a7b74: Pushed
 883b7e18bf71: Pushed
 cf5b3c6798f7: Pushed
-v1: digest: sha256:c9607f26fce7216e073073d066c0292cfec85f7234de4505f2e2614ff9a2ef80 size: 1370
+lab01: digest: sha256:c9607f26fce7216e073073d066c0292cfec85f7234de4505f2e2614ff9a2ef80 size: 1370
 ```
 You can now list the images in the Azure registry:
 ```
@@ -290,7 +290,7 @@ $ az acr repository list -n RockyRepo
 ```
 You can dive even deeper with the `az acr repository show` command. For example:
 ```
-$ az acr repository show -n RockyRepo --image lab01/gateway:v1
+$ az acr repository show -n RockyRepo --image lab01/gateway:lab01
 {
   "changeableAttributes": {
     "deleteEnabled": true,
@@ -301,7 +301,7 @@ $ az acr repository show -n RockyRepo --image lab01/gateway:v1
   "createdTime": "2019-07-10T21:23:31.6110695Z",
   "digest": "sha256:c9607f26fce7216e073073d066c0292cfec85f7234de4505f2e2614ff9a2ef80",
   "lastUpdateTime": "2019-07-10T21:23:31.6110695Z",
-  "name": "v1",
+  "name": "lab01",
   "signed": false
 }
 ```
@@ -330,13 +330,13 @@ If you are using the CLI, when the plan has been created you'll see the details 
 ```
 Now you can run a container in this plan:
 ```
-az webapp create --resource-group MyGroup --plan myAppServicePlan --name MyAppName --deployment-container-image-name myrepository.azurecr.io/lab01/gateway:v1
+az webapp create --resource-group MyGroup --plan myAppServicePlan --name MyAppName --deployment-container-image-name myrepository.azurecr.io/lab01/gateway:lab01
 ```
 Replace `MyGroup`, `myAppServicePlan`, `MyAppName`, and `myrepository` with appropriate values. `MyAppName` just needs to be something unique for this app (and within the `*.azurewebsites.net` domain).
 
 The last (and important) step is to give the App Service the credentials so it can pull the container image from your private repository.
 ```
-az webapp config container set --name MyAppName --resource-group MyGroup --docker-custom-image-name myrepository.azurecr.io/lab01/gateway:v1 --docker-registry-server-url https://myrepository.azurecr.io --docker-registry-server-user repositoryusername --docker-registry-server-password repositorypassword
+az webapp config container set --name MyAppName --resource-group MyGroup --docker-custom-image-name myrepository.azurecr.io/lab01/gateway:lab01 --docker-registry-server-url https://myrepository.azurecr.io --docker-registry-server-user repositoryusername --docker-registry-server-password repositorypassword
 ```
 Replace `MyGroup`, `myAppServicePlan`, `MyAppName`, and `myrepository` with appropriate values just like in the last step. 
 
