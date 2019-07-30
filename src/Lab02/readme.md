@@ -265,6 +265,13 @@ At this point you can run `kubectl get pods` to see that two instances of the im
 
 Go ahead and explore changing the `replicas` value to 3 and then down to 1. Quickly get the list of pods after each change to see how k8s starts and stops the various pod instances.
 
+## Cleanup
+
+At the end of Lab02 it is important to do some basic cleanup to avoid conflicts with subsequent labs.
+
+1. `kubectl delete deployment gateway`
+1. `kubectl delete service gateway`
+
 ## References
 
 * [Azure Container Registry authentication with service principals](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal)
