@@ -5,7 +5,6 @@
 We assume familiarity with
 
 1. ASP.NET server-side code development
-1. ADO.NET and/or EF data access concepts
 1. Know how to pull down NuGet packages into a project
 1. Basic usage of git source control
 
@@ -13,12 +12,14 @@ We assume familiarity with
 
 We will use some cloud-based services
 
-1. You should have an active GitHub or visualstudio.com subscription
-1. (optional) You should have an active Azure subscription with credits remaining (if you have MSDN you have access to some amount of Azure credits every month - and you must have MSDN if you have Visual Studio)
+1. You should have an active GitHub account
+1. You must have an active Azure subscription with credits remaining (if you have MSDN you have access to some amount of Azure credits every month - and you must have MSDN if you have Visual Studio)
 
 ## The workstation you should bring
 
-**Before arriving at the event** you should make sure your laptop workstation has the following (assuming PC, but if you have a Mac you should have comparable tooling installed)
+**Before arriving at the event** you should make sure your laptop workstation has the following:
+
+> Assuming PC, but if you have a Mac you should have comparable tooling installed.
 
 1. Windows 10 1809 or later
 1. Visual Studio 2017 or later (preferably 2019)
@@ -35,5 +36,9 @@ We will use some cloud-based services
    1. `choco install azure-cli`
 1. Clone this repo to your workstation: `git clone https://github.com/rockfordlhotka/Cloud-Native-HOL.git`
    1. There may be some last-minute fixes to the code so we recommend waiting to clone the repository until a day or two prior to the HOL
-
+1. (optional) Windows Subsystem for Linux (WSL)
+   1. Inside WSL install `sudo apt-get install git`
+   1. Inside WSL install `sudo apt-get install azure-cli`
+   1. Inside WSL install `sudo apt-get install kubernetes-cli`
+   
 Arriving with a pre-configured workstation is imperative.
