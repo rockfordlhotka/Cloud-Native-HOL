@@ -6,16 +6,6 @@ networks:
       name: demonet
 
 services:
-  greeter:
-    image: ${DOCKER_REGISTRY-}greeter
-    build:
-      context: .
-      dockerfile: Greeter/Dockerfile
-    environment: 
-      - RABBITMQ__URL=172.25.0.9
-      - RABBITMQ__USER
-      - RABBITMQ__PASSWORD
-
   sandwichmaker:
     image: ${DOCKER_REGISTRY-}sandwichmaker
     build:

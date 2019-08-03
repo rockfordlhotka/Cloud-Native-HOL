@@ -1,12 +1,8 @@
 ﻿using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using RabbitQueue;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace Gateway.Services
 {
@@ -25,16 +21,9 @@ namespace Gateway.Services
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-      _queue.StartListening((ea, message) =>
+      _queue.StartListening<Messages.SandwichResponse>((ea, response) =>
       {
-        var response = JsonConvert.DeserializeObject<Messages.SandwichResponse>(message);
-        var result = new Messages.SandwichResponse
-        {
-          Success = response.Success,
-          Description = $"SUCCESS: {response.Description}",
-          Error = $"FAILED: {response.Error}"
-        };
-        _wip.CompleteWork(ea.BasicProperties.CorrelationId, result);
+        _wip.CompleteWork(ea.BasicProperties.CorrelationId, response);
       });
 
       return Task.CompletedTask;

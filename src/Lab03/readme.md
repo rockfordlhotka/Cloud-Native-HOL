@@ -222,13 +222,356 @@ The `Lock` property maintains a reference to an `AsyncManualResetEvent`. The use
 
 This workflow will become more clear as you implement the code to send and receive messages, as that code will make use of this work in progress implementation.
 
-### Implement the SandwichRequestor Service
+The `WorkInProgress` instance is made available to other code in the `Gateway` project via dependency injection. In the `Startup` class's `ConfigureServices` method there's a singleton declaration for the type:
 
-### Implement the SandwichmakerListener Hosted Service
+```c#
+      services.AddSingleton<Services.IWorkInProgress>((e) => new Services.WorkInProgress());
+```
+
+Classes requiring access to work in progress information can gain access to this singleton via standard .NET Core dependency injection.
+
+### Implement Service Interfaces
+
+The gateway app accepts inbound postback requests from browsers as each user asks for a sandwich to be created. The gateway service must relay this request from the external consumer into the service-based system. Specifically, it needs to send a message to the sandwichmaker service asking for the sandwich.
+
+Before implementing code in the gateway app/service, it is necessary to define a couple POCO message definition classes and an ASP.NET Core service interfaces that'll be used by the gateway code.
+
+#### Message Definitions
+
+Examine the `SandwichRequest` class in the `Messages` folder of the `Gateway` project.
+
+This is the message that will be sent to the sandwichmaker service to request a new sandwich.
+
+Examine the `SandwichResponse` class in the `Messages` folder.
+
+This is the message that will be sent from the sandwichmaker service to the gateway service to report on whether a sandwich was or was not made as requested.
+
+Remember that most response messages must not only provide _success_ information, but also _failure_ information. It isn't at all exceptional or invalid for the sandwichmaker to be unable to make a sandwich, so success and failure are both perfectly reasonable responses.
+
+#### Service Interface Definitions
+
+Then add a `cs` file defining an `ISandwichRequestor` interface to the `Services` folder in the `Gateway` project:
+
+```c#
+using System.Threading.Tasks;
+
+namespace Gateway.Services
+{
+    public interface ISandwichRequestor
+    {
+        Task<Messages.SandwichResponse> RequestSandwich(Messages.SandwichRequest request);
+    }
+}
+```
+
+Later you will implement a class that sends a request to make a sandwich into the service-based system. This interface defines the method that you'll implement, but right now the interface makes it possible to implement the code that'll ultimately call that implementation.
 
 ### Implement the Index Page
 
+The next step in this process is to implement the `Index` page in the Gateway project.
+
+The markup for the page is already in the project, as it is basic Razor code:
+
+```html
+@page
+@model Gateway.Pages.IndexModel
+@{
+  ViewData["Title"] = "Sandwich";
+}
+
+<h2>Sandwich</h2>
+
+<div class="row">
+  <h3>Select ingredients</h3>
+  @using (Html.BeginForm())
+  {
+    <div>Meat</div>
+    <input asp-for="TheMeat" />
+    <div>Bread</div>
+    <input asp-for="TheBread" />
+    <div>Cheese</div>
+    <input asp-for="TheCheese" />
+    <div>Lettuce?</div>
+    <input asp-for="TheLettuce" />
+    <br /><br />
+    <input type="submit" name="sendMessage" value="Ask cook to make sandwich" />
+  }
+  <p></p>
+  <p>Reply from sandwich maker:</p>
+  <div style="font-size:24px">@Model.ReplyText</div>
+</div>
+```
+
+Some of the code behind in `Index.cshtml.cs` is already in the project as well, establishing the properties that are data bound to the Razor markup.
+
+What isn't yet in the class is a constructor that obtains an `IServiceRequestor` instance via dependency injection. Add this field declaration and constructor to the class:
+
+```c#
+    readonly Services.ISandwichRequestor _requestor;
+
+    public IndexModel(Services.ISandwichRequestor requestor)
+    {
+      _requestor = requestor;
+    }
+```
+
+Using this `_requestor` field it is possible to implement the `OnPost` method:
+
+```c#
+    public async Task OnPost()
+    {
+      var request = new Messages.SandwichRequest
+      {
+        Meat = TheMeat,
+        Bread = TheBread,
+        Cheese = TheCheese,
+        Lettuce = TheLettuce
+      };
+      var result = await _requestor.RequestSandwich(request);
+
+      if (result.Success)
+        ReplyText = result.Description;
+      else
+        ReplyText = result.Error;
+    }
+```
+
+This method creates a `SandwichRequest` message object, populating it with the values provided from the Razor markup via data binding.
+
+It then invokes the `RequestSandwich` method, awaiting the response from the service-based system.
+
+Once a response is available, the data bound `ReplyText` UI control is updated to reflect the success or failure result from the sandwichmaker service.
+
+### Implement the SandwichRequestor Service
+
+The next step is to implement the `SandwichRequestor` service based on the `ISandwichRequestor` interface.
+
+#### SandwichRequestor Class
+
+Add a `SandwichRequestor` class to the `Services` folder with the following code:
+
+```c#
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Threading.Tasks;
+using RabbitQueue;
+
+namespace Gateway.Services
+{
+  public class SandwichRequestor : ISandwichRequestor
+  {
+    readonly IConfiguration _config;
+    readonly IWorkInProgress _wip;
+
+    public SandwichRequestor(IConfiguration config, IWorkInProgress wip)
+    {
+      _config = config;
+      _wip = wip;
+    }
+
+    public async Task<Messages.SandwichResponse> RequestSandwich(Messages.SandwichRequest request)
+    {
+      var result = new Messages.SandwichResponse();
+      var requestToCook = new Messages.SandwichRequest
+      {
+        Meat = request.Meat,
+        Bread = request.Bread,
+        Cheese = request.Cheese,
+        Lettuce = request.Lettuce
+      };
+      var correlationId = Guid.NewGuid().ToString();
+      var lockEvent = new AsyncManualResetEvent();
+      _wip.StartWork(correlationId, lockEvent);
+      try
+      {
+        using (var _queue = new Queue(_config["rabbitmq:url"], "customer"))
+        {
+          _queue.SendMessage("sandwichmaker", correlationId, requestToCook);
+        }
+        var messageArrived = lockEvent.WaitAsync();
+        if (await Task.WhenAny(messageArrived, Task.Delay(10000)) == messageArrived)
+        {
+          result = _wip.FinalizeWork(correlationId);
+        }
+        else
+        {
+          result.Error = "The cook didn't get back to us in time, no sandwich";
+          result.Success = false;
+        }
+      }
+      finally
+      {
+          _wip.FinalizeWork(correlationId);
+      }
+
+      return result;
+    }
+  }
+}
+```
+
+This class relies on dependency injection to gain access to the `IConfiguration` instance for the app, and the `IWorkInProgress` singleton instance.
+
+It then implements the `RequestSandwich` method that sends the request message to the sandwichmaker service. Some key things to note in this method:
+
+1. The `correlationId` is a unique identifier for the "create a sandwich" saga, and is used throughout the system to coordinate all the work necessary to attempt creation of a sandwich and return the result to the gateway service
+1. The `lockEvent` object is what's used to ensure that the postback request doesn't return to the browser until success, failure, or timeout
+1. This code uses the `Queue` type from the `RabbitQueue` project to easily interact with RabbitMQ to send the message
+1. The `try..finally` block ensures that, even if an exception occurs, the work in progress list is cleaned up regardless of how this saga completes
+
+#### Blocking the Postback
+
+Perhaps the two lines of code that are hardest to understand are these:
+
+```c#
+        var messageArrived = lockEvent.WaitAsync();
+        if (await Task.WhenAny(messageArrived, Task.Delay(10000)) == messageArrived)
+```
+
+The way .NET implements async/await is not well understood by most developers. You may fully understand what's going on here, in which case you can skip this bit of discussion.
+
+The `AsyncManualResetEvent` type provides a locking mechanism that doesn't rely on any underlying operating system locks. Instead it is implemented in a way that relies on the very nature of the Task Parallel Library (TPL) and async/await implementation in .NET.
+
+The first line of code gets the `Task` object representing the `lockEvent` lock. It is possible to directly await this task, but that wouldn't allow for a timeout. Clearly it is necessary to have some sort of timeout, otherwise the user's web page would be waiting forever for a result.
+
+The second line of code awaits two tasks: the `lockEvent` task and a `Delay` task that acts as a timeout. The `WhenAny` method returns when _either_ of these tasks complete.
+
+The puzzling part of this code isn't the workflow, that's fairly clear. The puzzling part is that this code is reasonable to run on a web server.
+
+People's first instant when seeing some sort of "lock" in web server code is to worry about scalability and consumption of the ASP.NET thread pool. Very reasonable concerns to be sure!
+
+This code is implemented in a way that mirrors exactly what happens when you await a call to a database from ASP.NET code. In other words, it has the same scalability and thread pool consumption characteristics as if it was awaiting a database query via ADO.NET, Entity Framework, or Dapper.
+
+In all cases the code is waiting for a callback via some sort of network IO, and is released when that callback occurs (from the database, or in this case from the RabbitMQ listener).
+
+#### Adding the Service to IServiceCollection
+
+With the `SandwichRequestor` service implemented, it is possible to make it available for use in the `Index` page via dependency injection. This is done by adding some code to the `Startup` class:
+
+```c#
+      services.AddSingleton<Services.ISandwichRequestor>((e) =>
+          new Services.SandwichRequestor(
+              e.GetService<IConfiguration>(), 
+              e.GetService<Services.IWorkInProgress>()));
+```
+
+Because `SandwichRequestor` relies on dependency injection as it is created it is necessary to resolve the `IConfiguration` and `IWorkInProgress` instances as shown here.
+
+At this point you have all the code necessary to send a request from the user through the `Index` page and the `ServiceRequestor` type to the sandwichmaker service.
+
+### Implement the SandwichmakerListener Hosted Service
+
+When the sandwichmaker service is complete, having succeeded or failed in making a sandwich, it sends a message to the gateway service to provide the result. This means that the gateway service needs to always be listening for messages that arrive on the gateway service's queue.
+
+ASP.NET Core supports this concept via something called a Hosted Service. This is a type of ASP.NET Core service that starts as the web site is launched, and keeps running as long as the server is online.
+
+There are many ways to implement and use a Hosted Service. In this lab you'll implement one type of service that is always awaiting messages that arrive in a queue.
+
+#### SandwichmakerListener Class
+
+Add a `SandwichmakerListener` class in the `Services` folder with the following code:
+
+```c#
+using Microsoft.Extensions.Hosting;
+using System.Threading;
+using System.Threading.Tasks;
+using RabbitQueue;
+using Microsoft.Extensions.Configuration;
+
+namespace Gateway.Services
+{
+  public class SandwichmakerListener : IHostedService
+  {
+    readonly IConfiguration _config;
+    readonly IWorkInProgress _wip;
+    private readonly Queue _queue;
+
+    public SandwichmakerListener(IConfiguration config, IWorkInProgress wip)
+    {
+      _config = config;
+      _wip = wip;
+      _queue = new Queue(_config["rabbitmq:url"], "customer");
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+      _queue.StartListening<Messages.SandwichResponse>((ea, response) =>
+      {
+        _wip.CompleteWork(ea.BasicProperties.CorrelationId, result);
+      });
+
+      return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+      _queue.Dispose();
+
+      return Task.CompletedTask;
+    }
+  }
+}
+```
+
+This class relies on dependency injection to gain access to the configuration and work in progress services. In the constructor it also uses the `Queue` class to gain access to the gateway service's queue.
+
+The `IHostedService` interface from ASP.NET requires that the class implement `StartAsync` and `StopAsync` methods. These are invoked by the runtime as the service starts up and shuts down.
+
+The `StopAsync` method simply disposes the `Queue` instance to properly close down.
+
+The `StartAsync` method is more interesting, as this method creates an event hook to process messages in the gateway service's queue. The `StartListening` method invokes a callback method for each message as it arrives.
+
+Inside the callback code the work in progress item is updated via the `CompleteWork` method. Notice that the correlation id value is used to identify the saga (and thus postback browser request) to which this message relates. Also remember that the `CompleteWork` method calls the `Set` method of the `AsyncManualResetEvent` to release the browser postback code so it can return the result to the user's browser.
+
+#### Adding the Service to IServiceCollection
+
+A Hosted Service is added to ASP.NET Core in the `Startup` class like any other dependency injection service. Add the following line of code to the `ConfigureServices` method:
+
+```c#
+      services.AddHostedService<Services.SandwichmakerListener>();
+```
+
+As the web server starts up it'll automatically create and start an instance of this type.
+
+At this point your code can send and receive messages, enabling full interaction with the sandwichmaker service.
+
 ### Examine the SandwichController Class
+
+In the `Gateway` project's `Controllers` folder you'll find a `SandwichController` class. You can uncomment this code, as all the types it uses how exist in your project. The controller code should look like this:
+
+```c#
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Gateway.Controllers
+{
+  [Route("api/[controller]")]
+  [ApiController]
+  public class SandwichController : ControllerBase
+  {
+    readonly Services.ISandwichRequestor _requestor;
+
+    public SandwichController(Services.ISandwichRequestor requestor)
+    {
+      _requestor = requestor;
+    }
+
+    [HttpGet]
+    public string OnGet()
+    {
+      return "I am running; use PUT to make a sandwich";
+    }
+
+    [HttpPut]
+    public async Task<Messages.SandwichResponse> OnPut(Messages.SandwichRequest request)
+    {
+      return await _requestor.RequestSandwich(request);
+    }
+  }
+}
+```
+
+This lab will not use this controller, but it is worth examining to see how the same types that support the `Index` page can also be used to create an API controller. You can see how this controller supports unknown callers as long as they pass a valid message via an HTML `PUT` call.
 
 ## Implement Bread Service
 

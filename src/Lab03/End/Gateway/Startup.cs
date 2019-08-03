@@ -29,14 +29,12 @@ namespace Gateway
 
 
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-      services.AddSingleton<Services.IWorkInProgress>(new Services.WorkInProgress());
+      services.AddSingleton<Services.IWorkInProgress>((e) => new Services.WorkInProgress());
       services.AddHostedService<Services.SandwichmakerListener>();
       services.AddSingleton<Services.ISandwichRequestor>((e) =>
-        {
-          var sp = services.BuildServiceProvider();
-          return new Services.SandwichRequestor(
-            sp.GetService<IConfiguration>(), sp.GetService<Services.IWorkInProgress>());
-        });
+          new Services.SandwichRequestor(
+              e.GetService<IConfiguration>(), 
+              e.GetService<Services.IWorkInProgress>()));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

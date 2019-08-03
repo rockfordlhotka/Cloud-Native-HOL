@@ -66,6 +66,21 @@ namespace RabbitQueue
     }
 
     /// <summary>
+    /// Start listening for messages of a single type
+    /// to arrive on the queue
+    /// </summary>
+    /// <typeparam name="M">Type of message</typeparam>
+    /// <param name="handleMessage">Method to invoke for each message</param>
+    public void StartListening<M>(Action<BasicDeliverEventArgs, M> handleMessage)
+    {
+      StartListening((ea, message) =>
+      {
+        var response = JsonConvert.DeserializeObject<M>(message);
+        handleMessage?.Invoke(ea, response);
+      });
+    }
+
+    /// <summary>
     /// Start listening for messages to arrive on the queue
     /// </summary>
     /// <param name="handleMessage">Method to invoke for each message</param>

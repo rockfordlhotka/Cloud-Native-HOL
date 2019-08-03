@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.106
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.89
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Greeter", "Greeter\Greeter.csproj", "{E77CD5BA-555F-489A-8F64-12B4D1A395DD}"
-EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{2FE5D699-2EE7-4027-9B75-094A94E89484}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.csproj", "{F0377B7D-6851-4BBE-A9EB-234A8A938271}"
@@ -32,10 +30,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E77CD5BA-555F-489A-8F64-12B4D1A395DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E77CD5BA-555F-489A-8F64-12B4D1A395DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E77CD5BA-555F-489A-8F64-12B4D1A395DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E77CD5BA-555F-489A-8F64-12B4D1A395DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2FE5D699-2EE7-4027-9B75-094A94E89484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2FE5D699-2EE7-4027-9B75-094A94E89484}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FE5D699-2EE7-4027-9B75-094A94E89484}.Release|Any CPU.ActiveCfg = Release|Any CPU
