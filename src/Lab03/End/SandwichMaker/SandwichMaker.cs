@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +13,8 @@ namespace SandwichMaker
 	 class SandwichMaker
 	 {
     private static Queue _queue;
-    private static readonly Dictionary<string, SandwichInProgress> _workInProgress =
-      new Dictionary<string, SandwichInProgress>();
+    private static readonly ConcurrentDictionary<string, SandwichInProgress> _workInProgress =
+      new ConcurrentDictionary<string, SandwichInProgress>();
 
     static async Task Main(string[] args)
     {
@@ -133,7 +134,12 @@ namespace SandwichMaker
       if (wip.IsComplete)
       {
         Console.WriteLine($"### SandwichMaker is done with {wip.CorrelationId}");
-        _workInProgress.Remove(wip.CorrelationId);
+        if (!_workInProgress.TryRemove(wip.CorrelationId, out SandwichInProgress temp))
+        {
+          var id = wip.CorrelationId;
+          if (temp != null) id = temp.CorrelationId;
+          Console.WriteLine($"### SandwichMaker could NOT remove WIP {id}");
+        }
         _queue.SendReply(wip.ReplyTo, wip.CorrelationId, new Messages.SandwichResponse
         {
           Description = wip.GetDescription(),
@@ -168,7 +174,7 @@ namespace SandwichMaker
         CorrelationId = ea.BasicProperties.CorrelationId,
         Request = request
       };
-      _workInProgress.Add(ea.BasicProperties.CorrelationId, wip);
+      _workInProgress.TryAdd(ea.BasicProperties.CorrelationId, wip);
       Console.WriteLine($"### Sandwichmaker making {request.Meat} on {request.Bread}{Environment.NewLine}  from {ea.BasicProperties.CorrelationId} at {DateTime.Now}");
 
       if (!string.IsNullOrEmpty(request.Meat))

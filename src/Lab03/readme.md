@@ -206,6 +206,8 @@ The `environment:` node provides a list of environment variables to be set in ea
 
 In other words, your ASP.NET Core code can easily access the three variables defined here, though in this lab only the URL value is important, because the RabbitMQ instances are using the default user/password values.
 
+**IMPORTANT:** Now make sure all the other existing service entries in the file have the same IP address for their `RABBITMQ__URL` values.
+
 ### Examine the WorkInProgress Class
 
 Open the `Services/WorkInProgress.cs` file. This simple code exists because it is necessary to keep track of outstanding user requests (browser postback requests) that have requested a sandwich. Remember the overall workflow:
@@ -412,6 +414,8 @@ namespace Gateway.Services
 
 This class relies on dependency injection to gain access to the `IConfiguration` instance for the app, and the `IWorkInProgress` singleton instance.
 
+You can see how the .NET configuration subsystem is used to retrieve the URL of the queue. Remember that the value is coming from an environment variable with the name `RABBITMQ__URL` (yes, two underscores). The configuration subsystem translates that name into a dictionary key value of `rabbitmq:url`.
+
 It then implements the `RequestSandwich` method that sends the request message to the sandwichmaker service. Some key things to note in this method:
 
 1. The `correlationId` is a unique identifier for the "create a sandwich" saga, and is used throughout the system to coordinate all the work necessary to attempt creation of a sandwich and return the result to the gateway service
@@ -573,8 +577,387 @@ namespace Gateway.Controllers
 
 This lab will not use this controller, but it is worth examining to see how the same types that support the `Index` page can also be used to create an API controller. You can see how this controller supports unknown callers as long as they pass a valid message via an HTML `PUT` call.
 
+## Examine the Sandwichmaker Service
+
+At this point you have a gateway app/service that interacts with the sandwichmaker service. This is a fairly complex service, as it not only interacts with the gateway service, but also with the resource services (for bread, cheese, meat, and lettuce).
+
+You will implement the bread resource service from scratch, but first you should understand key aspects of the sandwichmaker service code.
+
+### Startup
+
+As you'll see when you implement the bread service, these services are all implemented as console apps. They just listen for, and send, messages to queues, and so there's no need for all the overhead and complexity of ASP.NET. This is very typical of service-based systems.
+
+A major benefit of running code in containers is the high density of services per physical server. Containers themselves require very little memory or overhead, and it is important that your code also use as little memory or resources as possible. You can keep your memory footprint as small as possible by avoiding the use of runtime frameworks like ASP.NET when possible.
+
+Because the sandwichmaker service is a console app, the first code that is run is the `Main` method:
+
+```c#
+    static async Task Main(string[] args)
+    {
+      var config = new ConfigurationBuilder()
+        .AddEnvironmentVariables()
+        .Build();
+
+      if (_queue == null)
+        _queue = new Queue(config["rabbitmq:url"], "sandwichmaker");
+
+      Console.WriteLine("### SandwichMaker starting to listen");
+      _queue.StartListening(HandleMessage);
+
+      // wait forever - we run until the container is stopped
+      await new AsyncManualResetEvent().WaitAsync();
+    }
+```
+
+This code is interesting, because it leverages the same .NET Core configuration subsystem as ASP.NET Core, but explicitly:
+
+```c#
+      var config = new ConfigurationBuilder()
+        .AddEnvironmentVariables()
+        .Build();
+```
+
+Where ASP.NET Core defaults to loading configuration values from numerous sources (web.config, environment, console parameters, etc.), this code is only loading configuration from the environment.
+
+For debug and testing purposes you might also choose to load config from console parameters, but at runtime config should always flow from the environment.
+
+The code then starts listening for messages to arrive on the sandwichmaker queue. Just like with the `SandwichmakerListener` in the `Gateway` project, each message is handed off to a method for handling.
+
+The final line of code simply waits on a lock that'll never be released. This is because this service should run forever, or until its hosting container is terminated.
+
+### Message Classes
+
+Open the `Messages` folder and notice all the classes. These are all the message types that the sandwichmaker service knows how to send and recieve.
+
+These types are the _exact same types_ used in the other services in the system. Many people's first instinct is to put these types into a central Class Library project, and reference that common assembly from all the services.
+
+> **THAT WOULD BE A BAD DESIGN CHOICE!!**
+
+Perhaps the most important characteristic of any service-based system is that each service or app can be deployed independently from any other services or apps.
+
+If all services are coupled to a common "master document format" or "master message definition" assembly, the result is that any service that needs to expand or change its message type will force all other services to also adopt/accept those changes.
+
+There are various ways to overcome this issue. You _can_ use a common assembly for message types, as long as you are _extremely_ careful to do so in a way that allows dependent projects (all of your services) to only accept changes when they want the changes. That is complex and requires a lot of human-centric process and coordination.
+
+The _easier_ solution is to avoid having any common assembly across all your services, and have each service maintain its own message definitions.
+
+### Handling Inbound Messages
+
+The sandwichmaker service receives different types of message from numerous other services within the overall system. As a result it needs to examine each message to determine what to do with the message:
+
+```c#
+    private static void HandleMessage(BasicDeliverEventArgs ea, string message)
+    {
+      switch (ea.BasicProperties.Type)
+      {
+        case "SandwichRequest":
+          RequestIngredients(ea, message);
+          break;
+        case "MeatBinResponse":
+          HandleMeatBinResponse(ea, message);
+          break;
+        case "BreadBinResponse":
+          HandleBreadBinResponse(ea, message);
+          break;
+        case "CheeseBinResponse":
+          HandleCheeseBinResponse(ea, message);
+          break;
+        case "LettuceBinResponse":
+          HandleLettuceBinResponse(ea, message);
+          break;
+        default:
+          Console.WriteLine($"### Unknown message type '{ea.BasicProperties.Type}' from {ea.BasicProperties.ReplyTo}");
+          break;
+      }
+    }
+```
+
+Fortunately RabbitMQ (using the [AMQP protocol](https://www.amqp.org/)) has provisions for passing metadata such as the message type along with the message payload. This is part of the abstraction implemented in the `RabbitQueue` project's `Queue` class.
+
+Notice that when an unknown message arrives it is handled by writing a message to the console: to stdout for Linux-savvy folks. This is standard practice when building container-based apps. In all major container runtimes stdout and stderr are _expected_ to be used for log output from code running in the container.
+
+You might also use other logging frameworks and techniques, but writing to stdout is generally considered a good practice.
+
+Messages that _are_ recognized are routed to methods that handle the specific message type. For example, when you implement the bread service you'll be sending messages to the sandwichmaker service, and they'll be handled in this `HandleBreadResponse` method:
+
+```c#
+    private static void HandleBreadBinResponse(BasicDeliverEventArgs ea, string message)
+    {
+      Console.WriteLine("### SandwichMaker got bread");
+      if (!string.IsNullOrWhiteSpace(ea.BasicProperties.CorrelationId) && 
+        _workInProgress.TryGetValue(ea.BasicProperties.CorrelationId, out SandwichInProgress wip))
+      {
+        var response = JsonConvert.DeserializeObject<Messages.BreadBinResponse>(message);
+        wip.GotBread = response.Success;
+        SeeIfSandwichIsComplete(wip);
+      }
+      else
+      {
+        // got Bread we apparently don't need, so return it
+        Console.WriteLine("### Returning unneeded Bread");
+        _queue.SendReply("breadbin", null, new Messages.BreadBinRequest { Returning = true });
+      }
+    }
+```
+
+This code attempts to match the inbound message to existing work in progress (yes, the sandwichmaker service also needs to track work in progress). 
+
+If an existing in progress item is found then response from the bread service is attached to the work in progress item, and then a method is called to determine if the sandwich is complete.
+
+No matching work in progress item might exist. In reality this shouldn't happen, but it is wise to write defensive code. Such a message indicates that some orphan request was handled, and the sandwichmaker service has no outstanding work in progress for the response. 
+
+```c#
+  _queue.SendReply("breadbin", null, new Messages.BreadBinRequest { Returning = true });
+```
+
+This is part of the compensating transaction implementation. The desired business behavior is that if the bread service provides bread to the sandwichmaker service, and that bread can't be used, it is to be returned to the bread service for future use.
+
+### Work in Progress Tracking
+
+As mentioned earlier, the sandwichmaker service needs to track work in progress. This is because it will be handling many concurrent requests to make sandwiches, and it needs to keep track of which are in progress, which are complete, and which can't be completed.
+
+In this service the work in progress information is maintained in a dictionary:
+
+```c#
+    private static readonly ConcurrentDictionary<string, SandwichInProgress> _workInProgress =
+      new ConcurrentDictionary<string, SandwichInProgress>();
+```
+
+Like in the gateway service, the key here is the correlation id for the "make a sandwich" saga that started when the user requested a sandwich.
+
+The data required to track the work required to make a sandwich is fairly complex. You can look at the `SandwichInProgress` class to see what is tracked.
+
+Remember that the sandwichmaker service will request all necessary resources _in parallel_, and there's no way to predict the order of responses from those other services. As a result, as each response does arrive it is recorded in a `SandwichInProgress` object, indexed by the saga's correlation id value.
+
+The `IsComplete` and `Failed` properties implement business logic based on the responses that have arrived at any point in time.
+
+The `IsComplete` property only returns `true` if all four resource services have responded, regardless of whether the response is one of success or failure.
+
+The `Failed` property returns `true` when all four resource services have responded and one or more of the response messages indicate failure.
+
+### Requesting Ingredients (Resources)
+
+The sandwichmaker service handles the `SandwichRequest` message sent from the gateway service (or any other caller really). When such a message is received the result is that a request is sent to each resource service, in parallel, to ask for the required bread, cheese, meat, and lettuce.
+
+The `RequestIngredients` method in the `SandwichMaker` class implements this behavior.
+
+The method sets up a work in progress item to track the process of making the requested sandwich. Then it sends messages to each resource service.
+
+### Compensating Transaction Implementation
+
+The `SeeIfSandwichIsComplete` method is responsible for determining whether the sandwichmaker service has successfully made the requested sandwich.
+
+If the sandwich is complete a success message is sent to the service that requested the sandwich (the gateway service in this implementation). Similarly, if the sandwich couldn't be made a message is also sent to tell the calling service that they can't have their sandwich.
+
+In the case of failure however, it is necessary to implement a compensating transaction. If one or more ingredients aren't available it is very likely that the sandwichmaker service has possession of _other_ resources it no longer needs.
+
+The following code sends messages to the appropriate resource services, telling them to restore ingredients to their inventory for future use:
+
+```c#
+  if (wip.GotMeat.HasValue && wip.GotMeat.Value)
+    _queue.SendMessage("meatbin", wip.CorrelationId, new Messages.MeatBinRequest { Meat = wip.Request.Meat, Returning = true });
+  if (wip.GotBread.HasValue && wip.GotBread.Value)
+    _queue.SendMessage("breadbin", wip.CorrelationId, new Messages.BreadBinRequest { Bread = wip.Request.Bread, Returning = true });
+  if (wip.GotCheese.HasValue && wip.GotCheese.Value)
+    _queue.SendMessage("cheesebin", wip.CorrelationId, new Messages.CheeseBinRequest { Cheese = wip.Request.Cheese, Returning = true });
+  if (wip.GotLettuce.HasValue && wip.GotLettuce.Value)
+    _queue.SendMessage("lettucebin", wip.CorrelationId, new Messages.LettuceBinRequest { Returning = true });
+```
+
+In service-based systems compensating transactions are the normal way this sort of problem is resolved. Keep in mind that this isn't just a technical implementation detail, it is a key part of the overall business process.
+
 ## Implement Bread Service
 
-## Examine the Lettuce Service
+Now that you've seen how the more complex sandwichmaker service is implemented it is time to implement a service from scratch. The resource services are much simpler, but still demonstrate all the key aspects of service implementation.
+
+### Create the Project
+
+Add a new .NET Core Console App project to the solution named `BreadService`.
+
+It needs the following NuGet references:
+
+* `Newtonsoft.Json`
+* `RabbitMQ.Client`
+
+It needs the following project references:
+
+* `RabbitQueue`
+
+At this point you might be asking why it is OK to reference the RabbitQueue project when earlier we so strongly recommended _against_ referencing a common message definition assembly.
+
+The difference is that the `RabbitQueue` project, much like .NET itself, or `Newtonsoft.Json`, contain no business logic. They are "horizontal frameworks" in that they cut across many apps or services, providing common platform-level functionality.
+
+It is important to minimize or avoid reuse of _vertical_ code: code that is part of any given business implementation. That includes UI components, viewmodels, controllers, message or document definitions, and data access layers. Those are all examples of app-specific code, where reuse will almost certainly lead to coupling. And coupling prevents independent deployment of services and apps - this defeating the primary value of being service-based.
+
+### Message Definitions
+
+Create a `Messages` folder in the project. As with the other services, this one will follow the "shared nothing" strategy to avoid coupling.
+
+Add a `BreadBinRequest` class:
+
+```c#
+namespace Messages
+{
+  internal class BreadBinRequest
+  {
+    public string Bread { get; set; }
+    public bool Returning { get; set; }
+  }
+}
+```
+
+Add a `BreadBinResponse` class:
+
+```c#
+namespace Messages
+{
+  internal class BreadBinResponse
+  {
+    public bool Success { get; set; }
+  }
+}
+```
+
+The request comes from some other service that needs bread (or needs to return unused bread). The response message is how the bread service indicates success or failure.
+
+### Service Implementation
+
+Like the sandwichmaker service, this is a console app, and so the entrypoint for the code is the `Main` method. This method needs to load configuration, create the `Queue` object, and start listening for inbound messages:
+
+```c#
+    private static Queue _queue; 
+
+    static async Task Main(string[] args)
+    {
+      var config = new ConfigurationBuilder()
+        .AddEnvironmentVariables()
+        .Build();
+
+      if (_queue == null)
+        _queue = new Queue(config["rabbitmq:url"], "breadbin");
+
+      Console.WriteLine("### Bread bin service starting to listen");
+      _queue.StartListening<Messages.BreadBinRequest>(HandleMessage);
+
+      // wait forever - we run until the container is stopped
+      await new AsyncManualResetEvent().WaitAsync();
+    }
+```
+
+In a real app the inventory would be maintained in a database. For this lab the inventory will be maintained in memory:
+
+```c#
+    private volatile static int _inventory = 10;
+```
+
+To avoid any potential issues with shared state, the inventory value is maintained as a `volatile` value. Were the value being retrieved from a database on request this wouldn't be an issue because no shared/`static` state would be necessary.
+
+The `HandleMessage` method is invoked for each message received from the queue:
+
+```c#
+    private static void HandleMessage(BasicDeliverEventArgs ea, Messages.BreadBinRequest request)
+    {
+      var response = new Messages.BreadBinResponse();
+      lock (_queue)
+      {
+        if (request.Returning)
+        {
+          Console.WriteLine($"### Request for {request.GetType().Name} - returned");
+          _inventory++;
+        }
+        else if (_inventory > 0)
+        {
+          Console.WriteLine($"### Request for {request.GetType().Name} - filled");
+          _inventory--;
+          response.Success = true;
+          _queue.SendReply(ea.BasicProperties.ReplyTo, ea.BasicProperties.CorrelationId, response);
+        }
+        else
+        {
+          Console.WriteLine($"### Request for {request.GetType().Name} - no inventory");
+          response.Success = false;
+          _queue.SendReply(ea.BasicProperties.ReplyTo, ea.BasicProperties.CorrelationId, response);
+        }
+      }
+    }
+```
+
+Notice that a `lock` statement is used to prevent multi-threading reentrancy issues with this code. Again, this is only necessary due to the use of shared state (the `_inventory` field). In most service implementations the `HandleMessage` method will be only interacting with fields scoped to the method, so reentrancy is not a concern.
+
+There are two possible workflows to handle. 
+
+One is that the caller is returning bread to inventory, in which case the inventory quantity is incremented. 
+
+The other is that the caller is requesting bread. In this case the inventory is checked. If there's bread in inventory the value is decremented and a success response is sent. Otherwise a failure message is sent so the caller knows no bread is available.
+
+Although this implementation is simple, you should be able to see how the `HandleMessage` method could be much more complex, interacting with databases or other services (as shown in the sandwichmaker service).
+
+### Adding Docker Support
+
+Visual Studio 2019 provides comparable support for adding Docker support to a Console App project as it does for a web project.
+
+![add docker](images/add-docker-console.png)
+
+Selecting this option, and choosing Linux, will result in Visual Studio adding a `Dockerfile` to your project.
+
+If you are using Visual Studio 2017 you'll have to do this process manually.
+
+Add a file named `Dockerfile` to the project with the following contents:
+
+```docker
+FROM microsoft/dotnet:2.1-runtime AS base
+WORKDIR /app
+
+FROM microsoft/dotnet:2.1-sdk AS build
+WORKDIR /src
+COPY BreadService/BreadService.csproj BreadService/
+COPY RabbitQueue/RabbitQueue.csproj RabbitQueue/
+RUN dotnet restore BreadService/BreadService.csproj
+COPY . .
+WORKDIR /src/BreadService
+RUN dotnet build BreadService.csproj -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish BreadService.csproj -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "BreadService.dll"]
+```
+
+Then edit the `csproj` file and add the following to the `PropertyGroup` node:
+
+```xml
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+```
+
+At this point your project can be built into a Docker container.
+
+### Adding docker-compose Support
+
+The docker-compose environment provides a useful way to run and debug a set of related services and apps. As discussed earlier today, the `docker-compose.yml` file in the docker-compose node in Solution Explorer defines all the services that are to be hosted by docker-compose.
+
+Make sure this file contains an entry for the new `breadservice`:
+
+```yaml
+  breadservice:
+    image: ${DOCKER_REGISTRY-}breadservice
+    build:
+      context: .
+      dockerfile: BreadService/Dockerfile
+    environment: 
+      - RABBITMQ__URL=172.25.0.9
+      - RABBITMQ__USER
+      - RABBITMQ__PASSWORD
+```
+
+**IMPORTANT:** Replace the IP address for `RABBITMQ__URL` with the IP address for your RabbitMQ instance within Docker. This should be the same already used by all the existing services in the file.
+
+## Running in docker-compose
+
+At this point you should be able to press F5 or ctrl-F5 to run the solution in docker-compose.
+
+If you request a sandwich with lettuce it'll fail right away, because that service has an inventory level of 0 to start. You should be able to request other sandwich combinations until running out of inventory.
 
 ## Deploy to Kubernetes

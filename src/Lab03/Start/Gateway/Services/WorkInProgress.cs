@@ -1,5 +1,6 @@
 ﻿using Messages;
 using RabbitQueue;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Gateway.Services
@@ -13,15 +14,15 @@ namespace Gateway.Services
 
   public class WorkInProgress : IWorkInProgress
   {
-    readonly Dictionary<string, WipItem> WipList =
-      new Dictionary<string, WipItem>();
+    readonly ConcurrentDictionary<string, WipItem> WipList =
+      new ConcurrentDictionary<string, WipItem>();
 
     /// <summary>
     /// Start a work item (call when sending request to system)
     /// </summary>
     public void StartWork(string correlationId, AsyncManualResetEvent lockEvent)
     {
-      WipList.Add(correlationId, new WipItem { Lock = lockEvent });
+      WipList.TryAdd(correlationId, new WipItem { Lock = lockEvent });
     }
 
     /// <summary>
@@ -50,7 +51,11 @@ namespace Gateway.Services
       if (WipList.TryGetValue(correlationId, out WipItem wipItem))
       {
         result = wipItem.Response;
-        WipList.Remove(correlationId);
+        if (!WipList.TryRemove(correlationId, out WipItem temp))
+        {
+          System.Diagnostics.Debug.Fail($"Could not remove WIP item {correlationId}");
+          System.Diagnostics.Debug.Assert(temp != null);
+        }
       }
       return result;
     }
