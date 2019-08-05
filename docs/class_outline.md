@@ -1,5 +1,5 @@
-Cloud-Native HOL Outline
-------------------------
+# Cloud-Native HOL Outline
+
 1. Introduction to cloud-native computing and tools
    1. Docker
    1. Kubernetes
@@ -17,13 +17,13 @@ Cloud-Native HOL Outline
    1. Use Helm to deploy RabbitMQ in minikube
    1. Use `kubectl` to deploy/run an ASP.NET Core website in minikube
    1. Exposing a container as a public service
+   1. Understanding how kubernetes scales services
 1. Designing and building message-based microservices
    1. Hosting ASP.NET Core console apps in a container
    1. Understanding docker-compose and local debugging
    1. Using queues for message delivery
    1. Externalizing configuration to the environment
    1. Implementing retry policies
-   1. Understanding how kubernetes scales services
 1. Service bus messaging
    1. Branches off module 4
    1. Using queues as a service bus
