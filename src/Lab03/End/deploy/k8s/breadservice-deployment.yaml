@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: breadservice
-        image: rdlk8s.azurecr.io/breadservice:lab03
+        image: myrepository.azurecr.io/breadservice:lab03
         resources:
           limits:
             memory: "128Mi"
