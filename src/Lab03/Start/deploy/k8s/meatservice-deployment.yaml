@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: meatservice
-        image: rdlk8s.azurecr.io/meatservice:lab03
+        image: myrepository.azurecr.io/meatservice:lab03
         resources:
           limits:
             memory: "128Mi"
