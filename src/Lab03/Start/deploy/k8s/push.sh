@@ -1,9 +1,8 @@
 #!/bin/bash
 
-docker push rdlk8s.azurecr.io/gateway:v1
-docker push rdlk8s.azurecr.io/cheeseservice:v1
-docker push rdlk8s.azurecr.io/lettuceservice:v1
-docker push rdlk8s.azurecr.io/greeter:v1
-docker push rdlk8s.azurecr.io/sandwichmaker:v1
-docker push rdlk8s.azurecr.io/breadservice:v1
-docker push rdlk8s.azurecr.io/meatservice:v1
+docker push myrepository.azurecr.io/gateway:lab03
+docker push myrepository.azurecr.io/cheeseservice:lab03
+docker push myrepository.azurecr.io/lettuceservice:lab03
+docker push myrepository.azurecr.io/sandwichmaker:lab03
+docker push myrepository.azurecr.io/breadservice:lab03
+docker push myrepository.azurecr.io/meatservice:lab03

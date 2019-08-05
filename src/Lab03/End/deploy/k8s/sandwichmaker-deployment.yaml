@@ -19,7 +19,11 @@ spec:
     spec:
       containers:
       - name: sandwichmaker
-        image: rdlk8s.azurecr.io/sandwichmaker:v1
+        image: rdlk8s.azurecr.io/sandwichmaker:lab03
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         env:
         - name: RABBITMQ__URL
-          value: dinky-wallaby-rabbitmq
+          value: my-rabbitmq

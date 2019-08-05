@@ -206,8 +206,6 @@ The `environment:` node provides a list of environment variables to be set in ea
 
 In other words, your ASP.NET Core code can easily access the three variables defined here, though in this lab only the URL value is important, because the RabbitMQ instances are using the default user/password values.
 
-**IMPORTANT:** Now make sure all the other existing service entries in the file have the same IP address for their `RABBITMQ__URL` values.
-
 ### Examine the WorkInProgress Class
 
 Open the `Services/WorkInProgress.cs` file. This simple code exists because it is necessary to keep track of outstanding user requests (browser postback requests) that have requested a sandwich. Remember the overall workflow:
@@ -952,7 +950,11 @@ Make sure this file contains an entry for the new `breadservice`:
       - RABBITMQ__PASSWORD
 ```
 
-**IMPORTANT:** Replace the IP address for `RABBITMQ__URL` with the IP address for your RabbitMQ instance within Docker. This should be the same already used by all the existing services in the file.
+At this point your `docker-compose.yml` file contains entries only for the `gateway` and `breadservice` services. In reality it needs entries for all the services necessary to run the system in your local environment.
+
+Making note of the IP address for your RabbitMQ instance, copy the `docker-compose.yml` file from the `End` directory into your `Start` directory, replacing the current file. The result is a `docker-compose.yml` that has entries for all the services in the system.
+
+**IMPORTANT:** Replace the IP addresses for `RABBITMQ__URL` with the IP address for your RabbitMQ instance within Docker. This needs to be done for all the services in the file.
 
 ## Running in docker-compose
 
@@ -961,3 +963,198 @@ At this point you should be able to press F5 or ctrl-F5 to run the solution in d
 If you request a sandwich with lettuce it'll fail right away, because that service has an inventory level of 0 to start. You should be able to request other sandwich combinations until running out of inventory.
 
 ## Deploy to Kubernetes
+
+The final step in this lab is to deploy the services to K8s. The docker-compose environment is convenient for the F5 experience and debugging, but ultimately most production systems will run on K8s or something similar.
+
+### Deployment and Service Configuration Files
+
+K8s uses a different syntax for its deployment and service definition files. You've already seen an example of these in a previous lab.
+
+There is already a `Start/deploy/k8s` directory in the directory structure. In a VS Code instance, open this `deploy/k8s` directory. Add a `breadservice-deployment.yaml` file with the following contents:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: breadservice
+spec:
+  selector:
+    matchLabels:
+      app: breadservice
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: breadservice
+    spec:
+      containers:
+      - name: breadservice
+        image: myrepository.azurecr.io/breadservice:lab03
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: RABBITMQ__URL
+          value: my-rabbitmq
+```
+
+Replace `myrepository` with the name of your Azure repository. Also notice that the `RABBITMQ__URL` environment variable is being set to the _name_ of the RabbitMQ instance you started in K8s in a previous lab. Rather than using a hard-coded IP address, it is important to use the DNS name so K8s can manage the IP address automatically.
+
+You can review the pre-existing yaml files in the directory. There's a deployment file for each service in the system, plus a service definition file for the gateway service.
+
+No K8s service definition files are necessary for most of our services, because they don't require any sort of public IP address, or even any known cluster-level IP address. Because all communication occurs via queued messaging, each service is truly a standalone app that has no direct interaction with any other apps via IP address.
+
+Only the gateway service needs a known IP address, and that's because it exposes a web frontend, including web pages and an API for external consumers.
+
+### Pushing the Container Images to Azure
+
+Before you can apply the deployment and service files to the K8s cluster, the Docker container images need to be available in the repository. You've already seen how to tag and push an image to ACR, and that process now needs to happen for all the images in the system.
+
+> Pushing all the images at once like in this lab isn't necessarily normal over time. Remember that the primary goal of service-based architectures is to be able to deploy or update individual services without redeploying everything else. But you do need to get the whole system running in the first place before you can go into long-term maintenance mode.
+
+#### Building the Images
+
+In the `deploy` directory there's a `build.sh` bash script that builds all the images for the system.
+
+```bash
+#!/bin/bash
+
+docker build -f ../BreadService/Dockerfile -t breadservice:dev ..
+docker build -f ../CheeseService/Dockerfile -t cheeseservice:dev ..
+docker build -f ../LettuceService/Dockerfile -t lettuceservice:dev ..
+docker build -f ../MeatService/Dockerfile -t meatservice:dev ..
+docker build -f ../Gateway/Dockerfile -t gateway:dev ..
+docker build -f ../SandwichMaker/Dockerfile -t sandwichmaker:dev ..
+```
+
+Open a Git Bash CLI window and do the following:
+
+1. Change directory to `deploy`
+1. `chmod +x build.sh`
+1. `./build.sh`
+
+This will build the Docker image for each service in the system based on the individual `Dockerfile` definitions in each project directory.
+
+#### Tagging the Images
+
+In the `deploy/k8s` directory there's a `tag.sh` bash script that tags all the images created by `build.sh`.
+
+```bash
+#!/bin/bash
+
+docker tag breadservice:dev myrepository.azurecr.io/breadservice:lab03
+docker tag cheeseservice:dev myrepository.azurecr.io/cheeseservice:lab03
+docker tag meatservice:dev myrepository.azurecr.io/meatservice:lab03
+docker tag lettuceservice:dev myrepository.azurecr.io/lettuceservice:lab03
+docker tag gateway:dev myrepository.azurecr.io/gateway:lab03
+docker tag sandwichmaker:dev myrepository.azurecr.io/sandwichmaker:lab03
+```
+
+Edit this file and replace `myrepository` with your ACR repository name. Then open a Git Bash CLI and do the following:
+
+1. Change directory to `deploy/k8s`
+1. `chmod +x tag.sh`
+1. `./tag.sh`
+
+This will tag each container image with the repository name for your ACR instance.
+
+#### Pushing the Images
+
+In the `deploy/k8s` directory there's a `push.sh` bash script that pushes the local images to the remote repository.
+
+```bash
+#!/bin/bash
+
+docker push myrepository.azurecr.io/gateway:lab03
+docker push myrepository.azurecr.io/cheeseservice:lab03
+docker push myrepository.azurecr.io/lettuceservice:lab03
+docker push myrepository.azurecr.io/sandwichmaker:lab03
+docker push myrepository.azurecr.io/breadservice:lab03
+docker push myrepository.azurecr.io/meatservice:lab03
+```
+
+Edit this file and replace `myrepository` with your ACR repository name. Then open a Git Bash CLI and do the following:
+
+1. Change directory to `deploy/k8s`
+1. `chmod +x push.sh`
+1. `./push.sh`
+
+The result is that all the local images are pushed to the remote ACR repository.
+
+### Applying the Kubernetes State
+
+At this point you have all the deployment and service definition files that describe the desired state for the K8s cluster. And you have all the Docker container images in the ACR repository so they are available for download to the K8s cluster.
+
+> **IMPORTANT:** before applying the desired state for this lab, _make sure_ you have done the cleanup step in the previous lab so no containers are running other than RabbitMQ. You can check this with a `kubectl get pods` command.
+
+The next step is to apply the desired state to the cluster by executing each yaml file via `kubectl apply`. To simplify this process, there's a `run-k8s.sh` file in the `deploy/k8s` directory:
+
+```bash
+#!/bin/bash
+
+kubectl apply -f gateway-deployment.yaml
+kubectl apply -f gateway-service.yaml
+kubectl apply -f greeter-deployment.yaml
+kubectl apply -f breadservice-deployment.yaml
+kubectl apply -f cheeseservice-deployment.yaml
+kubectl apply -f lettuceservice-deployment.yaml
+kubectl apply -f meatservice-deployment.yaml
+kubectl apply -f sandwichmaker-deployment.yaml
+```
+
+Open a Git Bash CLI window and do the following:
+
+1. Change directory to `deploy/k8s`
+1. `chmod +x run-k8s.sh`
+1. `./run-k8s.sh`
+1. `kubectl get pods`
+
+The result is that the desired state described in your local yaml files is applied to the K8s cluster.
+
+If you immediately execute (and repeat) the `kubectl get pods` command you can watch as the K8s pods download, load, and start executing each container image. This may take a little time, because as each pod comes online it needs to download the container image from ACR.
+
+> Depending on the number of folks doing the lab, and the Internet speeds in the facility, patience may be required! In a production environment it is likely that you'll have much higher Internet speeds, less competition for bandwidth, and so spinning up a container in a pod will be quite fast.
+
+Make sure (via `kubectl get pods`) that all your services are running before moving on to the next step.
+
+### Interacting with the System
+
+1. Open a CLI window _as administrator_
+1. Type `minikube service gateway --url`
+   1. This will show the localhost URL provided by minikube to access the service
+1. Type `minikube service gateway`
+   1. This will open your default browser to the URL for the service - it is a shortcut provided by minikube for testing
+
+> An Admin CLI window (e.g. run as administrator) is required because interacting with the `minikube` command always needs elevated permissions.
+
+As with the docker-compose instance, you should be able to request sandwiches from the system. Notice that there's no shared state (such as inventory) between the services running in docker-compose and those running in minikube. In a real scenario any such state would typically be maintained in a database, and the various service implementations would be interacting with the database instead of in-memory data.
+
+### Tearing Down the System
+
+Once you are done interacting with the system you can shut it down. In the `deploy/k8s` directory there's a `teardown.sh` bash script that uses `kubectl` to delete the deployment and service items from the cluster:
+
+```bash
+#!/bin/bash
+
+kubectl delete deployment gateway
+kubectl delete service gateway
+kubectl delete deployment breadservice
+kubectl delete deployment cheeseservice
+kubectl delete deployment lettuceservice
+kubectl delete deployment meatservice
+kubectl delete deployment sandwichmaker
+```
+
+Open a Git Bash CLI window and do the following:
+
+1. Change directory to `deploy/k8s`
+1. `chmod +x teardown.sh`
+1. `./teardown.sh`
+
+It is critical that you do this before moving on to subsequent labs.
