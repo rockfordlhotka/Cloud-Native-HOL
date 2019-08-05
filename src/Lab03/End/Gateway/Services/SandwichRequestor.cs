@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
 using RabbitQueue;
+using Polly;
 
 namespace Gateway.Services
 {
@@ -9,6 +10,9 @@ namespace Gateway.Services
   {
     readonly IConfiguration _config;
     readonly IWorkInProgress _wip;
+    readonly Policy _retryPolicy = Policy.
+      Handle<Exception>().
+      WaitAndRetry(3, r => TimeSpan.FromSeconds(Math.Pow(2, r)));
 
     public SandwichRequestor(IConfiguration config, IWorkInProgress wip)
     {
@@ -24,10 +28,13 @@ namespace Gateway.Services
       _wip.StartWork(correlationId, lockEvent);
       try
       {
-        using (var _queue = new Queue(_config["rabbitmq:url"], "customer"))
+        _retryPolicy.Execute(() =>
         {
-          _queue.SendMessage("sandwichmaker", correlationId, request);
-        }
+          using (var _queue = new Queue(_config["rabbitmq:url"], "customer"))
+          {
+            _queue.SendMessage("sandwichmaker", correlationId, request);
+          }
+        });
         var messageArrived = lockEvent.WaitAsync();
         if (await Task.WhenAny(messageArrived, Task.Delay(10000)) == messageArrived)
         {

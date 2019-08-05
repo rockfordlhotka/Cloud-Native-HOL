@@ -11,6 +11,8 @@ Lesson goals:
 1. See how docker-compose provides a convenient developer inner-loop experience
 1. Understand how docker-compose.yaml is different from K8s deploy/service definition files
 1. Understand compensating transactions
+1. Updating a running container in Kubernetes
+1. Implement retry policies for potential network failures
 
 ## Terminology
 
@@ -1135,7 +1137,91 @@ Make sure (via `kubectl get pods`) that all your services are running before mov
 
 As with the docker-compose instance, you should be able to request sandwiches from the system. Notice that there's no shared state (such as inventory) between the services running in docker-compose and those running in minikube. In a real scenario any such state would typically be maintained in a database, and the various service implementations would be interacting with the database instead of in-memory data.
 
-### Tearing Down the System
+## Implementing Retry Policies
+
+First on the list of [Fallacies of Distributed Computing](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing) is the idea that the network is reliable. Virtually all code folks write tends to assume that the network is there and won't fail. Rarely do people implement retry logic in case opening a database, sending an HTTP request, or writing to a queue might fail.
+
+While we tend to get away with that approach, it becomes _really_ problematic when your code is hosted in a dynamic, self-healing runtime like Kubernetes. There's just no guarantee that a service won't go down, and a replacement spun up in its place by K8s.
+
+Such a thing can happen due to bugs, or an intentional rolling update of a running service.
+
+In this system it is possible that the RabbitMQ instance might become temporarily unavailable.
+
+> In practice this is unlikely, because a production system will almost certainly deploy RabbitMQ across multiple redundant K8s nodes, leveraging RabbitMQ and K8s to achieve high fault tolerance.
+
+### Using Polly Retry Policies
+
+To overcome potential failures when trying to interact with any direct network interactions you should implement a retry policy. One common solution is to use the `Polly` or `Steeltoe` NuGet packages. In this lab you will use the `Polly` package.
+
+In Visual Studio, right-click on the `Gateway` project and choose *Manage NuGet Packages* to add a reference to the `Polly` package.
+
+Then open the `SandwichRequestor` class in the `Services` folder. This class contains the code that sends messages to RabbitMQ, so it is an ideal location to implement a retry policy.
+
+Add a `using Polly;` statement at the top of the file.
+
+Then in the class define a field for the retry policy:
+
+```c#
+    readonly Policy _retryPolicy = Policy.
+      Handle<Exception>().
+      WaitAndRetry(3, r => TimeSpan.FromSeconds(Math.Pow(2, r)));
+```
+
+Polly provides a lot of flexibility around retry policies, and supports both sync and async concepts. Because the call to RabbitMQ is synchronous, this is a synchronous policy.
+
+The policy itself will trigger on any `Exception`, and will retry three times. The `Math.Pow(2, r)` expression implements an exponential backoff. The first retry will happen in 1 second, the second 2 seconds later, the third 4 seconds later. In total it will consume 7 seconds before giving up and letting the exception flow to the rest of the code.
+
+Using the policy is fairly straightforward. The policy object is used to wrap a block of your code, and it "protects" that code. In this case, any `Exception` thrown by the protected code will trigger the retry policy.
+
+Edit the `SandwichRequest` method where the queue is opened and the message sent to wrap it with the policy:
+
+```c#
+        _retryPolicy.Execute(() =>
+        {
+          using (var _queue = new Queue(_config["rabbitmq:url"], "customer"))
+          {
+            _queue.SendMessage("sandwichmaker", correlationId, request);
+          }
+        });
+```
+
+You can see how the retry policy's `Execute` method is used to encapsulate the block of code that uses the network to connect to RabbitMQ and send a message. The most likely failure scenario here is that the RabbitMQ instance is momentarily unavailable, and as long as it becomes available again within seven seconds this code will ultimately succeed.
+
+Make sure to save the changes to the code file and project.
+
+## Updating a Running Container
+
+At this point you have a newer version of the gateway service to deploy: the updated code with a retry policy.
+
+Fortunately the Kubernetes deployment for the gateway service specified the use of rolling updates. You can review the `End/deploy/k8s/gateway-deployment.yaml` file to refresh you memory.
+
+What this means is that we can tell K8s that there's a newer version of the gateway image and "magic" will happen:
+
+1. Kubernetes will suspend all inbound network requests to the existing pod
+   1. Any existing network requests will still be routed to and handled by the existing pod
+1. Kubernetes will spin up a new instance of the pod
+   1. The new pod will download the new container image
+   1. The new pod will start up the new container image
+1. Kubernetes will route all inbound network requests to the new pod
+1. Kubernetes will terminate the old pod
+
+Perform the following steps in a Git Bash CLI to see this happen:
+
+1. Change directory to `Lab03/Start`
+1. Build the new container image: `docker build -f Gateway/Dockerfile -t gateway:dev`
+1. Tag the new image: `docker tag gateway:dev myrepository.azurecr.io/gateway:lab03-1`
+1. Edit the `deploy/k8s/gateway-deployment.yaml` file to express the new desired state
+   * Update the `image` element with the new tag
+   * `        image: myrepository.azurecr.io/gateway:lab03-1`
+1. Apply the new desired state with `kubectl`
+   * `kubectl apply -f gateway-deployment.yaml`
+1. Quickly and repeatedly use `kubectl get pods` to watch the rolling update occur
+
+At this point you've updated the gateway service to a newer version, and it is running with a retry policy.
+
+> If you are ahead of time, feel free to go through all the services and add retry policies anywhere the code opens and sends messages to RabbitMQ.
+
+## Tearing Down the System
 
 Once you are done interacting with the system you can shut it down. In the `deploy/k8s` directory there's a `teardown.sh` bash script that uses `kubectl` to delete the deployment and service items from the cluster:
 
@@ -1158,3 +1244,4 @@ Open a Git Bash CLI window and do the following:
 1. `./teardown.sh`
 
 It is critical that you do this before moving on to subsequent labs.
+
