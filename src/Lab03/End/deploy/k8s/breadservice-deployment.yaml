@@ -19,7 +19,11 @@ spec:
     spec:
       containers:
       - name: breadservice
-        image: rdlk8s.azurecr.io/breadservice:v1
+        image: rdlk8s.azurecr.io/breadservice:lab03
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         env:
         - name: RABBITMQ__URL
-          value: dinky-wallaby-rabbitmq
+          value: my-rabbitmq

@@ -22,7 +22,7 @@ namespace BreadService
         _queue = new Queue(config["rabbitmq:url"], "breadbin");
 
       Console.WriteLine("### Bread bin service starting to listen");
-      _queue.StartListening(HandleMessage);
+      _queue.StartListening<Messages.BreadBinRequest>(HandleMessage);
 
       // wait forever - we run until the container is stopped
       await new AsyncManualResetEvent().WaitAsync();
@@ -30,9 +30,8 @@ namespace BreadService
 
     private volatile static int _inventory = 10;
 
-    private static void HandleMessage(BasicDeliverEventArgs ea, string message)
+    private static void HandleMessage(BasicDeliverEventArgs ea, Messages.BreadBinRequest request)
     {
-      var request = JsonConvert.DeserializeObject<Messages.BreadBinRequest>(message);
       var response = new Messages.BreadBinResponse();
       lock (_queue)
       {
