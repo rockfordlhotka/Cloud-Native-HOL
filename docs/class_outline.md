@@ -1,6 +1,6 @@
 # Cloud-Native HOL Outline
 
-1. Introduction to cloud-native computing and tools
+0. Introduction to cloud-native computing and tools
    1. Docker
    1. Kubernetes
    1. minikube
