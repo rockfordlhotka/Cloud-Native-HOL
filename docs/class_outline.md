@@ -25,12 +25,12 @@
    1. Externalizing configuration to the environment
    1. Implementing retry policies
 1. Service bus messaging
-   1. Branches off module 4
+   1. Branches off module 3
    1. Using queues as a service bus
    1. Implementing services over a service bus vs a dedicated queue
    1. Understanding how kubernetes applies container updates
 1. Http messaging
-   1. Branches off module 4
+   1. Branches off module 3
    1. Creating a private kubernetes service for a container
    1. Understanding the kubernetes load balancer
    1. Using k8s DNS (no fixed IP addresses)
