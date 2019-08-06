@@ -13,7 +13,7 @@ We assume familiarity with
 We will use some cloud-based services
 
 1. You should have an active GitHub account
-1. You must have an active Azure subscription with credits remaining (if you have MSDN you have access to some amount of Azure credits every month - and you must have MSDN if you have Visual Studio)
+1. You must have an active Azure subscription with credits remaining (your Visual Studio Subscription provides some number of free Azure credits)
 
 ## The workstation you should bring
 
