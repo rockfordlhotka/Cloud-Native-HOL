@@ -43,7 +43,7 @@ We will use some cloud-based services
    1. There may be some last-minute fixes to the code so we recommend waiting to clone the repository until a day or two prior to the HOL
 1. (optional) Windows Subsystem for Linux (WSL)
    1. Inside WSL install `sudo apt-get install git`
-   1. Inside WSL install `sudo apt-get install azure-cli`
-   1. Inside WSL install `sudo apt-get install kubernetes-cli`
+   1. Inside WSL install `sudo apt-get install azure-cli` (Use the instructions at: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
+   1. Inside WSL install `sudo apt-get install kubernetes-cli` (Use the instructions at: https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux)
    
 Arriving with a pre-configured workstation is imperative.
