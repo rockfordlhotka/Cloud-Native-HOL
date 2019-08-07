@@ -55,7 +55,7 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 ### Starting minikube
 
-1. Type `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
+1. Type `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
 
 Alternately you can use pre-built bash shell scripts to start/stop the cluster:
 
@@ -74,7 +74,7 @@ Alternately you can use pre-built bash shell scripts to start/stop the cluster:
 
 **IMPORTANT:** Don't actually stop minikube, as you'll be using it throughout the day. However, when you do want to stop minikube this is how you do it.
 
-1. Type `minikube ssh "sudo poweroff"`
+1. Type `winpty minikube ssh "sudo poweroff"`
 
 Alternately you can use the pre-built bash command script:
 
