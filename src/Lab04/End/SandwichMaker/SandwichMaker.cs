@@ -26,24 +26,24 @@ namespace SandwichMaker
         _bus = new ServiceBus(config["rabbitmq:url"], "sandwichBus");
 
       Console.WriteLine("### SandwichMaker starting to listen");
+
+      //_bus.Subscribe<Messages.SandwichRequest>(
+      //  new string[] { "SandwichRequest", "MeatBinResponse", "BreadBinResponse", "CheeseBinResponse", "LettuceBinResponse" },
+      //  HandleMessage);
+
       _bus.Subscribe<Messages.SandwichRequest>(
-        "SandwichMaker",
         "SandwichRequest",
         RequestIngredients);
       _bus.Subscribe<Messages.MeatBinResponse>(
-        "SandwichMaker",
         "MeatBinResponse",
         HandleMeatBinResponse);
       _bus.Subscribe<Messages.BreadBinResponse>(
-        "SandwichMaker",
         "BreadBinResponse",
         HandleBreadBinResponse);
       _bus.Subscribe<Messages.CheeseBinResponse>(
-        "SandwichMaker",
         "CheeseBinResponse",
         HandleCheeseBinResponse);
       _bus.Subscribe<Messages.LettuceBinResponse>(
-        "SandwichMaker",
         "LettuceBinResponse",
         HandleLettuceBinResponse);
 

@@ -12,10 +12,10 @@ namespace Gateway.Services
   {
     readonly IConfiguration _config;
     readonly IWorkInProgress _wip;
-    private readonly IServiceBus _bus;
     readonly Policy _retryPolicy = Policy.
       Handle<Exception>().
       WaitAndRetry(3, r => TimeSpan.FromSeconds(Math.Pow(2, r)));
+    private readonly IServiceBus _bus;
 
     public SandwichmakerListener(IConfiguration config, IWorkInProgress wip, IServiceBus bus)
     {
@@ -28,7 +28,7 @@ namespace Gateway.Services
     {
       _retryPolicy.Execute(() =>
       {
-        _bus.Subscribe<Messages.SandwichResponse>("Gateway", "SandwichResponse", (ea, response) =>
+        _bus.Subscribe<Messages.SandwichResponse>("SandwichResponse", (ea, response) =>
         {
           _wip.CompleteWork(ea.BasicProperties.CorrelationId, response);
         });
