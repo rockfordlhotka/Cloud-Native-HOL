@@ -8,8 +8,8 @@ using RabbitQueue;
 
 namespace SandwichMaker
 {
-	 class SandwichMaker
-	 {
+  class SandwichMaker
+  {
     private static Queue _queue;
     private static readonly ConcurrentDictionary<string, SandwichInProgress> _workInProgress =
       new ConcurrentDictionary<string, SandwichInProgress>();
@@ -58,7 +58,7 @@ namespace SandwichMaker
     private static void HandleCheeseBinResponse(BasicDeliverEventArgs ea, string message)
     {
       Console.WriteLine("### SandwichMaker got cheese");
-      if (!string.IsNullOrWhiteSpace(ea.BasicProperties.CorrelationId) && 
+      if (!string.IsNullOrWhiteSpace(ea.BasicProperties.CorrelationId) &&
         _workInProgress.TryGetValue(ea.BasicProperties.CorrelationId, out SandwichInProgress wip))
       {
         var response = JsonConvert.DeserializeObject<Messages.CheeseBinResponse>(message);
@@ -76,7 +76,7 @@ namespace SandwichMaker
     private static void HandleLettuceBinResponse(BasicDeliverEventArgs ea, string message)
     {
       Console.WriteLine("### SandwichMaker got lettuce");
-      if (!string.IsNullOrWhiteSpace(ea.BasicProperties.CorrelationId) && 
+      if (!string.IsNullOrWhiteSpace(ea.BasicProperties.CorrelationId) &&
         _workInProgress.TryGetValue(ea.BasicProperties.CorrelationId, out SandwichInProgress wip))
       {
         var response = JsonConvert.DeserializeObject<Messages.LettuceBinResponse>(message);
@@ -94,7 +94,7 @@ namespace SandwichMaker
     private static void HandleBreadBinResponse(BasicDeliverEventArgs ea, string message)
     {
       Console.WriteLine("### SandwichMaker got bread");
-      if (!string.IsNullOrWhiteSpace(ea.BasicProperties.CorrelationId) && 
+      if (!string.IsNullOrWhiteSpace(ea.BasicProperties.CorrelationId) &&
         _workInProgress.TryGetValue(ea.BasicProperties.CorrelationId, out SandwichInProgress wip))
       {
         var response = JsonConvert.DeserializeObject<Messages.BreadBinResponse>(message);
@@ -112,7 +112,7 @@ namespace SandwichMaker
     private static void HandleMeatBinResponse(BasicDeliverEventArgs ea, string message)
     {
       Console.WriteLine("### SandwichMaker got meat");
-      if (!string.IsNullOrWhiteSpace(ea.BasicProperties.CorrelationId) && 
+      if (!string.IsNullOrWhiteSpace(ea.BasicProperties.CorrelationId) &&
         _workInProgress.TryGetValue(ea.BasicProperties.CorrelationId, out SandwichInProgress wip))
       {
         var response = JsonConvert.DeserializeObject<Messages.MeatBinResponse>(message);
@@ -162,7 +162,7 @@ namespace SandwichMaker
         }
       }
     }
-    
+
     private static void RequestIngredients(BasicDeliverEventArgs ea, string message)
     {
       var request = JsonConvert.DeserializeObject<Messages.SandwichRequest>(message);
