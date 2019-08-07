@@ -12,7 +12,7 @@ namespace SandwichMaker
 {
 	 class SandwichMaker
 	 {
-    private static ServiceBus _bus;
+    private static IServiceBus _bus;
     private static readonly ConcurrentDictionary<string, SandwichInProgress> _workInProgress =
       new ConcurrentDictionary<string, SandwichInProgress>();
 
@@ -23,7 +23,7 @@ namespace SandwichMaker
         .Build();
 
       if (_bus == null)
-        _bus = new ServiceBus(config["rabbitmq:url"], "sandwichBus");
+        _bus = new ServiceBusPubSub(config["rabbitmq:url"], "sandwichBus");
 
       Console.WriteLine("### SandwichMaker starting to listen");
       _bus.Subscribe(

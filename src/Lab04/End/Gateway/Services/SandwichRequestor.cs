@@ -13,11 +13,13 @@ namespace Gateway.Services
     readonly Policy _retryPolicy = Policy.
       Handle<Exception>().
       WaitAndRetry(3, r => TimeSpan.FromSeconds(Math.Pow(2, r)));
+    readonly IServiceBus _bus;
 
-    public SandwichRequestor(IConfiguration config, IWorkInProgress wip)
+    public SandwichRequestor(IConfiguration config, IWorkInProgress wip, IServiceBus bus)
     {
       _config = config;
       _wip = wip;
+      _bus = bus;
     }
 
     public async Task<Messages.SandwichResponse> RequestSandwich(Messages.SandwichRequest request)
@@ -30,10 +32,7 @@ namespace Gateway.Services
       {
         _retryPolicy.Execute(() =>
         {
-          using (var bus = new ServiceBus(_config["rabbitmq:url"], "sandwichBus"))
-          {
-            bus.Publish("SandwichRequest", correlationId, request);
-          }
+          _bus.Publish("SandwichRequest", correlationId, request);
         });
         var messageArrived = lockEvent.WaitAsync();
         if (await Task.WhenAny(messageArrived, Task.Delay(10000)) == messageArrived)

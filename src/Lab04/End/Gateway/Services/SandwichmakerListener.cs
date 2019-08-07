@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using RabbitQueue;
 using Microsoft.Extensions.Configuration;
+using Polly;
+using System;
 
 namespace Gateway.Services
 {
@@ -10,20 +12,26 @@ namespace Gateway.Services
   {
     readonly IConfiguration _config;
     readonly IWorkInProgress _wip;
-    private readonly ServiceBus _bus;
+    private readonly IServiceBus _bus;
+    readonly Policy _retryPolicy = Policy.
+      Handle<Exception>().
+      WaitAndRetry(3, r => TimeSpan.FromSeconds(Math.Pow(2, r)));
 
-    public SandwichmakerListener(IConfiguration config, IWorkInProgress wip)
+    public SandwichmakerListener(IConfiguration config, IWorkInProgress wip, IServiceBus bus)
     {
       _config = config;
       _wip = wip;
-      _bus = new ServiceBus(_config["rabbitmq:url"], "sandwichBus");
+      _bus = bus;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-      _bus.Subscribe<Messages.SandwichResponse>("SandwichResponse", (ea, response) =>
+      _retryPolicy.Execute(() =>
       {
-        _wip.CompleteWork(ea.BasicProperties.CorrelationId, response);
+        _bus.Subscribe<Messages.SandwichResponse>("SandwichResponse", (ea, response) =>
+        {
+          _wip.CompleteWork(ea.BasicProperties.CorrelationId, response);
+        });
       });
 
       return Task.CompletedTask;

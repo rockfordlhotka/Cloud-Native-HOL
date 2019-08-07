@@ -10,7 +10,7 @@ namespace BreadService
 {
   class BreadBin
   {
-    private static ServiceBus _bus; 
+    private static IServiceBus _bus; 
 
     static async Task Main(string[] args)
     {
@@ -19,7 +19,7 @@ namespace BreadService
         .Build();
 
       if (_bus == null)
-        _bus = new ServiceBus(config["rabbitmq:url"], "sandwichBus");
+        _bus = new ServiceBusPubSub(config["rabbitmq:url"], "sandwichBus");
 
       Console.WriteLine("### Bread bin service starting to listen");
       _bus.Subscribe<Messages.BreadBinRequest>("BreadBinRequest", HandleMessage);

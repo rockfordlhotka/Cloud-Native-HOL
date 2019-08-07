@@ -2,14 +2,21 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace RabbitQueue
 {
-  public class ServiceBus : IDisposable
+  /// <summary>
+  /// Service bus implementation that uses a
+  /// publish/subscribe model based on RabbitMQ
+  /// queues
+  /// </summary>
+  public class ServiceBusQueues : IServiceBus
   {
-    private readonly IConnection connection;
-    private readonly IModel channel;
+    private IConnection connection;
+    private IModel channel;
+    private readonly string hostName;
     private readonly string exchangeName;
 
     /// <summary>
@@ -17,13 +24,20 @@ namespace RabbitQueue
     /// </summary>
     /// <param name="hostName">Host name or URL for RabbitMQ service</param>
     /// <param name="busName">Name of the bus</param>
-    public ServiceBus(string hostName, string busName)
+    public ServiceBusQueues(string hostName, string busName)
     {
-      exchangeName = busName;
-      var factory = new ConnectionFactory() { HostName = hostName };
-      connection = factory.CreateConnection();
-      channel = connection.CreateModel();
-      channel.ExchangeDeclare(exchangeName, "direct");
+      this.hostName = hostName;
+      exchangeName = busName.Trim();
+    }
+
+    private void Initialize()
+    {
+      if (channel == null)
+      {
+        var factory = new ConnectionFactory() { HostName = hostName };
+        connection = factory.CreateConnection();
+        channel = connection.CreateModel();
+      }
     }
 
     /// <summary>
@@ -34,6 +48,14 @@ namespace RabbitQueue
     /// <param name="message">Message body</param>
     public void Publish(string bindingKey, string correlationId, object message)
     {
+      Initialize();
+      channel.QueueDeclare(
+        queue: $"{exchangeName}-{bindingKey.Trim()}",
+        durable: false,
+        exclusive: false,
+        autoDelete: false,
+        arguments: null);
+
       var serialized = JsonConvert.SerializeObject(message);
       var body = Encoding.UTF8.GetBytes(serialized);
 
@@ -41,7 +63,7 @@ namespace RabbitQueue
       props.CorrelationId = correlationId;
 
       channel.BasicPublish(
-        exchange: exchangeName,
+        exchange: "",
         routingKey: bindingKey,
         basicProperties: props,
         body: body);
@@ -101,25 +123,23 @@ namespace RabbitQueue
     /// <param name="handleMessage">Method to invoke for each message</param>
     public void Subscribe(string[] bindingKeys, Action<BasicDeliverEventArgs, string> handleMessage)
     {
-      var queue = channel.QueueDeclare();
+      Initialize();
       foreach (var item in bindingKeys)
       {
-        channel.QueueBind(
-          queue: queue.QueueName,
-          exchange: exchangeName,
-          routingKey: item);
+        channel.QueueDeclare(
+          queue: $"{exchangeName}-{item.Trim()}",
+          durable: false,
+          exclusive: false,
+          autoDelete: false,
+          arguments: null);
+        var consumer = new EventingBasicConsumer(channel);
+        consumer.Received += (model, ea) =>
+        {
+          var message = Encoding.UTF8.GetString(ea.Body);
+          handleMessage(ea, message);
+        };
+        channel.BasicConsume(queue: item, autoAck: true, consumer: consumer);
       }
-
-      var consumer = new EventingBasicConsumer(channel);
-      consumer.Received += (model, ea) =>
-      {
-        var message = Encoding.UTF8.GetString(ea.Body);
-        handleMessage(ea, message);
-      };
-      channel.BasicConsume(
-        queue: queue.QueueName, 
-        autoAck: true, 
-        consumer: consumer);
     }
 
     /// <summary>

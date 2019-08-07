@@ -35,6 +35,8 @@ namespace Gateway
           new Services.SandwichRequestor(
               e.GetService<IConfiguration>(), 
               e.GetService<Services.IWorkInProgress>()));
+      services.AddTransient<RabbitQueue.IServiceBus>((e) => 
+        new RabbitQueue.ServiceBusPubSub(e.GetService<IConfiguration>()["rabbitmq:url"], "sandwichBus"));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
