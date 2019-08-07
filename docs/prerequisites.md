@@ -32,8 +32,13 @@ We will use some cloud-based services
 1. Install [Chocolatey](https://chocolatey.org)
 1. Using Chocolatey from an _admin_ command line
    1. `choco install kubernetes-cli`
+   1. `choco install kubernetes-helm`
    1. `choco install minikube`
    1. `choco install azure-cli`
+1. Start minikube one time to download/initialize all the container images from an _admin_ command line
+   1. `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
+      1. This may take several minutes as it downloads numerous images
+   1. `minikube ssh "sudo poweroff"`
 1. Clone this repo to your workstation: `git clone https://github.com/rockfordlhotka/Cloud-Native-HOL.git`
    1. There may be some last-minute fixes to the code so we recommend waiting to clone the repository until a day or two prior to the HOL
 1. (optional) Windows Subsystem for Linux (WSL)
