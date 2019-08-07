@@ -19,10 +19,10 @@ namespace LettuceService
         .Build();
 
       if (_bus == null)
-        _bus = new ServiceBusPubSub(config["rabbitmq:url"], "sandwichBus");
+        _bus = new ServiceBus(config["rabbitmq:url"], "sandwichBus");
 
       Console.WriteLine("### Lettuce bin service starting to listen");
-      _bus.Subscribe<Messages.LettuceBinRequest>("LettuceBinRequest", HandleMessage);
+      _bus.Subscribe<Messages.LettuceBinRequest>("LettuceBin", "LettuceBinRequest", HandleMessage);
 
       // wait forever - we run until the container is stopped
       await new AsyncManualResetEvent().WaitAsync();

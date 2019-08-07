@@ -19,10 +19,10 @@ namespace MeatService
         .Build();
 
       if (_bus == null)
-        _bus = new ServiceBusPubSub(config["rabbitmq:url"], "sandwichBus");
+        _bus = new ServiceBus(config["rabbitmq:url"], "sandwichBus");
 
       Console.WriteLine("### Meat bin service starting to listen");
-      _bus.Subscribe<Messages.MeatBinRequest>("MeatBinRequest", HandleMessage);
+      _bus.Subscribe<Messages.MeatBinRequest>("MeatBin", "MeatBinRequest", HandleMessage);
 
       // wait forever - we run until the container is stopped
       await new AsyncManualResetEvent().WaitAsync();

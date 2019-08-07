@@ -2,17 +2,16 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace RabbitQueue
 {
   /// <summary>
   /// Service bus implementation that uses a
-  /// publish/subscribe model based on RabbitMQ
-  /// queues
+  /// publish/subscribe model based on a RabbitMQ
+  /// exchange and subscriptions
   /// </summary>
-  public class ServiceBusQueues : IServiceBus
+  public class ServiceBus : IServiceBus
   {
     private IConnection connection;
     private IModel channel;
@@ -24,10 +23,10 @@ namespace RabbitQueue
     /// </summary>
     /// <param name="hostName">Host name or URL for RabbitMQ service</param>
     /// <param name="busName">Name of the bus</param>
-    public ServiceBusQueues(string hostName, string busName)
+    public ServiceBus(string hostName, string busName)
     {
       this.hostName = hostName;
-      exchangeName = busName.Trim();
+      exchangeName = busName;
     }
 
     private void Initialize()
@@ -37,6 +36,7 @@ namespace RabbitQueue
         var factory = new ConnectionFactory() { HostName = hostName };
         connection = factory.CreateConnection();
         channel = connection.CreateModel();
+        channel.ExchangeDeclare(exchangeName, "direct");
       }
     }
 
@@ -49,13 +49,6 @@ namespace RabbitQueue
     public void Publish(string bindingKey, string correlationId, object message)
     {
       Initialize();
-      channel.QueueDeclare(
-        queue: $"{exchangeName}-{bindingKey.Trim()}",
-        durable: false,
-        exclusive: false,
-        autoDelete: false,
-        arguments: null);
-
       var serialized = JsonConvert.SerializeObject(message);
       var body = Encoding.UTF8.GetBytes(serialized);
 
@@ -63,7 +56,7 @@ namespace RabbitQueue
       props.CorrelationId = correlationId;
 
       channel.BasicPublish(
-        exchange: "",
+        exchange: exchangeName,
         routingKey: bindingKey,
         basicProperties: props,
         body: body);
@@ -73,12 +66,13 @@ namespace RabbitQueue
     /// Start listening for messages of a single type
     /// to arrive on the bus
     /// </summary>
+    /// <param name="subscriptionName">Name of subscription</param>
     /// <param name="bindingKeys">Binding keys to subscribe</param>
     /// <typeparam name="M">Type of message</typeparam>
     /// <param name="handleMessage">Method to invoke for each message</param>
-    public void Subscribe<M>(string[] bindingKeys, Action<BasicDeliverEventArgs, M> handleMessage)
+    public void Subscribe<M>(string subscriptionName, string[] bindingKeys, Action<BasicDeliverEventArgs, M> handleMessage)
     {
-      Subscribe(bindingKeys, (ea, message) =>
+      Subscribe(subscriptionName, bindingKeys, (ea, message) =>
       {
         var response = JsonConvert.DeserializeObject<M>(message);
         handleMessage?.Invoke(ea, response);
@@ -89,12 +83,13 @@ namespace RabbitQueue
     /// Start listening for messages of a single type
     /// and binding key to arrive on the bus
     /// </summary>
+    /// <param name="subscriptionName">Name of subscription</param>
     /// <param name="bindingKey">Binding key to subscribe</param>
     /// <typeparam name="M">Type of message</typeparam>
     /// <param name="handleMessage">Method to invoke for each message</param>
-    public void Subscribe<M>(string bindingKey, Action<BasicDeliverEventArgs, M> handleMessage)
+    public void Subscribe<M>(string subscriptionName, string bindingKey, Action<BasicDeliverEventArgs, M> handleMessage)
     {
-      Subscribe(new string[] { bindingKey }, (ea, message) =>
+      Subscribe(subscriptionName, new string[] { bindingKey }, (ea, message) =>
       {
         var response = JsonConvert.DeserializeObject<M>(message);
         handleMessage?.Invoke(ea, response);
@@ -105,12 +100,13 @@ namespace RabbitQueue
     /// Start listening for messages of a single binding
     /// key to arrive on the bus
     /// </summary>
+    /// <param name="subscriptionName">Name of subscription</param>
     /// <param name="bindingKey">Binding key to subscribe</param>
     /// <typeparam name="M">Type of message</typeparam>
     /// <param name="handleMessage">Method to invoke for each message</param>
-    public void Subscribe(string bindingKey, Action<BasicDeliverEventArgs, string> handleMessage)
+    public void Subscribe(string subscriptionName, string bindingKey, Action<BasicDeliverEventArgs, string> handleMessage)
     {
-      Subscribe(new string[] { bindingKey }, (ea, message) =>
+      Subscribe(subscriptionName, new string[] { bindingKey }, (ea, message) =>
       {
         handleMessage?.Invoke(ea, message);
       });
@@ -119,27 +115,36 @@ namespace RabbitQueue
     /// <summary>
     /// Start listening for messages to arrive on the bus
     /// </summary>
+    /// <param name="subscriptionName">Name of subscription</param>
     /// <param name="bindingKeys">Binding keys to subscribe</param>
     /// <param name="handleMessage">Method to invoke for each message</param>
-    public void Subscribe(string[] bindingKeys, Action<BasicDeliverEventArgs, string> handleMessage)
+    public void Subscribe(string subscriptionName, string[] bindingKeys, Action<BasicDeliverEventArgs, string> handleMessage)
     {
       Initialize();
+      var queue = channel.QueueDeclare(
+        queue: subscriptionName,
+        durable: false,
+        exclusive: false,
+        autoDelete: false,
+        arguments: null);
       foreach (var item in bindingKeys)
       {
-        channel.QueueDeclare(
-          queue: $"{exchangeName}-{item.Trim()}",
-          durable: false,
-          exclusive: false,
-          autoDelete: false,
-          arguments: null);
-        var consumer = new EventingBasicConsumer(channel);
-        consumer.Received += (model, ea) =>
-        {
-          var message = Encoding.UTF8.GetString(ea.Body);
-          handleMessage(ea, message);
-        };
-        channel.BasicConsume(queue: item, autoAck: true, consumer: consumer);
+        channel.QueueBind(
+          queue: queue.QueueName,
+          exchange: exchangeName,
+          routingKey: item);
       }
+
+      var consumer = new EventingBasicConsumer(channel);
+      consumer.Received += (model, ea) =>
+      {
+        var message = Encoding.UTF8.GetString(ea.Body);
+        handleMessage(ea, message);
+      };
+      channel.BasicConsume(
+        queue: queue.QueueName, 
+        autoAck: true, 
+        consumer: consumer);
     }
 
     /// <summary>

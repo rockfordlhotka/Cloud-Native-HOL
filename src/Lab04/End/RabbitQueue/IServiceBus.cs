@@ -19,31 +19,35 @@ namespace RabbitQueue
     /// Start listening for messages of a single type
     /// to arrive on the bus
     /// </summary>
+    /// <param name="subscriptionName">Name of subscription</param>
     /// <param name="bindingKeys">Binding keys to subscribe</param>
     /// <typeparam name="M">Type of message</typeparam>
     /// <param name="handleMessage">Method to invoke for each message</param>
-    void Subscribe<M>(string[] bindingKeys, Action<BasicDeliverEventArgs, M> handleMessage);
+    void Subscribe<M>(string subscriptionName, string[] bindingKeys, Action<BasicDeliverEventArgs, M> handleMessage);
     /// <summary>
     /// Start listening for messages of a single type
     /// and binding key to arrive on the bus
     /// </summary>
+    /// <param name="subscriptionName">Name of subscription</param>
     /// <param name="bindingKey">Binding key to subscribe</param>
     /// <typeparam name="M">Type of message</typeparam>
     /// <param name="handleMessage">Method to invoke for each message</param>
-    void Subscribe<M>(string bindingKey, Action<BasicDeliverEventArgs, M> handleMessage);
+    void Subscribe<M>(string subscriptionName, string bindingKey, Action<BasicDeliverEventArgs, M> handleMessage);
     /// <summary>
     /// Start listening for messages of a single binding
     /// key to arrive on the bus
     /// </summary>
+    /// <param name="subscriptionName">Name of subscription</param>
     /// <param name="bindingKey">Binding key to subscribe</param>
     /// <typeparam name="M">Type of message</typeparam>
     /// <param name="handleMessage">Method to invoke for each message</param>
-    void Subscribe(string bindingKey, Action<BasicDeliverEventArgs, string> handleMessage);
+    void Subscribe(string subscriptionName, string bindingKey, Action<BasicDeliverEventArgs, string> handleMessage);
     /// <summary>
     /// Start listening for messages to arrive on the bus
     /// </summary>
+    /// <param name="subscriptionName">Name of subscription</param>
     /// <param name="bindingKeys">Binding keys to subscribe</param>
     /// <param name="handleMessage">Method to invoke for each message</param>
-    void Subscribe(string[] bindingKeys, Action<BasicDeliverEventArgs, string> handleMessage);
+    void Subscribe(string subscriptionName, string[] bindingKeys, Action<BasicDeliverEventArgs, string> handleMessage);
   }
 }

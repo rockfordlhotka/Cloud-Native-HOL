@@ -23,10 +23,11 @@ namespace SandwichMaker
         .Build();
 
       if (_bus == null)
-        _bus = new ServiceBusPubSub(config["rabbitmq:url"], "sandwichBus");
+        _bus = new ServiceBus(config["rabbitmq:url"], "sandwichBus");
 
       Console.WriteLine("### SandwichMaker starting to listen");
       _bus.Subscribe(
+        "SandwichMaker",
         new string[] { "SandwichRequest", "MeatBinResponse", "BreadBinResponse", "CheeseBinResponse", "LettuceBinResponse" }, 
         HandleMessage);
 

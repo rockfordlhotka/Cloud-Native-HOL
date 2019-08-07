@@ -19,10 +19,10 @@ namespace BreadService
         .Build();
 
       if (_bus == null)
-        _bus = new ServiceBusPubSub(config["rabbitmq:url"], "sandwichBus");
+        _bus = new ServiceBus(config["rabbitmq:url"], "sandwichBus");
 
       Console.WriteLine("### Bread bin service starting to listen");
-      _bus.Subscribe<Messages.BreadBinRequest>("BreadBinRequest", HandleMessage);
+      _bus.Subscribe<Messages.BreadBinRequest>("BreadBin", "BreadBinRequest", HandleMessage);
 
       // wait forever - we run until the container is stopped
       await new AsyncManualResetEvent().WaitAsync();

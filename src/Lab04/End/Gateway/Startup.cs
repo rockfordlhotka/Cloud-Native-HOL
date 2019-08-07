@@ -31,12 +31,13 @@ namespace Gateway
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
       services.AddSingleton<Services.IWorkInProgress>((e) => new Services.WorkInProgress());
       services.AddHostedService<Services.SandwichmakerListener>();
+      services.AddTransient<RabbitQueue.IServiceBus>((e) =>
+        new RabbitQueue.ServiceBus(e.GetService<IConfiguration>()["rabbitmq:url"], "sandwichBus"));
       services.AddSingleton<Services.ISandwichRequestor>((e) =>
           new Services.SandwichRequestor(
               e.GetService<IConfiguration>(), 
-              e.GetService<Services.IWorkInProgress>()));
-      services.AddTransient<RabbitQueue.IServiceBus>((e) => 
-        new RabbitQueue.ServiceBusPubSub(e.GetService<IConfiguration>()["rabbitmq:url"], "sandwichBus"));
+              e.GetService<Services.IWorkInProgress>(),
+              e.GetService<RabbitQueue.IServiceBus>()));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

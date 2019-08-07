@@ -28,7 +28,7 @@ namespace Gateway.Services
     {
       _retryPolicy.Execute(() =>
       {
-        _bus.Subscribe<Messages.SandwichResponse>("SandwichResponse", (ea, response) =>
+        _bus.Subscribe<Messages.SandwichResponse>("Gateway", "SandwichResponse", (ea, response) =>
         {
           _wip.CompleteWork(ea.BasicProperties.CorrelationId, response);
         });
