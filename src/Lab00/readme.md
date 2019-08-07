@@ -100,7 +100,7 @@ To fix this on Windows:
 
 1. Open a CLI window _as administrator_
 1. Change directory to `/c/Program\ Files/Docker/Docker/resources/bin`
-1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.1/bin/windows/amd64/kubectl.exe`
+1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.2/bin/windows/amd64/kubectl.exe`
 
 This will download version `v1.15.1` of the tool, overwriting the older version in the Docker directory.
 
