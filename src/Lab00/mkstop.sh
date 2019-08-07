@@ -1,1 +1,1 @@
-minikube ssh "sudo poweroff"
+winpty minikube ssh "sudo poweroff"

@@ -55,7 +55,7 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 ### Starting minikube
 
-1. Type `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
+1. Type `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
 
 Alternately you can use pre-built bash shell scripts to start/stop the cluster:
 
@@ -72,7 +72,9 @@ Alternately you can use pre-built bash shell scripts to start/stop the cluster:
 
 ### Stopping minikube
 
-1. Type `minikube ssh "sudo poweroff"`
+**IMPORTANT:** Don't actually stop minikube, as you'll be using it throughout the day. However, when you do want to stop minikube this is how you do it.
+
+1. Type `winpty minikube ssh "sudo poweroff"`
 
 Alternately you can use the pre-built bash command script:
 
@@ -98,7 +100,7 @@ To fix this on Windows:
 
 1. Open a CLI window _as administrator_
 1. Change directory to `/c/Program\ Files/Docker/Docker/resources/bin`
-1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.1/bin/windows/amd64/kubectl.exe`
+1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.2/bin/windows/amd64/kubectl.exe`
 
 This will download version `v1.15.1` of the tool, overwriting the older version in the Docker directory.
 
