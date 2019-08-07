@@ -371,6 +371,8 @@ If you are using the CLI, when the plan has been created you'll see the details 
   "kind": "linux",
 ```
 
+> The 1st deployment will fail, but after setting the credentials on the app (see below) and it should retry and then succeed in deploying and starting your app
+
 Now you can run a container in this plan:
 
 ```text
