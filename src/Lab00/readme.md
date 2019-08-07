@@ -52,9 +52,12 @@ This should ensure that you have a local copy of the latest content from GitHub.
 1. Type `minikube status`
 1. Output should appear similar to: ![mkstatus](images/mkstatus.png)
    1. If minikube is not running follow the instructions to start minikube
-1. Close admin CLI window (type `exit`)
 
 ### Starting minikube
+
+1. Type `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
+
+Alternately you can use pre-built bash shell scripts to start/stop the cluster:
 
 1. Change directory to the `Lab00` in this repo
 1. Type `chmod +x mkstart.sh`
@@ -69,8 +72,15 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 ### Stopping minikube
 
+1. Type `minikube ssh "sudo poweroff"`
+
+Alternately you can use the pre-built bash command script:
+
 1. Type `./mkstop.sh` to stop minikube
    1. Type `cat mkstop.sh` to view script contents
+
+
+Finally: Close the admin CLI window (type `exit`)
 
 ## Kubernetes CLI
 
