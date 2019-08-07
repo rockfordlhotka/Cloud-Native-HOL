@@ -72,6 +72,8 @@ Alternately you can use pre-built bash shell scripts to start/stop the cluster:
 
 ### Stopping minikube
 
+**IMPORTANT:** Don't actually stop minikube, as you'll be using it throughout the day. However, when you do want to stop minikube this is how you do it.
+
 1. Type `minikube ssh "sudo poweroff"`
 
 Alternately you can use the pre-built bash command script:
