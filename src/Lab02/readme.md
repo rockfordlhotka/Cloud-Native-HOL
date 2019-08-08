@@ -201,7 +201,7 @@ In a CLI window, change directory to src/Lab02/Start/Gateway and type these comm
 
 ```text
 kubectl apply -f deploy.yaml
-kbuectl apply -f service.yaml
+kubectl apply -f service.yaml
 ```
 
 You can apply those same files to the cluster multiple times, but subsequent calls won't do anything because the current state will already match the desired state.
