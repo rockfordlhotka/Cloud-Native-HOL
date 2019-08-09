@@ -1,8 +1,10 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
+using Polly;
 
 namespace Gateway.Pages
 {
@@ -10,6 +12,9 @@ namespace Gateway.Pages
   {
     private readonly IConfiguration _config;
     private readonly HttpClient _httpClient;
+    readonly Policy _retryPolicy = Policy.
+      Handle<Exception>().
+      WaitAndRetry(3, r => TimeSpan.FromSeconds(Math.Pow(2, r)));
 
     public IndexModel(IConfiguration config, HttpClient httpClient)
     {
@@ -46,21 +51,25 @@ namespace Gateway.Pages
         Lettuce = TheLettuce
       };
       var server = _config["sandwichmaker:url"] + "/api/sandwichmaker";
-      using (var httpResponse = await _httpClient.PutAsJsonAsync(server, request))
+
+      await _retryPolicy.Execute(async () =>
       {
-        if (httpResponse.IsSuccessStatusCode)
+        using (var httpResponse = await _httpClient.PutAsJsonAsync(server, request))
         {
-          var result = await httpResponse.Content.ReadAsAsync<Messages.SandwichResponse>();
-          if (result.Success)
-            ReplyText = result.Description;
+          if (httpResponse.IsSuccessStatusCode)
+          {
+            var result = await httpResponse.Content.ReadAsAsync<Messages.SandwichResponse>();
+            if (result.Success)
+              ReplyText = result.Description;
+            else
+              ReplyText = result.Error;
+          }
           else
-            ReplyText = result.Error;
+          {
+            ReplyText = $"Couldn't reach sandwichmaker at {server}; Response: {httpResponse.ReasonPhrase}";
+          }
         }
-        else
-        {
-          ReplyText = $"Couldn't reach sandwichmaker at {server}; Response: {httpResponse.ReasonPhrase}";
-        }
-      }
+      });
     }
   }
 }
