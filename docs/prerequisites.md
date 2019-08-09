@@ -49,4 +49,4 @@ We will use some cloud-based services
    1. Inside WSL install `sudo apt-get install azure-cli` (Use the instructions at: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
    1. Inside WSL install `sudo apt-get install kubernetes-cli` (Use the instructions at: https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux)
    
-Arriving with a pre-configured workstation is imperative.
+⚠ Arriving with a pre-configured workstation is imperative.
