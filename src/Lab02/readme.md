@@ -4,29 +4,7 @@ In this lab we'll install RabbitMQ into K8s using Helm, and then we'll use `kube
 
 Lesson goals:
 
-1. Use Helm to deploy RabbitMQ
 1. Use `kubectl` to deploy ASP.NET Core website
-
-## Deploy RabbitMQ to Kubernetes
-
-1. Type `helm install --name my-rabbitmq --set rabbitmq.username=guest,rabbitmq.password=guest,rabbitmq.erlangCookie=supersecretkey stable/rabbitmq`
-   1. Note that in a real environment you'll want to set the `username`, `password`, and `erlangCookie` values to secret values
-1. Helm will display infomration about the deployment
-1. Type `helm list` to list installed releases
-1. Type 'kubectl get pods' to list running instances
-1. Type `kubectl get services` to list exposed services
-
-At this point you should have an instance of RabbitMQ running in minikube. The output from `kubectl get services` should be something like this:
-
-```text
-$ kubectl get services
-NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                 AGE
-kubernetes             ClusterIP   10.96.0.1        <none>        443/TCP                                 88d
-my-rabbitmq            ClusterIP   10.107.206.219   <none>        4369/TCP,5672/TCP,25672/TCP,15672/TCP   8m
-my-rabbitmq-headless   ClusterIP   None             <none>        4369/TCP,5672/TCP,25672/TCP,15672/TCP   8m
-```
-
-Make note of the `my-rabbitmq` name, and also notice how it has been provided with a `CLUSTER-IP` address. This address is how the RabbitMQ service is exposed within the K8s cluster itself. This isn't a hard-coded or consistent value however, so later on you'll use the _name_ of the service to allow our other running container images to interact with RabbitMQ.
 
 ## Deploy Website to Kubernetes
 
@@ -122,14 +100,14 @@ In Lab01 you did something similar by providing ACR credentials to the Azure App
 
 To do this for Kubernetes you use the `kubectl` command to create a secret that contains the credentials, and then provide the name of that secret in the `deploy.yaml` file.
 
-Here are the steps:
+> The bash commands used in this step won't all work in Git Bash, so a real Linux CLI is required; such as the one provided by Windows-Subsystem-for-Linux (WSL). IF YOU DON'T HAVE WSL then you can run the individual commands from `creds.sh` in Azure itself via the "Try It" button on [this web page](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal).
+
+Here are the steps if you have WSL:
 
 1. **Using WSL** change directory to src/Lab02
 1. `chmod +x creds.sh`
 1. `./creds.sh myrepository`
 1. Make note of the resulting service principal id and password
-
-> The bash commands used in `creds.sh` won't all work in Git Bash, so a real Linux CLI is required; such as the one provided by Windows-Subsystem-for-Linux (WSL). IF YOU DON'T HAVE WSL then you can run this command in Azure itself via the "Try It" button on [this web page](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal).
 
 The output should be something like this:
 
@@ -201,7 +179,7 @@ In a CLI window, change directory to src/Lab02/Start/Gateway and type these comm
 
 ```text
 kubectl apply -f deploy.yaml
-kbuectl apply -f service.yaml
+kubectl apply -f service.yaml
 ```
 
 You can apply those same files to the cluster multiple times, but subsequent calls won't do anything because the current state will already match the desired state.
