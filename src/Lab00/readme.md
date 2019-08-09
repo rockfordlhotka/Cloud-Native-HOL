@@ -94,7 +94,7 @@ Finally: Close the admin CLI window (type `exit`)
 
 ![kubectl version](images/kubectlversion.png)
 
-**NOTE:** It is very likely that your path (Windows and Mac) will have you running `kubectl` from Docker rather than the one directly installed for Kubernetes. This is a problem, because the Docker install is outdated. In the image above you can see that the client is version `v1.10.11`, but the current version is at least `v1.15.1`.
+**NOTE:** It is very likely that your path (Windows and Mac) will have you running `kubectl` from Docker rather than the one directly installed for Kubernetes. This is a problem, because the Docker install is outdated. In the image above you can see that the client is version `v1.10.11`, but the current version is at least `v1.15.2`.
 
 To fix this on Windows:
 
@@ -102,7 +102,7 @@ To fix this on Windows:
 1. Change directory to `/c/Program\ Files/Docker/Docker/resources/bin`
 1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.2/bin/windows/amd64/kubectl.exe`
 
-This will download version `v1.15.1` of the tool, overwriting the older version in the Docker directory.
+This will download version `v1.15.2` of the tool, overwriting the older version in the Docker directory.
 
 For Mac users you can do something similar, or change a symlink as described in this Stackoverflow thread<sup>[1](#1)</sup>.
 
