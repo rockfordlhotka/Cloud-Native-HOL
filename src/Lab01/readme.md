@@ -81,7 +81,7 @@ Finally a `dotnet build` command is run to build the project.
 
 If you've worked with the `dotnet` command line tool at all, this process should seem somewhat familiar, as when building a project on the command line you will often do `dotnet restore` and `dotnet build` just like what's happening here in the container.
 
-The reason the build occurs *inside the container* is so that the restore, build, compile processes all run within Linux, so the resulting compiled output is compiled *for Linux*.
+The reason the build occurs *inside the container* is so that the restore, build, and publish processes all run within Linux, so the resulting compiled output is compiled *for Linux*.
 
 ### Publish the Project
 
@@ -217,6 +217,8 @@ az acr create --name MyRepository --resource-group MyGroup --sku Basic --admin-e
 Replace `MyRepository` and `MyGroup` with values appropriate for your subscription.
 
 In the [Azure web portal](https://portal.azure.com) click *Create a resource*, pick *Containers* and then *Container Registry*. ![](images/azurecontainerregistry.png)
+
+> Azure refers to a container repository as a registry, which is sadly confusing. Most of the world does appear to use the term "repository".
 
 In the details panel provide a registry name, resource group, enable the Admin user, and pick the Basic SKU. ![](images/azurecontainerpanel.png)
 
@@ -408,6 +410,8 @@ It may take a minute or two for the App Service to pull the container image from
 What's really impressive about this, is that you are now interacting with the _exact same image and code_ that you were running locally on your workstation via `docker run`! The only difference is that the image is now hosted in Azure instead of on your workstation.
 
 ## Closing Down
+
+**🛑 WARNING!** Do not close down the Azure resources until the end of the day!
 
 One thing about using public cloud resources such as Azure is that you need to be cost concious. When we're done today you should consider removing all the resources you've set up so you don't have to pay for them to sit idle.
 
