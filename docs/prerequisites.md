@@ -37,6 +37,7 @@ We will use some cloud-based services
    1. `choco install azure-cli`
 1. Start minikube one time to download/initialize all the container images from an _admin_ command line
    1. `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
+      1. `winpty` is included in Git Bash - it is not a separate download/install
       1. This may take several minutes as it downloads numerous images
    1. `winpty minikube ssh "sudo poweroff"`
    1. **If running on Windows 10 before 1809** [this blog post](https://www.c-sharpcorner.com/article/getting-started-with-kubernetes-on-windows-10-using-hyperv-and-minikube/) might help get minikube installed
