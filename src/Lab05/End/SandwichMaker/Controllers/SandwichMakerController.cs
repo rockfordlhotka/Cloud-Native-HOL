@@ -69,35 +69,75 @@ namespace SandwichMaker.Controllers
 
       result.Success = !wip.Failed;
       if (result.Success)
+      {
         result.Description = wip.GetDescription();
+      }
       else
+      {
         result.Error = wip.GetFailureReason();
+        await ReturnInventory(wip);
+      }
 
       return result;
     }
 
-    private void HandleMessage(object response, SandwichInProgress sandwich)
+    private void HandleMessage(Messages.MeatBinResponse response, SandwichInProgress wip)
     {
-      lock (sandwich)
+      lock (wip)
       {
-        switch (response.GetType().Name)
-        {
-          case "MeatBinResponse":
-            sandwich.GotMeat = ((Messages.MeatBinResponse)response).Success;
-            break;
-          case "BreadBinResponse":
-            sandwich.GotBread = ((Messages.BreadBinResponse)response).Success;
-            break;
-          case "CheeseBinResponse":
-            sandwich.GotCheese = ((Messages.CheeseBinResponse)response).Success;
-            break;
-          case "LettuceBinResponse":
-            sandwich.GotLettuce = ((Messages.LettuceBinResponse)response).Success;
-            break;
-          default:
-            Console.WriteLine($"### Unknown message type '{response.GetType().Name}'");
-            break;
-        }
+        wip.GotMeat = response.Success;
+      }
+    }
+
+    private void HandleMessage(Messages.BreadBinResponse response, SandwichInProgress wip)
+    {
+      lock (wip)
+      {
+        wip.GotBread = response.Success;
+      }
+    }
+
+    private void HandleMessage(Messages.CheeseBinResponse response, SandwichInProgress wip)
+    {
+      lock (wip)
+      {
+        wip.GotCheese = response.Success;
+      }
+    }
+
+    private void HandleMessage(Messages.LettuceBinResponse response, SandwichInProgress wip)
+    {
+      lock (wip)
+      {
+        wip.GotLettuce = response.Success;
+      }
+    }
+
+  private async Task ReturnInventory(SandwichInProgress wip)
+    {
+      var requests = new List<Task>();
+      if (wip.GotBread.HasValue && wip.GotBread.Value)
+        requests.Add(_httpClient.PutAsJsonAsync(
+          _config["breadservice:url"] + "/api/breadbin",
+          new Messages.BreadBinRequest { Bread = wip.Request.Bread, Returning = true }));
+      if (wip.GotMeat.HasValue && wip.GotMeat.Value)
+        requests.Add(_httpClient.PutAsJsonAsync(
+          _config["meatservice:url"] + "/api/meatbin",
+          new Messages.MeatBinRequest { Meat = wip.Request.Meat, Returning = true }));
+      if (wip.GotCheese.HasValue && wip.GotCheese.Value)
+        requests.Add(_httpClient.PutAsJsonAsync(
+          _config["cheeseservice:url"] + "/api/cheesebin",
+          new Messages.CheeseBinRequest { Cheese = wip.Request.Cheese, Returning = true }));
+      if (wip.GotLettuce.HasValue && wip.GotLettuce.Value)
+        requests.Add(_httpClient.PutAsJsonAsync(
+          _config["lettuceservice:url"] + "/api/lettucebin",
+          new Messages.LettuceBinRequest { Returning = true }));
+
+      var timeout = Task.Delay(10000);
+      if (await Task.WhenAny(Task.WhenAll(requests), timeout) == timeout)
+      {
+        Console.WriteLine($"### Timeout returning inventory");
+        throw new TimeoutException("ReturnInventory");
       }
     }
 
