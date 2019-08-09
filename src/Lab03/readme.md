@@ -25,7 +25,7 @@ Throughout this and subsequent labs the following terms are used:
 * **Service-based**: a term used to encompass SOA and microservices without getting into debates about whether they are the same or different
 * **Service** or **app**: an autonomous unit of functionality that can be independently deployed from any other part of the overall system
 * **Edge app**: an app that exposes some sort of interface to external consumers
-* **Service-based system** (aka **system**): a logical boundary within which all apps/services interact using a common messaging protocol and run on a common service fabric or runtime
+* **Service-based system** (aka **system**): a logical boundary within which all apps/services interact using a common messaging protocol
 * **External consumers**: browsers, devices, users, or anything outside the service-based system
 
 ## Overview of Solution
