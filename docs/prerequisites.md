@@ -40,7 +40,6 @@ We will use some cloud-based services
    1. From Git Bash
       1. `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
       1. `winpty minikube ssh "sudo poweroff"`
-      1. `winpty` is included in Git Bash - it is not a separate download/install
    1. From cmd or PowerShell
       1. `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
       1. `minikube ssh "sudo poweroff"`
