@@ -2,7 +2,7 @@
 
 In this lab we'll confirm that everyone has the software installed for subsequent labs.
 
-See this [list of prerequisites](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/master/docs/prerequisites.md).
+See this [list of prerequisites](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/master/docs/prerequisites.md). ⚠ These must be installed _before arriving at the event_!
 
 ## Chocolatey
 
