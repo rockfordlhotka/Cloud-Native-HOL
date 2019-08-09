@@ -13,7 +13,7 @@ Lesson goals:
    1. Note that in a real environment you'll want to set the `username`, `password`, and `erlangCookie` values to secret values
 1. Helm will display infomration about the deployment
 1. Type `helm list` to list installed releases
-1. Type 'kubectl get pods' to list running instances
+1. Type `kubectl get pods` to list running instances
 1. Type `kubectl get services` to list exposed services
 
 At this point you should have an instance of RabbitMQ running in minikube. The output from `kubectl get services` should be something like this:
