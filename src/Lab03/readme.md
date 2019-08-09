@@ -4,6 +4,7 @@ In this lab we'll build a message-based service-based system that runs in docker
 
 Lesson goals:
 
+1. Use Helm to deploy RabbitMQ
 1. Use a gateway server to provide user access to a service-based system
    1. Understand how to implement a "synchronous" user experience to external users
    1. Discuss how SignalR _could_ be used to provide an asynchronous experience to external users
@@ -967,6 +968,27 @@ If you request a sandwich with lettuce it'll fail right away, because that servi
 ## Deploy to Kubernetes
 
 The final step in this lab is to deploy the services to K8s. The docker-compose environment is convenient for the F5 experience and debugging, but ultimately most production systems will run on K8s or something similar.
+
+### Deploy RabbitMQ to Kubernetes
+
+1. Type `helm install --name my-rabbitmq --set rabbitmq.username=guest,rabbitmq.password=guest,rabbitmq.erlangCookie=supersecretkey stable/rabbitmq`
+   1. Note that in a real environment you'll want to set the `username`, `password`, and `erlangCookie` values to secret values
+1. Helm will display infomration about the deployment
+1. Type `helm list` to list installed releases
+1. Type `kubectl get pods` to list running instances
+1. Type `kubectl get services` to list exposed services
+
+At this point you should have an instance of RabbitMQ running in minikube. The output from `kubectl get services` should be something like this:
+
+```text
+$ kubectl get services
+NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                 AGE
+kubernetes             ClusterIP   10.96.0.1        <none>        443/TCP                                 88d
+my-rabbitmq            ClusterIP   10.107.206.219   <none>        4369/TCP,5672/TCP,25672/TCP,15672/TCP   8m
+my-rabbitmq-headless   ClusterIP   None             <none>        4369/TCP,5672/TCP,25672/TCP,15672/TCP   8m
+```
+
+Make note of the `my-rabbitmq` name, and also notice how it has been provided with a `CLUSTER-IP` address. This address is how the RabbitMQ service is exposed within the K8s cluster itself. This isn't a hard-coded or consistent value however, so later on you'll use the _name_ of the service to allow our other running container images to interact with RabbitMQ.
 
 ### Deployment and Service Configuration Files
 
