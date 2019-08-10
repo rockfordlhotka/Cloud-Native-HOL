@@ -981,7 +981,7 @@ At this point your `docker-compose.yml` file contains entries only for the `gate
 
 Making note of the IP address for your RabbitMQ instance, copy the `docker-compose.yml` file from the `End` directory into your `Start` directory, replacing the current file. The result is a `docker-compose.yml` that has entries for all the services in the system.
 
-**IMPORTANT:** Replace the IP addresses for `RABBITMQ__URL` with the IP address for your RabbitMQ instance within Docker. This needs to be done for all the services in the file.
+> ⚠ **IMPORTANT:** Replace the IP addresses for `RABBITMQ__URL` with the IP address for your RabbitMQ instance within Docker. This needs to be done for all the services in the file.
 
 ## Running in docker-compose
 
