@@ -157,7 +157,9 @@ Visual Studio can help you add docker-compose support to a solution. Right-click
 
 ![](images/add-docker-compose.png)
 
-You'll be asked to choose between Windows and Linux containers. Choose Linux.
+You will be asked which container orchestrator to use. If you have a choice, choose docker-compose.
+
+You will be asked to choose the Target OS for your containers. Choose Linux.
 
 > ℹ Windows containers are a viable alternative, but modern server development is moving rapidly toward Linux containers.
 
@@ -204,6 +206,8 @@ One of the more important of the [12 Factors](https://12factor.net) is that conf
       - RABBITMQ__USER
       - RABBITMQ__PASSWORD
 ```
+
+> ⚠ Make sure to use the IP address of _your_ RabbitMQ instance.
 
 The `environment:` node provides a list of environment variables to be set in each container as it is initialized. These values can be easily retrieved by .NET Core code using the modern configuration subsystem using the default configuration for ASP.NET Core.
 
@@ -415,7 +419,7 @@ namespace Gateway.Services
 
 This class relies on dependency injection to gain access to the `IConfiguration` instance for the app, and the `IWorkInProgress` singleton instance.
 
-You can see how the .NET configuration subsystem is used to retrieve the URL of the queue. Remember that the value is coming from an environment variable with the name `RABBITMQ__URL` (yes, two underscores). The configuration subsystem translates that name into a dictionary key value of `rabbitmq:url`.
+You can see how the .NET configuration subsystem is used to retrieve the URL of the queue. Remember that the value is coming from an environment variable with the name `RABBITMQ__URL` (yes, two underscores). The .NET Core configuration subsystem translates that name into a dictionary key value of `rabbitmq:url`.
 
 It then implements the `RequestSandwich` method that sends the request message to the sandwichmaker service. Some key things to note in this method:
 
@@ -502,7 +506,7 @@ namespace Gateway.Services
     {
       _queue.StartListening<Messages.SandwichResponse>((ea, response) =>
       {
-        _wip.CompleteWork(ea.BasicProperties.CorrelationId, result);
+        _wip.CompleteWork(ea.BasicProperties.CorrelationId, response);
       });
 
       return Task.CompletedTask;
@@ -586,7 +590,7 @@ You will implement the bread resource service from scratch, but first you should
 
 ### Startup
 
-As you'll see when you implement the bread service, these services are all implemented as console apps. They just listen for, and send, messages to queues, and so there's no need for all the overhead and complexity of ASP.NET. This is very typical of service-based systems.
+As you'll see when you implement the bread service later, these services are all implemented as console apps. They just listen for, and send, messages to queues, and so there's no need for all the overhead and complexity of ASP.NET. This is very typical of service-based systems.
 
 A major benefit of running code in containers is the high density of services per physical server. Containers themselves require very little memory or overhead, and it is important that your code also use as little memory or resources as possible. You can keep your memory footprint as small as possible by avoiding the use of runtime frameworks like ASP.NET when possible.
 
@@ -779,6 +783,8 @@ It needs the following NuGet references:
 
 * `Newtonsoft.Json`
 * `RabbitMQ.Client`
+* `Microsoft.Extensions.Configuration.CommandLine`
+* `Microsoft.Extensions.Configuration.EnvironmentVariables`
 
 It needs the following project references:
 
@@ -823,7 +829,18 @@ The request comes from some other service that needs bread (or needs to return u
 
 ### Service Implementation
 
-Like the sandwichmaker service, this is a console app, and so the entrypoint for the code is the `Main` method. This method needs to load configuration, create the `Queue` object, and start listening for inbound messages:
+Like the sandwichmaker service, this is a console app, and so the entrypoint for the code is the `Main` method. This method needs to load configuration, create the `Queue` object, and start listening for inbound messages.
+
+It will need these `using` statements:
+
+```c#
+using Microsoft.Extensions.Configuration;
+using RabbitQueue;
+using System.Threading.Tasks;
+using RabbitMQ.Client.Events;
+```
+
+The `Program` class needs to contain this code:
 
 ```c#
     private static Queue _queue; 
@@ -845,7 +862,8 @@ Like the sandwichmaker service, this is a console app, and so the entrypoint for
     }
 ```
 
-In a real app the inventory would be maintained in a database. For this lab the inventory will be maintained in memory:
+In a real app the inventory would be maintained in a database. For this lab the inventory will be maintained in memory. 
+Add this class-level field:
 
 ```c#
     private volatile static int _inventory = 10;
@@ -853,7 +871,7 @@ In a real app the inventory would be maintained in a database. For this lab the 
 
 To avoid any potential issues with shared state, the inventory value is maintained as a `volatile` value. Were the value being retrieved from a database on request this wouldn't be an issue because no shared/`static` state would be necessary.
 
-The `HandleMessage` method is invoked for each message received from the queue:
+The `HandleMessage` method is invoked for each message received from the queue. Add this method to the `Program` class:
 
 ```c#
     private static void HandleMessage(BasicDeliverEventArgs ea, Messages.BreadBinRequest request)
@@ -895,11 +913,17 @@ Although this implementation is simple, you should be able to see how the `Handl
 
 ### Adding Docker Support
 
-Visual Studio 2019 provides comparable support for adding Docker support to a Console App project as it does for a web project.
+Adding Docker support to a Console App project requires adding a `Dockerfile` and editing the `csproj` file.
+
+#### Visual Studio 2019
+
+Visual Studio 2019 provides support for adding Docker support to a Console App project as it does for a web project.
 
 ![add docker](images/add-docker-console.png)
 
 Selecting this option, and choosing Linux, will result in Visual Studio adding a `Dockerfile` to your project.
+
+#### Visual Studio 2017
 
 If you are using Visual Studio 2017 you'll have to do this process manually.
 
