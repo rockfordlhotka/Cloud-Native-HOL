@@ -108,7 +108,7 @@ Developing in a container-based environment can be complex. It can be challengin
 
 On a small scale it is often easiest to work with docker-compose, because Visual Studio understands how to interact with Docker Desktop and docker-compose within the familiar "F5 dev experience".
 
-> It is a fairly safe bet to think that Visual Studio will become more integrated with Kubernetes over time. Already Azure Dev Spaces exist, and innovation within the K8s space is occurring at a breakneck pace.
+> ℹ It is a fairly safe bet to think that Visual Studio will become more integrated with Kubernetes over time. Already Azure Dev Spaces exist, and innovation within the K8s space is occurring at a breakneck pace.
 
 For this lab you'll learn how to run a set of services in docker-compose from Visual Studio, and later you'll learn how to deploy those services into a K8s cluster.
 
@@ -159,7 +159,7 @@ Visual Studio can help you add docker-compose support to a solution. Right-click
 
 You'll be asked to choose between Windows and Linux containers. Choose Linux.
 
-> Windows containers are a viable alternative, but modern server development is moving rapidly toward Linux containers.
+> ℹ Windows containers are a viable alternative, but modern server development is moving rapidly toward Linux containers.
 
 The wizard will next ask if you want to overwrite the existing `Dockerfile` for the Gateway project. It is recommended to allow the overwrite.
 
@@ -632,7 +632,7 @@ Open the `Messages` folder and notice all the classes. These are all the message
 
 These types are the _exact same types_ used in the other services in the system. Many people's first instinct is to put these types into a central Class Library project, and reference that common assembly from all the services.
 
-> **THAT WOULD BE A BAD DESIGN CHOICE!!**
+> ℹ **THAT WOULD BE A BAD DESIGN CHOICE!!**
 
 Perhaps the most important characteristic of any service-based system is that each service or app can be deployed independently from any other services or apps.
 
@@ -990,6 +990,15 @@ my-rabbitmq-headless   ClusterIP   None             <none>        4369/TCP,5672/
 
 Make note of the `my-rabbitmq` name, and also notice how it has been provided with a `CLUSTER-IP` address. This address is how the RabbitMQ service is exposed within the K8s cluster itself. This isn't a hard-coded or consistent value however, so later on you'll use the _name_ of the service to allow our other running container images to interact with RabbitMQ.
 
+### Replace myrepository With the Real Name
+
+Most of the files in the `deploy/k8s` directory refer to `myrepository` instead of the real name of your ACR repository. Fortunately it is possible to use bash to quickly fix them all up with the correct name.
+
+1. Open a Git Bash CLI
+1. Change directory to `deploy/k8s`
+1. Type `grep -rl --include=*.sh --include=*.yaml --include=*.yml 'myrepository' | tee | xargs sed -i 's/myrepository/realname/g'`
+   * ⚠ Replace `realname` with your real ACR repository name!
+
 ### Deployment and Service Configuration Files
 
 K8s uses a different syntax for its deployment and service definition files. You've already seen an example of these in a previous lab.
@@ -1028,7 +1037,11 @@ spec:
           value: my-rabbitmq
 ```
 
-Replace `myrepository` with the name of your Azure repository. Also notice that the `RABBITMQ__URL` environment variable is being set to the _name_ of the RabbitMQ instance you started in K8s in a previous lab. Rather than using a hard-coded IP address, it is important to use the DNS name so K8s can manage the IP address automatically.
+> ℹ The `myrepository` name should already be replaced with your ACR repo name.
+
+Notice that the `RABBITMQ__URL` environment variable is being set to the _name_ of the RabbitMQ instance you started in K8s in a previous lab. Rather than using a hard-coded IP address, it is important to use the DNS name so K8s can manage the IP address automatically.
+
+> ℹ The .NET Core configuration subsystem translates an environment variable such as `RABBITMQ__URL` to a setting with the key `rabbitmq:url`. So in the .NET code you'll see something like `_config["rabbitmq:url"]` referring to this environment variable.
 
 You can review the pre-existing yaml files in the directory. There's a deployment file for each service in the system, plus a service definition file for the gateway service.
 
@@ -1040,7 +1053,7 @@ Only the gateway service needs a known IP address, and that's because it exposes
 
 Before you can apply the deployment and service files to the K8s cluster, the Docker container images need to be available in the repository. You've already seen how to tag and push an image to ACR, and that process now needs to happen for all the images in the system.
 
-> Pushing all the images at once like in this lab isn't necessarily normal over time. Remember that the primary goal of service-based architectures is to be able to deploy or update individual services without redeploying everything else. But you do need to get the whole system running in the first place before you can go into long-term maintenance mode.
+> ℹ Pushing all the images at once like in this lab isn't necessarily normal over time. Remember that the primary goal of service-based architectures is to be able to deploy or update individual services without redeploying everything else. But you do need to get the whole system running in the first place before you can go into long-term maintenance mode.
 
 #### Building the Images
 
@@ -1080,7 +1093,9 @@ docker tag gateway:dev myrepository.azurecr.io/gateway:lab03
 docker tag sandwichmaker:dev myrepository.azurecr.io/sandwichmaker:lab03
 ```
 
-Edit this file and replace `myrepository` with your ACR repository name. Then open a Git Bash CLI and do the following:
+> ℹ The `myrepository` name should already be replaced with your ACR repo name.
+
+Open a Git Bash CLI and do the following:
 
 1. Change directory to `deploy/k8s`
 1. `chmod +x tag.sh`
@@ -1103,7 +1118,9 @@ docker push myrepository.azurecr.io/breadservice:lab03
 docker push myrepository.azurecr.io/meatservice:lab03
 ```
 
-Edit this file and replace `myrepository` with your ACR repository name. Then open a Git Bash CLI and do the following:
+> ℹ The `myrepository` name should already be replaced with your ACR repo name.
+
+Open a Git Bash CLI and do the following:
 
 1. Change directory to `deploy/k8s`
 1. `chmod +x push.sh`
@@ -1115,7 +1132,7 @@ The result is that all the local images are pushed to the remote ACR repository.
 
 At this point you have all the deployment and service definition files that describe the desired state for the K8s cluster. And you have all the Docker container images in the ACR repository so they are available for download to the K8s cluster.
 
-> **IMPORTANT:** before applying the desired state for this lab, _make sure_ you have done the cleanup step in the previous lab so no containers are running other than RabbitMQ. You can check this with a `kubectl get pods` command.
+> ⚠ **IMPORTANT:** before applying the desired state for this lab, _make sure_ you have done the cleanup step in the previous lab so no containers are running other than RabbitMQ. You can check this with a `kubectl get pods` command.
 
 The next step is to apply the desired state to the cluster by executing each yaml file via `kubectl apply`. To simplify this process, there's a `run-k8s.sh` file in the `deploy/k8s` directory:
 
@@ -1142,7 +1159,7 @@ The result is that the desired state described in your local yaml files is appli
 
 If you immediately execute (and repeat) the `kubectl get pods` command you can watch as the K8s pods download, load, and start executing each container image. This may take a little time, because as each pod comes online it needs to download the container image from ACR.
 
-> Depending on the number of folks doing the lab, and the Internet speeds in the facility, patience may be required! In a production environment it is likely that you'll have much higher Internet speeds, less competition for bandwidth, and so spinning up a container in a pod will be quite fast.
+> ℹ Depending on the number of folks doing the lab, and the Internet speeds in the facility, patience may be required! In a production environment it is likely that you'll have much higher Internet speeds, less competition for bandwidth, and so spinning up a container in a pod will be quite fast.
 
 Make sure (via `kubectl get pods`) that all your services are running before moving on to the next step.
 
@@ -1154,7 +1171,7 @@ Make sure (via `kubectl get pods`) that all your services are running before mov
 1. Type `minikube service gateway`
    1. This will open your default browser to the URL for the service - it is a shortcut provided by minikube for testing
 
-> An Admin CLI window (e.g. run as administrator) is required because interacting with the `minikube` command always needs elevated permissions.
+> ⚠ An Admin CLI window (e.g. run as administrator) is required because interacting with the `minikube` command always needs elevated permissions.
 
 As with the docker-compose instance, you should be able to request sandwiches from the system. Notice that there's no shared state (such as inventory) between the services running in docker-compose and those running in minikube. In a real scenario any such state would typically be maintained in a database, and the various service implementations would be interacting with the database instead of in-memory data.
 
@@ -1168,7 +1185,7 @@ Such a thing can happen due to bugs, or an intentional rolling update of a runni
 
 In this system it is possible that the RabbitMQ instance might become temporarily unavailable.
 
-> In practice this is unlikely, because a production system will almost certainly deploy RabbitMQ across multiple redundant K8s nodes, leveraging RabbitMQ and K8s to achieve high fault tolerance.
+> ℹ In practice this is unlikely, because a production system will almost certainly deploy RabbitMQ across multiple redundant K8s nodes, leveraging RabbitMQ and K8s to achieve high fault tolerance.
 
 ### Using Polly Retry Policies
 
@@ -1240,7 +1257,7 @@ Perform the following steps in a Git Bash CLI to see this happen:
 
 At this point you've updated the gateway service to a newer version, and it is running with a retry policy.
 
-> If you are ahead of time, feel free to go through all the services and add retry policies anywhere the code opens and sends messages to RabbitMQ.
+> 🎉 If you are ahead of time, feel free to go through all the services and add retry policies anywhere the code opens and sends messages to RabbitMQ.
 
 ## Tearing Down the System
 

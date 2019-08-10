@@ -10,11 +10,13 @@ namespace BreadService.Controllers
     private static readonly object _lock = new object();
     private volatile static int _inventory = 10;
 
+#if DEBUG
     [HttpGet]
     public string OnGet()
     {
       return "I am running; use PUT to request Bread";
     }
+#endif
 
     [HttpPut]
     public Messages.BreadBinResponse RequestBread(Messages.BreadBinRequest request)

@@ -25,5 +25,15 @@ spec:
             memory: "128Mi"
             cpu: "500m"
         env:
-        - name: RABBITMQ__URL
-          value: my-rabbitmq
+        - name: SANDWICHMAKER__URL
+          value: http://sandwichmaker
+        - name: BREADSERVICE__URL
+          value: http://breadservice
+        - name: CHEESESERVICE__URL
+          value: http://cheeseservice
+        - name: MEATSERVICE__URL
+          value: http://meatservice
+        - name: LETTUCESERVICE__URL
+          value: http://lettuceservice
+      imagePullSecrets:
+      - name: acr-auth

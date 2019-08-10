@@ -1,0 +1,32 @@
+version: '3.4'
+
+services:
+  gateway:
+    image: ${DOCKER_REGISTRY-}gateway
+    build:
+      context: .
+      dockerfile: Gateway/Dockerfile
+
+  sandwichmaker:
+    image: ${DOCKER_REGISTRY-}sandwichmaker
+    build:
+      context: .
+      dockerfile: SandwichMaker/Dockerfile
+
+  cheeseservice:
+    image: ${DOCKER_REGISTRY-}cheeseservice
+    build:
+      context: .
+      dockerfile: CheeseService/Dockerfile
+
+  meatservice:
+    image: ${DOCKER_REGISTRY-}meatservice
+    build:
+      context: .
+      dockerfile: MeatService/Dockerfile
+
+  lettuceservice:
+    image: ${DOCKER_REGISTRY-}lettuceservice
+    build:
+      context: .
+      dockerfile: LettuceService/Dockerfile

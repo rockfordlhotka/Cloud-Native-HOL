@@ -27,3 +27,5 @@ spec:
         env:
         - name: RABBITMQ__URL
           value: my-rabbitmq
+      imagePullSecrets:
+      - name: acr-auth

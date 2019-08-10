@@ -151,7 +151,7 @@ This container is hosting the gateway web server.
 
 Notice the port mapping: `0.0.0.0:57786->80/tcp`. This indicates that port 80 from *inside* the container is being mapped to our workstation's port 57786. 
 
-> Note that this image is the one created and managed by Visual Studio. You need to build your own image to move forward.
+> ℹ Note that this image is the one created and managed by Visual Studio. You need to build your own image to move forward.
 
 ### Building and Running an Image Manually
 
@@ -218,7 +218,7 @@ Replace `MyRepository` and `MyGroup` with values appropriate for your subscripti
 
 In the [Azure web portal](https://portal.azure.com) click *Create a resource*, pick *Containers* and then *Container Registry*. ![](images/azurecontainerregistry.png)
 
-> Azure refers to a container repository as a registry, which is sadly confusing. Most of the world does appear to use the term "repository".
+> ℹ Azure refers to a container repository as a registry, which is sadly confusing. Most of the world does appear to use the term "repository".
 
 In the details panel provide a registry name, resource group, enable the Admin user, and pick the Basic SKU. ![](images/azurecontainerpanel.png)
 
@@ -238,7 +238,7 @@ docker login myrepository.azurecr.io --username username --password-stdin
 
 Replace `myrepository`, `username` with your values. Also, once you press enter you'll be on an empty line. Type in (or paste) the password, press ctl-z, then enter. That'll provide the password to the command and you should be logged in.
 
-> Note that Git Bash defaults to shift-insert for paste, and ctl-insert for copy.
+> ℹ Note that Git Bash defaults to shift-insert for paste, and ctl-insert for copy.
 
 At this point you have a remote image repo and Docker can talk to it.
 
@@ -373,7 +373,7 @@ If you are using the CLI, when the plan has been created you'll see the details 
   "kind": "linux",
 ```
 
-> The 1st deployment will fail, but after setting the credentials on the app (see below) and it should retry and then succeed in deploying and starting your app
+> ⚠ The 1st deployment will fail, but after setting the credentials on the app (see below) and it should retry and then succeed in deploying and starting your app
 
 Now you can run a container in this plan:
 
@@ -393,7 +393,7 @@ Replace `MyGroup`, `myAppServicePlan`, `MyAppName`, and `myrepository` with appr
 
 The `repositoryusername` and `repositorypassword` values are the ones from way back in this lab when we created the container repository. If you've forgotten, you can run `az acr credential show -n MyRepository` (replacing `MyRepository` with your name).
 
-> If you are unable to get this to work, it may be because the CLI is doing something odd with the special characters in the password value. In this case you can set the password via the Azure web portal.
+> ⚠ If you are unable to get this to work, it may be because the CLI is doing something odd with the special characters in the password value. In this case you can set the password via the Azure web portal.
 
 To set the repository password via the Azure web portal:
 
@@ -411,7 +411,7 @@ What's really impressive about this, is that you are now interacting with the _e
 
 ## Closing Down
 
-**🛑 WARNING!** Do not close down the Azure resources until the end of the day!
+> 🛑 **WARNING!** Do not close down the Azure resources until the end of the day!
 
 One thing about using public cloud resources such as Azure is that you need to be cost concious. When we're done today you should consider removing all the resources you've set up so you don't have to pay for them to sit idle.
 
@@ -423,7 +423,7 @@ az group delete --name MyGroup
 
 As always, replacing `MyGroup` with your resource group name.
 
-**🛑 WARNING!** This will stop and totally remove all resources within the group.
+>🛑 **WARNING!** This will stop and totally remove all resources within the group.
 
 ## References
 

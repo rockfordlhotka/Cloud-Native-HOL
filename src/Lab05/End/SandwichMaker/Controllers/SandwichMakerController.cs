@@ -26,14 +26,16 @@ namespace SandwichMaker.Controllers
       _httpClient = httpClient;
     }
 
+#if DEBUG
     [HttpGet]
     public string OnGet()
     {
       return "I am running; use PUT to request a sandwich";
     }
+#endif
 
     [HttpPut]
-    public async Task<Messages.SandwichResponse> RequestSandwich(Messages.SandwichRequest request)
+    public async Task<Messages.SandwichResponse> OnPut(Messages.SandwichRequest request)
     {
       Console.WriteLine($"### Sandwichmaker making {request.Meat} on {request.Bread}{Environment.NewLine} at {DateTime.Now}");
       var wip = new SandwichInProgress(request);
@@ -51,6 +53,7 @@ namespace SandwichMaker.Controllers
       var timeout = Task.Delay(10000);
       if (await Task.WhenAny(Task.WhenAll(requests), timeout) == timeout)
       {
+        await ReturnInventory(wip);
         result.Error = "The cook didn't get back to us in time, no sandwich";
         result.Success = false;
         return result;
@@ -66,7 +69,6 @@ namespace SandwichMaker.Controllers
         result.Error = wip.GetFailureReason();
         await ReturnInventory(wip);
       }
-
       return result;
     }
 
@@ -74,7 +76,7 @@ namespace SandwichMaker.Controllers
     {
       if (string.IsNullOrEmpty(wip.Request.Bread)) return Task.CompletedTask;
 
-      return _retryPolicy.ExecuteAndCapture<Task>(()=>
+      return _retryPolicy.ExecuteAndCapture<Task>(() =>
         _httpClient.PutAsJsonAsync(
           _config["breadservice:url"] + "/api/breadbin",
           request).
@@ -150,7 +152,7 @@ namespace SandwichMaker.Controllers
       }
     }
 
-  private async Task ReturnInventory(SandwichInProgress wip)
+    private async Task ReturnInventory(SandwichInProgress wip)
     {
       var requests = new List<Task>
       {

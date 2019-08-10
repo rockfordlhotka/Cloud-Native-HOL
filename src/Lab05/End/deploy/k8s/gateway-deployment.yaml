@@ -25,5 +25,7 @@ spec:
             memory: "128Mi"
             cpu: "500m"
         env:
-        - name: RABBITMQ__URL
-          value: my-rabbitmq
+        - name: SANDWICHMAKER__URL
+          value: http://sandwichmaker
+      imagePullSecrets:
+      - name: acr-auth

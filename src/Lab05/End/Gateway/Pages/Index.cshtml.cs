@@ -66,7 +66,8 @@ namespace Gateway.Pages
           }
           else
           {
-            ReplyText = $"Couldn't reach sandwichmaker at {server}; Response: {httpResponse.ReasonPhrase}";
+            throw new HttpRequestException(
+              $"Couldn't reach sandwichmaker at {server}; Response: {httpResponse.ReasonPhrase}");
           }
         }
       });
