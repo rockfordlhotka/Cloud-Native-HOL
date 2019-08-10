@@ -9,7 +9,7 @@ It is possible to get minikube confused such that it won't function properly. If
    1. `choco uninstall minikube`
 1. Delete your `~/.minikube` directory
    1. `cd ~`
-   1. `rm -rm .minikube`
+   1. `rm -rf .minikube`
 1. Reinstall minikube
    1. `choco install minikube`
 
