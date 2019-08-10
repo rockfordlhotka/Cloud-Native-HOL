@@ -796,6 +796,20 @@ The difference is that the `RabbitQueue` project, much like .NET itself, or `New
 
 It is important to minimize or avoid reuse of _vertical_ code: code that is part of any given business implementation. That includes UI components, viewmodels, controllers, message or document definitions, and data access layers. Those are all examples of app-specific code, where reuse will almost certainly lead to coupling. And coupling prevents independent deployment of services and apps - this defeating the primary value of being service-based.
 
+### Setting the Compiler Version
+
+> ⚠ You can skip this step if you are using Visual Studio 2019.
+
+In Visual Studio 2017 the default C# compiler version is probably lower than version 7.1. However this lab uses code which relies on version 7.1 features.
+
+Edit the `BreadService.csproj` file and add this line to the `PropertyGroup` section:
+
+```xml
+    <LangVersion>7.1</LangVersion>
+```
+
+That'll require the use of the version 7.1 compiler.
+
 ### Message Definitions
 
 Create a `Messages` folder in the project. As with the other services, this one will follow the "shared nothing" strategy to avoid coupling.
