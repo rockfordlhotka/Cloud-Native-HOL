@@ -12,3 +12,8 @@ It is possible to get minikube confused such that it won't function properly. If
    1. `rm -rm .minikube`
 1. Reinstall minikube
    1. `choco install minikube`
+
+# minikube notes and errata
+
+1. See details about minikube as it starts
+   * `--alsologtostderr -v=8  //shows log and errors for minikube start`
