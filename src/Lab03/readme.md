@@ -131,7 +131,7 @@ At this point a RabbitMQ container is running in Docker Desktop on your workstat
 
 ## RabbitMQ Helper Code
 
-In the src/Lab03/Start directory you'll see a pre-existing solution that implements most of the service-based system described earlier in this document. Open that solution. Look for the RabbitQueue project and examine the files in that project.
+In the `src/Lab03/Start` directory you'll see a pre-existing solution that implements most of the service-based system described earlier in this document. Open that solution. Look for the `RabbitQueue` project and examine the files in that project.
 
 You will be using the types defined in this project to implement the gateway and bread services.
 
