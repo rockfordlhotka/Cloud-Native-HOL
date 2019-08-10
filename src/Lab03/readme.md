@@ -1009,6 +1009,8 @@ The final step in this lab is to deploy the services to K8s. The docker-compose 
 
 ### Deploy RabbitMQ to Kubernetes
 
+Open a CLI window.
+
 1. Type `helm install --name my-rabbitmq --set rabbitmq.username=guest,rabbitmq.password=guest,rabbitmq.erlangCookie=supersecretkey stable/rabbitmq`
    1. Note that in a real environment you'll want to set the `username`, `password`, and `erlangCookie` values to secret values
 1. Helm will display infomration about the deployment
@@ -1115,6 +1117,8 @@ Open a Git Bash CLI window and do the following:
 1. `./build.sh`
 
 This will build the Docker image for each service in the system based on the individual `Dockerfile` definitions in each project directory.
+
+> ℹ This build process may take some time depending on the speed of your laptop.
 
 #### Tagging the Images
 
