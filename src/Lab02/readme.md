@@ -105,7 +105,7 @@ To do this for Kubernetes you use the `kubectl` command to create a secret that 
 
 Here are the steps if you have WSL:
 
-1. **Using WSL** change directory to src/Lab02
+1. **Using WSL** change directory to `src/Lab02`
 1. `chmod +x creds.sh`
 1. `./creds.sh myrepository`
 1. Make note of the resulting service principal id and password
@@ -176,7 +176,7 @@ minikube (the Kubernetes cluster) has a secret named `acr-auth`, and the contain
 
 Right now the `gateway` deployment and service don't exist, so on first run `kubectl` will change the current state to match the state described in your yaml files.
 
-In a CLI window, change directory to src/Lab02/Start/Gateway and type these commands:
+In a CLI window, change directory to `src/Lab02/Start/Gateway` and type these commands:
 
 ```text
 kubectl apply -f deploy.yaml

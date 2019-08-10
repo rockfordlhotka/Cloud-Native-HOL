@@ -19,7 +19,9 @@ We will use some cloud-based services
 
 **Before arriving at the event** you should make sure your laptop workstation has the following:
 
-> Assuming PC, but if you have a Mac you should have comparable tooling installed.
+> ℹ Assuming PC, but if you have a Mac you should have comparable tooling installed.
+
+> ℹ If you are unable to configure your laptop as shown here, you _might_ be able to use an Azure VM into which you remote desktop from the venue. Here are instructions on [setting up an Azure VM](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/master/docs/create-azure-vm.md) for the labs.
 
 1. Windows 10 1809 or later
 1. Visual Studio 2017 or later (preferably 2019)
