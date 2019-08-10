@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meatservice
+spec:
+  selector:
+    matchLabels:
+      app: meatservice
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: meatservice
+    spec:
+      containers:
+      - name: meatservice
+        image: myrepository.azurecr.io/meatservice:lab05
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+      imagePullSecrets:
+      - name: acr-auth

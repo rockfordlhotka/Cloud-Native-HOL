@@ -5,6 +5,7 @@ In this lab we'll install RabbitMQ into K8s using Helm, and then we'll use `kube
 Lesson goals:
 
 1. Use `kubectl` to deploy ASP.NET Core website
+1. Increase minikube resources
 
 ## Deploy Website to Kubernetes
 
@@ -69,7 +70,7 @@ This defines a Kubernetes _deployment_, describing the desired end state for dep
 
 Create a new `service.yaml` file in your src/Lab02/Start/Gateway directory.
 
-> You can optionally append this content to your existing `deploy.yaml` file, but for learning purposes it is best to keep these concepts separate.
+> ℹ You can optionally append this content to your existing `deploy.yaml` file, but for learning purposes it is best to keep these concepts separate.
 
 ```yaml
 apiVersion: v1
@@ -100,7 +101,7 @@ In Lab01 you did something similar by providing ACR credentials to the Azure App
 
 To do this for Kubernetes you use the `kubectl` command to create a secret that contains the credentials, and then provide the name of that secret in the `deploy.yaml` file.
 
-> The bash commands used in this step won't all work in Git Bash, so a real Linux CLI is required; such as the one provided by Windows-Subsystem-for-Linux (WSL). IF YOU DON'T HAVE WSL then you can run the individual commands from `creds.sh` in Azure itself via the "Try It" button on [this web page](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal).
+> ⚠ The bash commands used in this step won't all work in Git Bash, so a real Linux CLI is required; such as the one provided by Windows-Subsystem-for-Linux (WSL). IF YOU DON'T HAVE WSL then you can run the individual commands from `creds.sh` in Azure itself via the "Try It" button on [this web page](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal).
 
 Here are the steps if you have WSL:
 
@@ -207,7 +208,7 @@ Of course we need access to the service from localhost, and fortunately minikube
 1. Type `minikube service gateway`
    1. This will open your default browser to the URL for the service - it is a shortcut provided by minikube for testing
 
-> An Admin CLI window (e.g. run as administrator) is required because interacting with the `minikube` command always needs elevated permissions.
+> ⚠ An Admin CLI window (e.g. run as administrator) is required because interacting with the `minikube` command always needs elevated permissions.
 
 ### Change number of replicas
 
@@ -249,6 +250,36 @@ At the end of Lab02 it is important to do some basic cleanup to avoid conflicts 
 
 1. `kubectl delete deployment gateway`
 1. `kubectl delete service gateway`
+
+# Increase Minikube Resources
+
+By default minikube is configured with very limited resources. And this is fine for simple things like Lab02. However, in subsequent labs more resources will be required.
+
+If minikube doesn't have enough memory or CPU resources allocated it will fail to start up new pods as requested. This is a feature, because it protects already running pods by not allowing more pods to start if resources aren't available. But it is problematic when trying to run your code!
+
+Using an _admin_ CLI, stop minikube:
+
+1. In Git Bash
+   * `winpty minikube ssh "sudo poweroff"`
+1. In cmd or PowerShell
+   * `minikube ssh "sudo poweroff"`
+
+Open Hyper-V Manager from the Windows start menu, then open the settings for the minikube VM (which should not be running).
+
+![hyper-v manager](images/Hyper-V-Manager.png)
+
+Change the memory to 4096 and the Virtual CPU count to 4.
+
+![hyper-v manager](images/minikube-settings.png)
+
+With those changes saved, you can restart minikube from an _admin_ CLI:
+
+1. In Git Bash
+   * `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
+1. In cmd or PowerShell
+   * `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
+
+This will provide enough resources to minikube to run the subsequent labs.
 
 ## References
 

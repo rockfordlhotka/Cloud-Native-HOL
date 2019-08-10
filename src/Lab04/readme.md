@@ -41,7 +41,7 @@ Messages are tagged with a binding key to allow subscribers to filter out messag
  
 The _drawback_ to this approach is that if no subscriptions exist for a specific type of message, that type of message will just disappear. When a message is published to a service bus, it is either picked up by one or more subscriptions or it just disappears because nobody was listening.
  
-> If a publisher publishes a message in the forest and nobody is subscribed to hear the message, was the message really published? ;)
+> ℹ If a publisher publishes a message in the forest and nobody is subscribed to hear the message, was the message really published? ;)
  
 One thing to also keep in mind, is that a single message can be delivered to _multiple subscriptions_ at the same time. Sometimes this is desired behavior, but in the case of the sandwichmaker system that is undesirable.
  
@@ -51,7 +51,7 @@ Consider the case where two replicas of the bread service are running. If each s
 
 Open the `ServicesDemo` solution from the `src/Lab04/Start` directory, then open the `RabbitQueue` project and look at the new `ServiceBus.cs` file.
 
-> **NOTE:** This is a very simplistic implementation of a service bus. In a production environment you should consider using a pre-existing service bus product such as [nServiceBus](https://particular.net/nservicebus) or one of its competitors.
+> ℹ This is a very simplistic implementation of a service bus. In a production environment you should consider using a pre-existing service bus product such as [nServiceBus](https://particular.net/nservicebus) or one of its competitors.
 
 The `Initialize` method opens a connection to RabbitMQ just like the `Queue` class does, and then it declares an exchange:
 
@@ -162,7 +162,7 @@ The reason for that implementation is to ensure that any failure that might occu
 
 This is another general improvement over the Lab03 implementation that's independent of the use of a service bus.
 
-> In fact, if you look at the `Queue` code in Lab04 you'll see that it also defers opening connections to the RabbitMQ service to enable the use of dependency injection and also the use of Polly policies.
+> ℹ In fact, if you look at the `Queue` code in Lab04 you'll see that it also defers opening connections to the RabbitMQ service to enable the use of dependency injection and also the use of Polly policies.
 
 And that's it. _Most_ of the changes were to accommodate the use of dependency injection. The change from direct queue messaging to service bus publishing is quite trivial.
 
@@ -386,6 +386,15 @@ Open a Git Bash CLI window and do the following:
 
 This will build the Docker image for each service in the system based on the individual `Dockerfile` definitions in each project directory.
 
+### Replace myrepository With the Real Name
+
+Most of the files in the `deploy/k8s` directory refer to `myrepository` instead of the real name of your ACR repository. Fortunately it is possible to use bash to quickly fix them all up with the correct name.
+
+1. Open a Git Bash CLI
+1. Change directory to `deploy/k8s`
+1. Type `grep -rl --include=*.sh --include=*.yaml --include=*.yml 'myrepository' | tee | xargs sed -i 's/myrepository/realname/g'`
+   * ⚠ Replace `realname` with your real ACR repository name!
+
 ### Tagging the Images
 
 In the `deploy/k8s` directory there's a `tag.sh` bash script that tags all the images created by `build.sh`.
@@ -401,7 +410,9 @@ docker tag gateway:dev myrepository.azurecr.io/gateway:lab04
 docker tag sandwichmaker:dev myrepository.azurecr.io/sandwichmaker:lab04
 ```
 
-Edit this file and replace `myrepository` with your ACR repository name. Then open a Git Bash CLI and do the following:
+> ℹ The `myrepository` name should already be replaced with your ACR repo name.
+
+Open a Git Bash CLI and do the following:
 
 1. Change directory to `deploy/k8s`
 1. `chmod +x tag.sh`
@@ -424,7 +435,9 @@ docker push myrepository.azurecr.io/breadservice:lab04
 docker push myrepository.azurecr.io/meatservice:lab04
 ```
 
-Edit this file and replace `myrepository` with your ACR repository name. Then open a Git Bash CLI and do the following:
+> ℹ The `myrepository` name should already be replaced with your ACR repo name.
+
+Open a Git Bash CLI and do the following:
 
 1. Change directory to `deploy/k8s`
 1. `chmod +x push.sh`
@@ -436,7 +449,7 @@ The result is that all the local images are pushed to the remote ACR repository.
 
 At this point you have all the deployment and service definition files that describe the desired state for the K8s cluster. And you have all the Docker container images in the ACR repository so they are available for download to the K8s cluster.
 
-> **IMPORTANT:** before applying the desired state for this lab, _make sure_ you have done the cleanup step in the previous lab so no containers are running other than RabbitMQ. You can check this with a `kubectl get pods` command.
+> ⚠ **IMPORTANT:** before applying the desired state for this lab, _make sure_ you have done the cleanup step in the previous lab so no containers are running other than RabbitMQ. You can check this with a `kubectl get pods` command.
 
 The next step is to apply the desired state to the cluster by executing each yaml file via `kubectl apply`. To simplify this process, there's a `run-k8s.sh` file in the `deploy/k8s` directory:
 
@@ -445,7 +458,6 @@ The next step is to apply the desired state to the cluster by executing each yam
 
 kubectl apply -f gateway-deployment.yaml
 kubectl apply -f gateway-service.yaml
-kubectl apply -f greeter-deployment.yaml
 kubectl apply -f breadservice-deployment.yaml
 kubectl apply -f cheeseservice-deployment.yaml
 kubectl apply -f lettuceservice-deployment.yaml
@@ -464,7 +476,7 @@ The result is that the desired state described in your local yaml files is appli
 
 If you immediately execute (and repeat) the `kubectl get pods` command you can watch as the K8s pods download, load, and start executing each container image. This may take a little time, because as each pod comes online it needs to download the container image from ACR.
 
-> Depending on the number of folks doing the lab, and the Internet speeds in the facility, patience may be required! In a production environment it is likely that you'll have much higher Internet speeds, less competition for bandwidth, and so spinning up a container in a pod will be quite fast.
+> ℹ Depending on the number of folks doing the lab, and the Internet speeds in the facility, patience may be required! In a production environment it is likely that you'll have much higher Internet speeds, less competition for bandwidth, and so spinning up a container in a pod will be quite fast.
 
 Make sure (via `kubectl get pods`) that all your services are running before moving on to the next step.
 
@@ -476,7 +488,7 @@ At this point you should be able to open a browser and interact with the system 
 1. Type `minikube service gateway`
    1. This will open your default browser to the URL for the service - it is a shortcut provided by minikube for testing
 
-> An Admin CLI window (e.g. run as administrator) is required because interacting with the `minikube` command always needs elevated permissions.
+> ⚠ An Admin CLI window (e.g. run as administrator) is required because interacting with the `minikube` command always needs elevated permissions.
 
 ## Tearing Down the System
 
