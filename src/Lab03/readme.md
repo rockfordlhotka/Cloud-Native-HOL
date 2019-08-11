@@ -1075,6 +1075,8 @@ spec:
         env:
         - name: RABBITMQ__URL
           value: my-rabbitmq
+      imagePullSecrets:
+      - name: acr-auth
 ```
 
 > ℹ The `myrepository` name should already be replaced with your ACR repo name.
