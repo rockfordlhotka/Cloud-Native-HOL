@@ -101,27 +101,21 @@ In Lab01 you did something similar by providing ACR credentials to the Azure App
 
 To do this for Kubernetes you use the `kubectl` command to create a secret that contains the credentials, and then provide the name of that secret in the `deploy.yaml` file.
 
-> ⚠ The bash commands used in this step won't all work in Git Bash, so a real Linux CLI is required; such as the one provided by Windows-Subsystem-for-Linux (WSL). IF YOU DON'T HAVE WSL then you can run the individual commands from `creds.sh` in Azure itself via the "Try It" button on [this web page](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal).
+First it is necessary to get a _service principal ID_ and _service principal password_ from Azure.
 
-Here are the steps if you have WSL:
+1. To get the service principal ID type
+   * `az ad sp show --id http://acr-service-principal --query appId --output tsv`
+1. To get the password, replace `myrepository` with your repository name and type
+   * `az ad sp create-for-rbac --name http://acr-service-principal --role acrpull --scopes myrepository --query password --output tsv`
 
-1. **Using WSL** change directory to `src/Lab02`
-1. `chmod +x creds.sh`
-1. `./creds.sh myrepository`
-1. Make note of the resulting service principal id and password
+> 🛑 Every time you run these commands you will generate a new password, obsoleting the old one. Run the commands, record the resulting values, and then use them going forward.
 
-The output should be something like this:
-
-```text
-Service principal ID: 62cdc8b8-ea83-445a-b1d3-07343f80dbf3
-Service principal password: 35be6aa1-2cf2-40cf-bb81-aa019ad2c214
-```
-
-Now use those values (your actual values) to enter the following `kubectl` command. Make sure to use a local CLI window that is connected to your minikube.
+Now use those values to enter the following `kubectl` command. Make sure to use a local CLI window that is connected to your minikube.
 
 ```bash
 kubectl create secret docker-registry acr-auth --docker-server myrepository.azurecr.io --docker-username <principal-id> --docker-password <principal-pw> --docker-email <your@email.com>
 ```
+> ⚠ Make sure to replace "myrepository", "<principal-id>", "<principal-pw>", and "<your@email.com>" with your real values.
 
 That'll create a secret in minikube named `acr-auth` that contains read-only credentials for your Azure repository.
 
