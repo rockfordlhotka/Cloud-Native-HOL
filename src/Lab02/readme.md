@@ -197,10 +197,13 @@ minikube won't assign an external IP for a service, so that value will always be
 Of course we need access to the service from localhost, and fortunately minikube has a provision to enable that scenario.
 
 1. Open a CLI window _as administrator_
+1. Type `minikube dashboard`
+   * This will show a dashboard so you can see what's running in the K8s cluster
+   * This is often useful for diagnosing issues when things don't run as expected
 1. Type `minikube service gateway --url`
-   1. This will show the localhost URL provided by minikube to access the service
+   * This will show the localhost URL provided by minikube to access the service
 1. Type `minikube service gateway`
-   1. This will open your default browser to the URL for the service - it is a shortcut provided by minikube for testing
+   * This will open your default browser to the URL for the service - it is a shortcut provided by minikube for testing
 
 > ⚠ An Admin CLI window (e.g. run as administrator) is required because interacting with the `minikube` command always needs elevated permissions.
 
