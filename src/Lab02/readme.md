@@ -276,7 +276,13 @@ With those changes saved, you can restart minikube from an _admin_ CLI:
 1. In cmd or PowerShell
    * `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
 
+In _theory_ there are command switches for `minikube start` to increase memory and CPU allocations. They don't appear to work (at least not consistently) with a Hyper-V VM.
+
+* `minikube start --vm-driver-hyperv --hyperv-virtual-switch "Default Switch" --memory 4096 --cpus 4`
+
 This will provide enough resources to minikube to run the subsequent labs.
+
+> ℹ If `cpus 4` is not sufficient, and if your physical device has more virtual CPUs (via hyperthreading) you can set the value higher.
 
 ## References
 
