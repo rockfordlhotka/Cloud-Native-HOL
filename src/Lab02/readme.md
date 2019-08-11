@@ -115,7 +115,7 @@ Now use those values to enter the following `kubectl` command. Make sure to use 
 ```bash
 kubectl create secret docker-registry acr-auth --docker-server myrepository.azurecr.io --docker-username <principal-id> --docker-password <principal-pw> --docker-email <your@email.com>
 ```
-> ⚠ Make sure to replace "myrepository", "<principal-id>", "<principal-pw>", and "<your@email.com>" with your real values.
+> ⚠ Make sure to replace "myrepository", "\<principal-id\>", "\<principal-pw\>", and "\<your\@email.com\>" with your real values.
 
 That'll create a secret in minikube named `acr-auth` that contains read-only credentials for your Azure repository.
 
