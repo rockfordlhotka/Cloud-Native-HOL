@@ -103,10 +103,13 @@ To do this for Kubernetes you use the `kubectl` command to create a secret that 
 
 First it is necessary to get a _service principal ID_ and _service principal password_ from Azure.
 
+1. Get the ACR registry id value
+   * `az acr show --name myrepository --query id --output tsv`
 1. To get the service principal ID type
    * `az ad sp show --id http://acr-service-principal --query appId --output tsv`
 1. To get the password, replace `myrepository` with your repository name and type
-   * `az ad sp create-for-rbac --name http://acr-service-principal --role acrpull --scopes myrepository --query password --output tsv`
+   * `az ad sp create-for-rbac --name http://acr-service-principal --role acrpull --scopes <acr-registry-id> --query password --output tsv`
+   * Replace "\<acr-registry-id\>" with the value from step 1
 
 > 🛑 Every time you run these commands you will generate a new password, obsoleting the old one. Run the commands, record the resulting values, and then use them going forward.
 
