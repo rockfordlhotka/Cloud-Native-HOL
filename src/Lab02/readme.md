@@ -105,13 +105,13 @@ First it is necessary to get a _service principal ID_ and _service principal pas
 
 1. Get the ACR registry id value
    * `az acr show --name myrepository --query id --output tsv`
-1. To get the service principal ID type
-   * `az ad sp show --id http://acr-service-principal --query appId --output tsv`
 1. To get the password, replace `myrepository` with your repository name and type
    * `az ad sp create-for-rbac --name http://acr-service-principal --role acrpull --scopes <acr-registry-id> --query password --output tsv`
    * Replace "\<acr-registry-id\>" with the value from step 1
+1. To get the service principal ID type
+   * `az ad sp show --id http://acr-service-principal --query appId --output tsv`
 
-> 🛑 Every time you run these commands you will generate a new password, obsoleting the old one. Run the commands, record the resulting values, and then use them going forward.
+> 🛑 Every time you run the `az ad sp create-for-rbac` command you will generate a new password, obsoleting the old one. Run the commands, record the resulting values, and then use them going forward.
 
 Now use those values to enter the following `kubectl` command. Make sure to use a local CLI window that is connected to your minikube.
 
