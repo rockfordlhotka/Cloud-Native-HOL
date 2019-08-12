@@ -4,6 +4,7 @@ In this lab we'll install RabbitMQ into K8s using Helm, and then we'll use `kube
 
 Lesson goals:
 
+1. Create ACR credentials so Kubernetes can pull images
 1. Use `kubectl` to deploy ASP.NET Core website
 1. Increase minikube resources
 
