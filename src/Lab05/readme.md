@@ -121,7 +121,7 @@ In the `Pages/Index.cshtml.cs` file you'll see much the same code as before. Add
 The `OnPut` method is empty, ready for a new HTTP messaging implementation. Update it as follows:
 
 ```c#
-    public async Task OnPost()
+    public async Task OnPut()
     {
       var request = new Messages.SandwichRequest
       {
@@ -148,6 +148,7 @@ The `OnPut` method is empty, ready for a new HTTP messaging implementation. Upda
           {
             throw new HttpRequestException(
               $"Couldn't reach sandwichmaker at {server}; Response: {httpResponse.ReasonPhrase}");
+          }
         }
       });
     }
