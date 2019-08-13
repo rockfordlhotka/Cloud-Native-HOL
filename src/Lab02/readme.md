@@ -60,9 +60,6 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
-        env:
-        - name: RABBITMQ__URL
-          value: my-rabbitmq
 ```
 
 This defines a Kubernetes _deployment_, describing the desired end state for deploying your image to a K8s cluster. Notice that it specifies the container image, how many replicas (instances) should be running, a rolling update strategy, runtime resource limits, and runtime environment variables.
