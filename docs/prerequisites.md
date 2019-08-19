@@ -37,12 +37,11 @@ Minimum hardware required:
 1. Visual Studio 2017 or later (preferably 2019)
 1. [Visual Studio Code](https://code.visualstudio.com/)
 1. Install the latest [.NET Core SDK](https://dotnet.microsoft.com/download)
-1. Install [git for Windows](https://git-scm.com/download/win)
-   1. (optional) Install git with Chocolatey via `choco install git` as per step 9
 1. Install/activate the [HyperV feature](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v) in Windows
-1. Install [Docker for Windows](https://docs.docker.com/docker-for-windows/)
 1. Install [Chocolatey](https://chocolatey.org)
 1. Using Chocolatey from an _admin_ command line
+   1. `choco install git`
+   1. `choco install docker-desktop`
    1. `choco install kubernetes-cli`
    1. `choco install kubernetes-helm`
    1. `choco install minikube`
