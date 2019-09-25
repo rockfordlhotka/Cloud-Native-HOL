@@ -35,7 +35,6 @@ Minimum hardware required:
 
 1. Windows 10 1809 or later
 1. Visual Studio 2017 or later (preferably 2019)
-1. [Visual Studio Code](https://code.visualstudio.com/)
 1. Install the latest [.NET Core SDK](https://dotnet.microsoft.com/download)
 1. Install/activate the [HyperV feature](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v) in Windows
 1. Install [Chocolatey](https://chocolatey.org)
@@ -46,6 +45,7 @@ Minimum hardware required:
    1. `choco install kubernetes-helm`
    1. `choco install minikube`
    1. `choco install azure-cli`
+   1. `choco install vscode` (or install [Visual Studio Code](https://code.visualstudio.com/) manually)
 1. Start minikube one time to download/initialize all the container images from an _admin_ command line
    1. This may take several minutes as it downloads numerous images
    1. From Git Bash
