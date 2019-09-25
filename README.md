@@ -9,6 +9,6 @@ Releases:
 
 * [VS Live Redmond 2019 HOL](https://github.com/rockfordlhotka/Cloud-Native-HOL/releases/tag/VSLRED19)
 
-Made possible by [Magenic](https://magenic.com) and [Pivotal](https://pivotal.iohttps://pivotal.io).
+Made possible by [Magenic](https://magenic.com).
 
-![https://magenic.com](docs/images/magenic-logo.png) ![https://pivotal.io](docs/images/pivotal-logo.png)
+![https://magenic.com](docs/images/magenic-logo.png)
