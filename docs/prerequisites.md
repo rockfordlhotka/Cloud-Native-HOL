@@ -34,11 +34,11 @@ Minimum hardware required:
 > ℹ If you are unable to configure your laptop as shown here, you _might_ be able to use an Azure VM into which you remote desktop from the venue. Here are instructions on [setting up an Azure VM](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/master/docs/create-azure-vm.md) for the labs.
 
 1. Windows 10 1809 or later
-1. Visual Studio 2017 or later (preferably 2019)
-1. Install the latest [.NET Core SDK](https://dotnet.microsoft.com/download)
+1. Visual Studio 2019
 1. Install/activate the [HyperV feature](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v) in Windows
 1. Install [Chocolatey](https://chocolatey.org)
 1. Using Chocolatey from an _admin_ command line
+   1. `choco install dotnetcore-sdk` (or install the latest [.NET Core SDK](https://dotnet.microsoft.com/download) manually)
    1. `choco install git`
    1. `choco install docker-desktop`
    1. `choco install kubernetes-cli`
