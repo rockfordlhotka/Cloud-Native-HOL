@@ -1290,8 +1290,9 @@ What this means is that we can tell K8s that there's a newer version of the gate
 Perform the following steps in a Git Bash CLI to see this happen:
 
 1. Change directory to `Lab03/Start`
-1. Build the new container image: `docker build -f Gateway/Dockerfile -t gateway:dev`
+1. Build the new container image: `docker build -f Gateway/Dockerfile -t gateway:dev .`
 1. Tag the new image: `docker tag gateway:dev myrepository.azurecr.io/gateway:lab03-1`
+1. Push the new image: `docker push myrepository.azurecr.io/gateway:lab03-1`
 1. Edit the `deploy/k8s/gateway-deployment.yaml` file to express the new desired state
    * Update the `image` element with the new tag
    * `        image: myrepository.azurecr.io/gateway:lab03-1`
