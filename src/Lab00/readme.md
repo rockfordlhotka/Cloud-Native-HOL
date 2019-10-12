@@ -6,15 +6,15 @@ See this [list of prerequisites](https://github.com/rockfordlhotka/Cloud-Native-
 
 ## Chocolatey
 
-1. Open a console window (CLI) of your choice
+1. Open Git Bash
 1. Type `choco --version`
 1. Ensure that the version is at least `0.10.15`
 
 ## Git for Windows
 
-1. Open the Git Bash CLI
+1. Open Git Bash
 1. Type `git --version`
-1. Ensure that the version is at least `2.19.0`
+1. Ensure that the version is at least `2.23.0`
 
 ## Clone/update local repo
 
@@ -32,15 +32,15 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 ## .NET Core
 
-1. Open the Git Bash CLI
+1. Open Git Bash
 1. Type `dotnet --version`
-1. Ensure that the version is at least `2.1.700`
+1. Ensure that the version is at least `3.0.100`
 
 ## Docker
 
 1. Open the Git Bash CLI
 1. Type `docker --version`
-1. Ensure that the version is at least `18.09.2`
+1. Ensure that the version is at least `10.03.2`
 1. Type `docker run hello-world`
 1. You should get several lines of output, starting with `Hello from Docker!`
 
@@ -48,14 +48,14 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 1. Open the Git Bash CLI (**as admin**)
 1. Type `minikube version`
-1. Ensure that the version is at least `1.2.0`
+1. Ensure that the version is at least `1.4.0`
 1. Type `minikube status`
 1. Output should appear similar to: ![mkstatus](images/mkstatus.png)
    1. If minikube is not running follow the instructions to start minikube
 
 ### Starting minikube
 
-1. Type `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
+1. Type `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch" --cpus 6 --memory 4096`
 
 Alternately you can use pre-built bash shell scripts to start/stop the cluster:
 
@@ -86,7 +86,7 @@ Finally: Close the admin CLI window (type `exit`)
 
 ## Kubernetes CLI
 
-1. Open the Git Bash CLI
+1. Open Git Bash
 1. Type `kubectl version`
 1. The result will be version numbers for numerous components
    1. Client versions are for the Kubernetes CLI
@@ -94,28 +94,24 @@ Finally: Close the admin CLI window (type `exit`)
 
 ![kubectl version](images/kubectlversion.png)
 
-**NOTE:** It is very likely that your path (Windows and Mac) will have you running `kubectl` from Docker rather than the one directly installed for Kubernetes. This is a problem, because the Docker install is outdated. In the image above you can see that the client is version `v1.10.11`, but the current version is at least `v1.15.2`.
+**⚠ NOTE:** It is very likely that your path (Windows and Mac) will have you running `kubectl` from Docker rather than the one directly installed for Kubernetes. This is a problem, because the Docker install is outdated. In the image above you can see that the client is version `v1.14.6`, but the minimum version we need is at least `v1.15.2`.
 
 To fix this on Windows:
 
 1. Open a Git Bash CLI window _as administrator_
 1. Change directory to `/c/Program\ Files/Docker/Docker/resources/bin`
-1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.2/bin/windows/amd64/kubectl.exe`
+1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/windows/amd64/kubectl.exe`
 
-This will download version `v1.15.2` of the tool, overwriting the older version in the Docker directory.
+This will download version `v1.16.0` of the tool, overwriting the older version in the Docker directory.
 
-For Mac users you can do something similar, or change a symlink as described in this Stackoverflow thread<sup>[1](#1)</sup>.
+For Mac users you can do something similar, or change a symlink as described in this [Stackoverflow thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror).
 
 ## Azure CLI
 
-1. Open the Git Bash CLI
+1. Open Git Bash
 1. Type `az --version`
-1. Ensure that the version is at least `2.0.68`
+1. Ensure that the version is at least `2.0.74`
 1. Type `az login`
    1. You should get see a browser window
    1. Log into your Microsoft Azure account
    1. The console should now list your subscriptions
-
-## References
-
-* <a name="#1">[1]</a>: [kubectl version SO thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror)
