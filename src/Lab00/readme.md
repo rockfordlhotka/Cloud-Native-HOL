@@ -4,6 +4,21 @@ In this lab we'll confirm that everyone has the software installed for subsequen
 
 See this [list of prerequisites](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/master/docs/prerequisites.md). ⚠ These must be installed _before arriving at the event_!
 
+## Bash Aliases
+
+1. Open Git Bash
+1. Type 'cd ~' to navigate to your user home directory
+1. Type `code .bashrc` to edit your profile file
+1. Edit the file to match this, then save and exit:
+
+```bash
+alias az='winpty az.cmd'
+alias minikube='winpty minikube.exe'
+alias docker='winpty docker'
+```
+
+Close the CLI window when done.
+
 ## Chocolatey
 
 1. Open Git Bash
