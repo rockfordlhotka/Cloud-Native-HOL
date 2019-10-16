@@ -57,7 +57,14 @@ This should ensure that you have a local copy of the latest content from GitHub.
 1. Type `docker --version`
 1. Ensure that the version is at least `10.03.2`
 1. Type `docker run hello-world`
-1. You should get several lines of output, starting with `Hello from Docker!`
+   1. You should get several lines of output, starting with `Hello from Docker!`
+1. Share your local drives with Docker
+   1. Right-click on the Docker icon in system tray
+   1. Select Settings
+   1. Choose the Shared Drives tab
+   1. Select your working drive(s)
+
+![shared drives](images/shared-drives.png)
 
 ## minikube and Helm
 
