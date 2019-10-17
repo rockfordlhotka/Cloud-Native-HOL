@@ -52,7 +52,7 @@ Minimum hardware required:
       1. `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
       1. `winpty minikube ssh "sudo poweroff"`
    1. From cmd or PowerShell
-      1. `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
+      1. `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch" --kubernetes-version=1.15.4`
       1. `minikube ssh "sudo poweroff"`
    1. **If running on Windows 10 before 1809** [this blog post](https://www.c-sharpcorner.com/article/getting-started-with-kubernetes-on-windows-10-using-hyperv-and-minikube/) might help get minikube installed
 1. Pull large Docker base images
