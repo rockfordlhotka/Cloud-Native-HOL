@@ -91,6 +91,7 @@ Alternately you can use pre-built bash shell scripts to start/stop the cluster:
 
 1. minikube must be running
 1. Type `helm init`
+1. If this fails it may be due to this [SO issue](https://github.com/helm/helm/issues/6374)
 
 ### Stopping minikube
 
