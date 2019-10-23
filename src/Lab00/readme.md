@@ -125,7 +125,7 @@ To fix this on Windows:
 1. Change directory to `/c/Program\ Files/Docker/Docker/resources/bin`
 1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/windows/amd64/kubectl.exe`
 
-This will download version `v1.15.4` of the tool, overwriting the older version in the Docker directory.
+This will download version `v1.16.0` of the tool, overwriting the older version in the Docker directory.
 
 For Mac users you can do something similar, or change a symlink as described in this [Stackoverflow thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror).
 
