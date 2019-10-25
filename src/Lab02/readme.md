@@ -99,23 +99,18 @@ In Lab01 you did something similar by providing ACR credentials to the Azure App
 
 To do this for Kubernetes you use the `kubectl` command to create a secret that contains the credentials, and then provide the name of that secret in the `deploy.yaml` file.
 
-First it is necessary to get a _service principal ID_ and _service principal password_ from Azure.
+As in Lab02, the admin credentials can be retrieved using the following command line (or via the web portal):
 
-1. Get the ACR registry id value
-   * `az acr show --name myrepository --query id --output tsv`
-1. To get the password, replace `myrepository` with your repository name and type
-   * `az ad sp create-for-rbac --name http://acr-service-principal --role acrpull --scopes <acr-registry-id> --query password --output tsv`
-   * Replace "\<acr-registry-id\>" with the value from step 1
-1. To get the service principal ID type
-   * `az ad sp show --id http://acr-service-principal --query appId --output tsv`
-
-> 🛑 Every time you run the `az ad sp create-for-rbac` command you will generate a new password, obsoleting the old one. Run the commands, record the resulting values, and then use them going forward.
+```text
+az acr credential show -n MyRepository
+```
 
 Now use those values to enter the following `kubectl` command. Make sure to use a local CLI window that is connected to your minikube.
 
 ```bash
 kubectl create secret docker-registry acr-auth --docker-server myrepository.azurecr.io --docker-username <principal-id> --docker-password <principal-pw> --docker-email <your@email.com>
 ```
+
 > ⚠ Make sure to replace "myrepository", "\<principal-id\>", "\<principal-pw\>", and "\<your\@email.com\>" with your real values.
 
 That'll create a secret in minikube named `acr-auth` that contains read-only credentials for your Azure repository.
@@ -156,9 +151,6 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
-        env:
-        - name: RABBITMQ__URL
-          value: my-rabbitmq
       imagePullSecrets:
       - name: acr-auth
 ```
