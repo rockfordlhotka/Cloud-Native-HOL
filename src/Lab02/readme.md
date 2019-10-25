@@ -99,7 +99,7 @@ In Lab01 you did something similar by providing ACR credentials to the Azure App
 
 To do this for Kubernetes you use the `kubectl` command to create a secret that contains the credentials, and then provide the name of that secret in the `deploy.yaml` file.
 
-As in Lab02, the admin credentials can be retrieved using the following command line (or via the web portal):
+As in Lab01, the admin credentials can be retrieved using the following command line (or via the web portal):
 
 ```text
 az acr credential show -n MyRepository
