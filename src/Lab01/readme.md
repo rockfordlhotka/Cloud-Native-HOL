@@ -188,7 +188,7 @@ docker stop objective_margulis
 
 ## Image Repositories
 
-When you ran the `hello-world` app in Lab0, that container image was pulled from a cloud repository called Docker Hub (https://hub.docker.com) down to your workstation, and then a container was created from that locally cached image.
+When you ran the `hello-world` app in Lab00, that container image was pulled from a cloud repository called Docker Hub (https://hub.docker.com) down to your workstation, and then a container was created from that locally cached image.
 
 That's the normal flow for running images in containers in Docker (and in Kubernetes). Images are maintained in a repository, are pulled to a local cache, and then loaded into containers.
 
