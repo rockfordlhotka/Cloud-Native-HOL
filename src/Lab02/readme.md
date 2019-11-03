@@ -1,6 +1,6 @@
 # Deploy pre-built software into Kubernetes
 
-In this lab we'll install RabbitMQ into K8s using Helm, and then we'll use `kubectl` to deploy the Gateway web site into K8s.
+In this lab we'll use `kubectl` to deploy the Gateway web site into K8s.
 
 Lesson goals:
 
