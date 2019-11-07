@@ -23,3 +23,7 @@
     1. `docker pull mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim`
     1. `docker pull mcr.microsoft.com/dotnet/core/runtime:3.0-buster-slim`
     1. `docker pull mcr.microsoft.com/dotnet/core/sdk:3.0-buster`
+5. Install Visual Studio Code
+    1. `brew cask install visual-studio-code`
+6. Install Visual Studio for Mac
+    1. `brew cask install visual-studio`
