@@ -1,6 +1,6 @@
 # Deploy pre-built software into Kubernetes
 
-In this lab we'll install RabbitMQ into K8s using Helm, and then we'll use `kubectl` to deploy the Gateway web site into K8s.
+In this lab we'll use `kubectl` to deploy the Gateway web site into K8s.
 
 Lesson goals:
 
@@ -108,7 +108,7 @@ az acr credential show -n MyRepository
 Now use those values to enter the following `kubectl` command. Make sure to use a local CLI window that is connected to your minikube.
 
 ```bash
-kubectl create secret docker-registry acr-auth --docker-server myrepository.azurecr.io --docker-username <principal-id> --docker-password <principal-pw> --docker-email <your@email.com>
+kubectl create secret docker-registry acr-auth --docker-server myrepository.azurecr.io --docker-username <username> --docker-password <password> --docker-email <your@email.com>
 ```
 
 > ⚠ Make sure to replace "myrepository", "\<principal-id\>", "\<principal-pw\>", and "\<your\@email.com\>" with your real values.

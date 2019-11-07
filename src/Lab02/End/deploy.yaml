@@ -24,8 +24,5 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
-        env:
-        - name: RABBITMQ__URL
-          value: my-rabbitmq
       imagePullSecrets:
       - name: acr-auth
