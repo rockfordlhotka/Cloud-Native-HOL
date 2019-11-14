@@ -68,6 +68,8 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 ## minikube and Helm
 
+> ⚠ Before starting minikube it is _strongly recommended_ that you close as many apps/games/browsers/etc. as possible. Between Docker and Kubernetes most computers will barely have enough memory to function. Discount this advice if your computer has 32gb RAM or more.
+
 1. Open the Git Bash CLI (**as admin**)
 1. Type `minikube version`
 1. Ensure that the version is at least `1.4.0`
