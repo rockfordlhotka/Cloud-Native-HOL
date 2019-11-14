@@ -214,6 +214,8 @@ From the CLI you can run a command like this:
 az acr create --name MyRepository --resource-group MyGroup --sku Basic --admin-enabled true
 ```
 
+> ⚠ You should use a totally lowercase name for your repository, as some commands and URLs are case-sensitive and it is simpler if everything is lower case.
+
 Replace `MyRepository` and `MyGroup` with values appropriate for your subscription.
 
 In the [Azure web portal](https://portal.azure.com) click *Create a resource*, pick *Containers* and then *Container Registry*. ![](images/azurecontainerregistry.png)
