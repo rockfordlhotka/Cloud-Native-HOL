@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lettuceservice
+spec:
+  selector:
+    matchLabels:
+      app: lettuceservice
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: lettuceservice
+    spec:
+      containers:
+      - name: lettuceservice
+        image: myrepository.azurecr.io/lettuceservice:arm
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: RABBITMQ__URL
+          value: my-rabbitmq
+      imagePullSecrets:
+      - name: acr-auth
