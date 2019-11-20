@@ -19,7 +19,7 @@ The final step in this lab is to deploy the services to K8s. The docker-compose 
 
 Open a CLI window.
 
-1. Type `helm install --name my-rabbitmq --set rabbitmq.username=guest,rabbitmq.password=guest,rabbitmq.erlangCookie=supersecretkey stable/rabbitmq`
+1. Type `helm install my-rabbitmq --set rabbitmq.username=guest,rabbitmq.password=guest,rabbitmq.erlangCookie=supersecretkey stable/rabbitmq`
    1. Note that in a real environment you'll want to set the `username`, `password`, and `erlangCookie` values to secret values
 1. Helm will display infomration about the deployment
 1. Type `helm list` to list installed releases
