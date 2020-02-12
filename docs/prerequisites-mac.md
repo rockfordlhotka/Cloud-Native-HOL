@@ -1,8 +1,23 @@
 # Tips for Mac Setup
+## For the impatient:
+
+(install IDE of your choice, e.g. steps 5 and 6 below)
+```
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew install hyperkit minikube azure-cli kubernetes-cli kubernetes-helm
+minikube config set vm-driver hyperkit
+minikube start --vm-driver=hyperkit
+docker pull mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim
+docker pull mcr.microsoft.com/dotnet/core/runtime:3.1-buster-slim
+docker pull mcr.microsoft.com/dotnet/core/sdk:3.1-buster
+```
+# Individual steps
 1. Installing HomeBrew
+
 	1. `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
 2. Installing minikube on a mac
-	   1. `brew install docker`
+
+	1. `brew install docker`
 	1. Install virtual software
 		1. `brew install hyperkit`
 			1. Catalina bug: [https://github.com/kubernetes/minikube/issues/5827]
