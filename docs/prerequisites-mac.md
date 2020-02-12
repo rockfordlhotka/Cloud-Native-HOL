@@ -20,9 +20,9 @@
 		1. `minikube config set vm-driver hyperkit`
 		2. `minikube start --vm-driver=hyperkit`
 4. Pull large Docker base images
-    1. `docker pull mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim`
-    1. `docker pull mcr.microsoft.com/dotnet/core/runtime:3.0-buster-slim`
-    1. `docker pull mcr.microsoft.com/dotnet/core/sdk:3.0-buster`
+    1. `docker pull mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim`
+    1. `docker pull mcr.microsoft.com/dotnet/core/runtime:3.1-buster-slim`
+    1. `docker pull mcr.microsoft.com/dotnet/core/sdk:3.1-buster`
 5. Install Visual Studio Code
     1. `brew cask install visual-studio-code`
 6. Install Visual Studio for Mac
