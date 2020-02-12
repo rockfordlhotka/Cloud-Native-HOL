@@ -27,3 +27,9 @@
     1. `brew cask install visual-studio-code`
 6. Install Visual Studio for Mac
     1. `brew cask install visual-studio`
+7. Install dotNet Core
+	1. https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.1.101-macos-x64-installer
+	1. If you receive a popup indicating that you the software is untrusted do the following: (Source https://github.com/dotnet/core/issues/3685#issuecomment-547411254)
+	Show the file in the Finder and open context menu by right click on the downloaded package. Then select Open and a similar dialog will appear however there will be Open button available. When you open it in this way it will execute the package.
+
+It is caused by Apple security and it forces you to explicitly open the downloaded content. Additional details are on Apple web pages: https://support.apple.com/en-us/HT202491.
