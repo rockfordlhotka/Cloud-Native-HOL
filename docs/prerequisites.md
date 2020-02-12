@@ -52,14 +52,14 @@ Minimum hardware required:
       1. `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
       1. `winpty minikube ssh "sudo poweroff"`
    1. From cmd or PowerShell
-      1. `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch" --kubernetes-version=1.15.4`
+      1. `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
       1. `minikube ssh "sudo poweroff"`
    1. **If running on Windows 10 before 1809** [this blog post](https://www.c-sharpcorner.com/article/getting-started-with-kubernetes-on-windows-10-using-hyperv-and-minikube/) might help get minikube installed
 1. Pull large Docker base images
     > ℹ You may need to change Docker to `Switch to Linux containers...` before pulling these images
-   1. `docker pull mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim`
-   1. `docker pull mcr.microsoft.com/dotnet/core/runtime:3.0-buster-slim`
-   1. `docker pull mcr.microsoft.com/dotnet/core/sdk:3.0-buster`
+   1. `docker pull mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim`
+   1. `docker pull mcr.microsoft.com/dotnet/core/runtime:3.1-buster-slim`
+   1. `docker pull mcr.microsoft.com/dotnet/core/sdk:3.1-buster`
 1. Clone this repo to your workstation: `git clone https://github.com/rockfordlhotka/Cloud-Native-HOL.git`
    1. There may be some last-minute fixes to the code so we recommend waiting to clone the repository until a day or two prior to the HOL
 1. (optional) [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
