@@ -79,7 +79,7 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 ### Starting minikube
 
-1. Type `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch" --cpus 6 --memory 4096 --kubernetes-version=1.15.4`
+1. Type `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch" --cpus 6 --memory 4096`
 
 Alternately you can use pre-built bash shell scripts to start/stop the cluster:
 
@@ -91,9 +91,8 @@ Alternately you can use pre-built bash shell scripts to start/stop the cluster:
 
 ### Initialize Helm
 
-1. minikube must be running
-1. Type `helm init`
-1. If this fails it may be due to this [SO issue](https://github.com/helm/helm/issues/6374)
+1. Type `helm version`
+   1. Version must be 3.0 or higher
 
 ### Stopping minikube
 
