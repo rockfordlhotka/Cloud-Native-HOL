@@ -15,7 +15,7 @@
 3. Start minikube for package download
 	1. VirtualBox: 
 		1. `minikube config set vm-driver virtualbox`
-		2. `minikube start --vm-driver virtualbox --host-only-cidr 172.16.0.1/24  --kubernetes-version=1.15.4`
+		2. `minikube start --vm-driver virtualbox --host-only-cidr 172.16.0.1/24`
 	1. HyperKit: 
 		1. `minikube config set vm-driver hyperkit`
 		2. `minikube start --vm-driver=hyperkit`
