@@ -42,7 +42,7 @@ Minimum hardware required:
    1. `choco install git`
    1. `choco install docker-desktop`
    1. `choco install kubernetes-cli`
-   1. `choco install kubernetes-helm --version 2.16.0`
+   1. `choco install kubernetes-helm`
    1. `choco install minikube`
    1. `choco install azure-cli`
    1. `choco install vscode` (or install [Visual Studio Code](https://code.visualstudio.com/) manually)
