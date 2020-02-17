@@ -20,11 +20,11 @@ We will use some cloud-based services
 Minimum hardware required:
 
 * CPU with _at least_ 4 virtual cores (2 cores with hyperthreading)
-   * i7 with 8 virtual cores (4 cores with hyperthreading) is recommended
+  * i7 with 8 virtual cores (4 cores with hyperthreading) is recommended
 * 8gb RAM is the bare minimum required
-   * 16 is recommended
+  * 16 is recommended
 * High speed HDD
-   * SSD strongly recommended
+  * SSD strongly recommended
 * Ability to connect to wifi
 
 **Before arriving at the event** you should make sure your laptop workstation has the following:
