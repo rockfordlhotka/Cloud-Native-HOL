@@ -64,7 +64,13 @@ This should ensure that you have a local copy of the latest content from GitHub.
    1. Choose the Shared Drives tab
    1. Select your working drive(s)
 
+Windows:
+
 ![shared drives](images/shared-drives.png)
+
+Mac:
+
+![shared drives mac](images/shared-drives-mac.png)
 
 ## minikube and Helm
 
@@ -109,15 +115,15 @@ Finally: Close the admin CLI window (type `exit`)
 
 ![kubectl version](images/kubectlversion.png)
 
-**⚠ NOTE:** The minimum version we need is at least `v1.15.2`.
+**⚠ NOTE:** The minimum version we need is at least `v1.17.2`.
 
-To fix this on Windows:
+To fix this on Windows (if necessary):
 
 1. Open a Git Bash CLI window _as administrator_
 1. Change directory to `/c/Program\ Files/Docker/Docker/resources/bin`
-1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.4/bin/windows/amd64/kubectl.exe`
+1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.2/bin/windows/amd64/kubectl.exe`
 
-This will download version `v1.15.4` of the tool, overwriting the older version in the Docker directory.
+This will download version `v1.17.2` of the tool, overwriting the older version in the Docker directory.
 
 For Mac users you can do something similar, or change a symlink as described in this [Stackoverflow thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror).
 
