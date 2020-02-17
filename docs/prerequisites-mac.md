@@ -33,3 +33,23 @@
 	Show the file in the Finder and open context menu by right click on the downloaded package. Then select Open and a similar dialog will appear however there will be Open button available. When you open it in this way it will execute the package.
 
 It is caused by Apple security and it forces you to explicitly open the downloaded content. Additional details are on Apple web pages: https://support.apple.com/en-us/HT202491.
+
+## Troubleshooting 
+
+### Docker Desktop for Mac 
+   
+If you have Docker Desktop previously installed, you may already have a version of kubectl (kubernetes-cli) already installed.
+The client version of kubectl provided by the latest Docker Desktop install may be incompatible with the latest version of Kubernetes.
+When starting minikube, you may receive the following error:
+   
+```
+⚠️  /usr/local/bin/kubectl is version 1.15.5, and is incompatible with Kubernetes 1.17.2. You will need to update /usr/local/bin/kubectl or use 'minikube kubectl' to connect with this cluster
+```
+   
+To update kubectl to the latest version, execute the following:
+
+1. `brew install kubernetes-cli` 
+1. `brew link --overwrite kubernetes-cli` - 'To force the link and overwrite all conflicting files'.  The command does NOT affect the previous install, instead performs a reorg of symlinks in /usr/local/bin.
+1. `kubectl version` - verify your new and updated install of kubernetes.cli
+1. `kubectl.docker version` - verify your previous install of kubernetes.cli
+1. Run `minikube start` and verify successful startup.  
