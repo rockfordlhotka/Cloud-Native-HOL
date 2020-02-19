@@ -29,10 +29,11 @@ docker pull mcr.microsoft.com/dotnet/core/sdk:3.1-buster
    1. `brew install kubernetes-cli`
    1. `brew install kubernetes-helm`
 1. Start minikube for package download
-   1. HyperKit: 
+   1. If you installed Hyperkit from the previos section: 
       1. `minikube config set vm-driver hyperkit`
       1. `minikube start --vm-driver=hyperkit`
-   1. VirtualBox: 
+      1. Proceed to Pull large Docker base images section
+   1. If you installed VirtualBox from the previous section: 
       1. `minikube config set vm-driver virtualbox`
       1. `minikube start --vm-driver virtualbox --host-only-cidr 172.16.0.1/24`
 1. Pull large Docker base images
