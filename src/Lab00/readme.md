@@ -64,7 +64,13 @@ This should ensure that you have a local copy of the latest content from GitHub.
    1. Choose the Shared Drives tab
    1. Select your working drive(s)
 
+Windows:
+
 ![shared drives](images/shared-drives.png)
+
+Mac:
+
+![shared drives mac](images/shared-drives-mac.png)
 
 ## minikube and Helm
 
@@ -79,38 +85,29 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 ### Starting minikube
 
-1. Type `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch" --cpus 6 --memory 4096`
-
-Alternately you can use pre-built bash shell scripts to start/stop the cluster:
-
-1. Change directory to the `Lab00` in this repo
-1. Type `chmod +x mkstart.sh`
-1. Type `chmod +x mkstop.sh`
-1. Type `./mkstart.sh` to start minikube
-   1. Type `cat mkstart.sh` to view script contents
+1. Open an _admin_ PowerShell or cmd window
+1. Type `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch" --cpus 6 --memory 4096`
+1. Close the window
 
 ### Initialize Helm
 
-1. Type `helm version`
+1. Back in the Git Bash CLI type `helm version`
    1. Version must be 3.0 or higher
 
 ### Stopping minikube
 
 **🛑 IMPORTANT:** Don't actually stop minikube, as you'll be using it throughout the day. However, when you do want to stop minikube this is how you do it.
 
-1. Type `winpty minikube ssh "sudo poweroff"`
-
-Alternately you can use the pre-built bash command script:
-
-1. Type `./mkstop.sh` to stop minikube
-   1. Type `cat mkstop.sh` to view script contents
-
+1. In _admin_ Git Bash CLI
+   1. Type `winpty minikube ssh "sudo poweroff"`
+1. In _admin_ PowerShell or cmd
+   1. Type `minikube ssh "sudo poweroff"`
 
 Finally: Close the admin CLI window (type `exit`)
 
 ## Kubernetes CLI
 
-1. Open Git Bash
+1. Open Git Bash (not admin)
 1. Type `kubectl version`
 1. The result will be version numbers for numerous components
    1. Client versions are for the Kubernetes CLI
@@ -118,15 +115,15 @@ Finally: Close the admin CLI window (type `exit`)
 
 ![kubectl version](images/kubectlversion.png)
 
-**⚠ NOTE:** It is very likely that your path (Windows and Mac) will have you running `kubectl` from Docker rather than the one directly installed for Kubernetes. This is a problem, because the Docker install is outdated. In the image above you can see that the client is version `v1.14.6`, but the minimum version we need is at least `v1.15.2`.
+**⚠ NOTE:** The minimum version we need is at least `v1.17.2`.
 
-To fix this on Windows:
+To fix this on Windows (if necessary):
 
 1. Open a Git Bash CLI window _as administrator_
 1. Change directory to `/c/Program\ Files/Docker/Docker/resources/bin`
-1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.4/bin/windows/amd64/kubectl.exe`
+1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.2/bin/windows/amd64/kubectl.exe`
 
-This will download version `v1.15.4` of the tool, overwriting the older version in the Docker directory.
+This will download version `v1.17.2` of the tool, overwriting the older version in the Docker directory.
 
 For Mac users you can do something similar, or change a symlink as described in this [Stackoverflow thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror).
 

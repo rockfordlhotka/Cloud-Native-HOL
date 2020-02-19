@@ -48,7 +48,7 @@ This file defines how the container will be created. In fact, it defines not onl
 The first code block defines the "base image" to be used when creating the final container.
 
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 ```
@@ -64,13 +64,13 @@ The `EXPOSE` statement indicates that this image will listen on port 80.
 The next code block defines an "intermediate image" used to build the ASP.NET Core project. This intermediate image only exists long enough to do the build, and then it is discarded. It isn't part of the final image, and isn't deployed.
 
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["Gateway/Gateway.csproj", "Gateway/"]
 RUN dotnet restore "Gateway/Gateway.csproj"
 COPY . .
 WORKDIR "/src/Gateway"
-RUN dotnet build "Gateway.csproj" -c Release -o /app
+RUN dotnet build "Gateway.csproj" -c Release -o /app/build
 ```
 
 Notice how this image uses a different base image. This base image is also from Microsoft, but includes the dotnet SDK, not just the runtime. It is *much* larger, because it includes the compilers and other SDK tools/components necessary to build dotnet apps.
@@ -89,7 +89,7 @@ The next code block defines another intermediate image used to publish the resul
 
 ```dockerfile
 FROM build AS publish
-RUN dotnet publish "Gateway.csproj" -c Release -o /app
+RUN dotnet publish "Gateway.csproj" -c Release -o /app/publish
 ```
 
 The `dotnet publish` command is executed to create publish output based on the code built in the previous step. The result is the same publish output you'd get if you manually ran a `dotnet publish` command, or did a Publish from Visual Studio. ![](images/publish.png)
@@ -101,7 +101,7 @@ The last code block creates the final image.
 ```dockerfile
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Gateway.dll"]
 ```
 
@@ -133,7 +133,7 @@ Now that you've run some things via Docker, you can view the images on your work
 $ docker image ls
 REPOSITORY                                 TAG                      IMAGE ID            CREATED             SIZE
 gateway                                    dev                      6c6a43d12ad4        About an hour ago   260MB
-mcr.microsoft.com/dotnet/core/aspnet       2.2-stretch-slim         fe1db87517ca        5 hours ago         260MB
+mcr.microsoft.com/dotnet/core/aspnet       3.1-buster-slim          fe1db87517ca        5 hours ago         260MB
 hello-world                                latest                   4ab4c602aa5e        10 months ago       1.84kB
 ```
 

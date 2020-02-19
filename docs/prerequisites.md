@@ -20,11 +20,11 @@ We will use some cloud-based services
 Minimum hardware required:
 
 * CPU with _at least_ 4 virtual cores (2 cores with hyperthreading)
-   * i7 with 8 virtual cores (4 cores with hyperthreading) is recommended
+  * i7 with 8 virtual cores (4 cores with hyperthreading) is recommended
 * 8gb RAM is the bare minimum required
-   * 16 is recommended
+  * 16 is recommended
 * High speed HDD
-   * SSD strongly recommended
+  * SSD strongly recommended
 * Ability to connect to wifi
 
 **Before arriving at the event** you should make sure your laptop workstation has the following:
@@ -48,11 +48,8 @@ Minimum hardware required:
    1. `choco install vscode` (or install [Visual Studio Code](https://code.visualstudio.com/) manually)
 1. Start minikube one time to download/initialize all the container images from an _admin_ command line
    1. This may take several minutes as it downloads numerous images
-   1. From Git Bash
-      1. `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
-      1. `winpty minikube ssh "sudo poweroff"`
-   1. From cmd or PowerShell
-      1. `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
+   1. From _admin_ cmd or PowerShell
+      1. `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch" --cpus 6 --memory 4096`
       1. `minikube ssh "sudo poweroff"`
    1. **If running on Windows 10 before 1809** [this blog post](https://www.c-sharpcorner.com/article/getting-started-with-kubernetes-on-windows-10-using-hyperv-and-minikube/) might help get minikube installed
 1. Pull large Docker base images
@@ -68,5 +65,5 @@ Minimum hardware required:
    1. Inside WSL install the Azure CLI command (Use the instructions at: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
    1. Inside WSL install the Kubernetes CLI commands (Use the instructions at: https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux)
    1. You may want to follow the instructions in this blog so [WSL can seamlessly interact with Docker Desktop](https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly)
-   
+
 ⚠ Arriving with a pre-configured workstation is imperative.
