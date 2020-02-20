@@ -16,7 +16,7 @@ Lesson goals:
 1. Create new ASP.NET Core project named `Gateway` ![](images/newproj.png) ![](images/newproj2.png) ![](images/newproj3.png)
    1. Use the *Web Application* template
    1. Uncheck the *Configure for HTTPS* option (to simplify for demo/lab purposes)
-   1. Check the *Enable Docker Support* option
+   1. Check the *Enable Docker Support* option (For Mac: Right click on project within solution explorer, choose add, choose         Docker Support
    1. Confirm the use of Linux containers
 1. Look at Solution Explorer ![](images/solutionexplorer.png)
    1. Notice how it is a normal ASP.NET Core Razor Pages project
