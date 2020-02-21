@@ -71,9 +71,9 @@ in this example I am creating a WebAPi application
          COPY --from=publish /app/publish .
          ENTRYPOINT ["dotnet", "newprojectname.dll"]
       ```
-given that newprojectname is the name of the project
+Given that newprojectname is the name of the project
 
-Opening the app in VS code should gives ou the option to debug inside the container, but you may need to install docker extension and try to add it to the project, what it will do is configure VS code to allow debugging. It may ask you to overwrite the Dockerfile, you can say yes or no as it basically create the same thing.
+Opening the folder in VS code should gives you the option to debug inside the container, but you may need to install docker extension and try to add it to the project, what it will do is configure vs-code to allow debugging. It may ask you to overwrite the Dockerfile, you can say yes or no as it basically create the same thing.
 
 
 
