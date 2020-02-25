@@ -147,7 +147,7 @@ A number of lines of code are necessary to open a queue and connection, to prepa
 
 ## Implement Gateway Service/App
 
-The `Gateway` project in the solution is very similar to the project you created in Lab02, in that it is an ASP.NET Core Razor Pages web project configured to work with Docker.
+The `Gateway` project in the solution is similar to the project you created in Lab02, with some differences. This is a server-side Blazor project configured to work with Docker.
 
 ### Enabling docker-compose
 
@@ -275,75 +275,82 @@ Later you will implement a class that sends a request to make a sandwich into th
 
 The next step in this process is to implement the `Index` page in the Gateway project.
 
-The markup for the page is already in the project, as it is basic Razor code:
+The markup for the page is already in the project, as it is basic Blazor UI markup:
 
 ```html
-@page
-@model Gateway.Pages.IndexModel
-@{
-  ViewData["Title"] = "Sandwich";
+@page "/"
+
+<h3>Make a sandwich</h3>
+
+@if (request == null)
+{
+<div>Loading...</div>
 }
-
-<h2>Sandwich</h2>
-
-<div class="row">
-  <h3>Select ingredients</h3>
-  @using (Html.BeginForm())
-  {
+else
+{
+  <EditForm Model="@request" OnSubmit="@FormSubmitted">
+    <DataAnnotationsValidator />
     <div>Meat</div>
-    <input asp-for="TheMeat" />
+    <InputText @bind-Value="request.Meat" />
+    <ValidationMessage For=@(() => request.Meat) />
     <div>Bread</div>
-    <input asp-for="TheBread" />
+    <InputText @bind-Value="request.Bread" />
+    <ValidationMessage For=@(() => request.Bread) />
     <div>Cheese</div>
-    <input asp-for="TheCheese" />
-    <div>Lettuce?</div>
-    <input asp-for="TheLettuce" />
+    <InputText @bind-Value="request.Cheese" />
+    <ValidationMessage For=@(() => request.Cheese) />
+    <div>Lettuce</div>
+    <InputCheckbox @bind-Value="request.Lettuce" />
     <br /><br />
-    <input type="submit" name="sendMessage" value="Ask cook to make sandwich" />
-  }
+    <input type="submit" value="Save" class="btn btn-primary" />
+  </EditForm>
+
   <p></p>
   <p>Reply from sandwich maker:</p>
-  <div style="font-size:24px">@Model.ReplyText</div>
-</div>
+  <div style="font-size:24px">@ReplyText</div>
+}
 ```
 
-Some of the code behind in `Index.cshtml.cs` is already in the project as well, establishing the properties that are data bound to the Razor markup.
-
-What isn't yet in the class is a constructor that obtains an `IServiceRequestor` instance via dependency injection. Add this field declaration and constructor to the class:
+Some of the code behind in the `@code` block is already in the page as well:
 
 ```c#
-    readonly Services.ISandwichRequestor _requestor;
+@code
+{
+  private Messages.SandwichRequest request;
+  private string ReplyText;
 
-    public IndexModel(Services.ISandwichRequestor requestor)
-    {
-      _requestor = requestor;
-    }
+  protected override void OnParametersSet()
+  {
+    request = new Messages.SandwichRequest();
+  }
+
+  private async void FormSubmitted(EditContext editContext)
+  {
+  }
+}
 ```
 
-Using this `_requestor` field it is possible to implement the `OnPost` method:
+What isn't yet in the class is the functionality that obtains an `IServiceRequestor` instance via dependency injection. Add this line at the top of the page after the `@page` directive:
+
+```html
+@inject Services.ISandwichRequestor requestor
+```
+
+Using this `requestor` field it is possible to implement the `FormSubmitted` method:
 
 ```c#
-    public async Task OnPost()
-    {
-      var request = new Messages.SandwichRequest
-      {
-        Meat = TheMeat,
-        Bread = TheBread,
-        Cheese = TheCheese,
-        Lettuce = TheLettuce
-      };
-      var result = await _requestor.RequestSandwich(request);
-
-      if (result.Success)
-        ReplyText = result.Description;
-      else
-        ReplyText = result.Error;
-    }
+  private async void FormSubmitted(EditContext editContext)
+  {
+    var result = await requestor.RequestSandwich(request);
+    if (result.Success)
+      ReplyText = result.Description;
+    else
+      ReplyText = result.Error;
+    StateHasChanged();
+  }
 ```
 
-This method creates a `SandwichRequest` message object, populating it with the values provided from the Razor markup via data binding.
-
-It then invokes the `RequestSandwich` method, awaiting the response from the service-based system.
+The page uses data binding to populate a `SandwichRequest` message object with user input. This method uses that message object and sends it to the service-based system using the `RequestSandwich` method on the `requestor` object.
 
 Once a response is available, the data bound `ReplyText` UI control is updated to reflect the success or failure result from the sandwichmaker service.
 

@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>2fe5d699-2ee7-4027-9b75-094a94e89484</ProjectGuid>
+    <ProjectGuid>3bbfe436-9460-40a7-a524-9f416a55fd42</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
     <DockerServiceName>gateway</DockerServiceName>
