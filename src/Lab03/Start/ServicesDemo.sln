@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29721.120
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.csproj", "{EA479C6C-BCB0-4826-9929-EA64927485D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreadService", "BreadService\BreadService.csproj", "{847622FF-FE1E-45CA-AE20-C933321FAD7D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheeseService", "CheeseService\CheeseService.csproj", "{B02BEABB-5AFF-4BB1-A5A9-8C78185C3688}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeatService", "MeatService\MeatService.csproj", "{2EFD6DEC-F3A4-44C2-B5E3-AE921C411A70}"
@@ -34,10 +32,6 @@ Global
 		{EA479C6C-BCB0-4826-9929-EA64927485D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA479C6C-BCB0-4826-9929-EA64927485D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA479C6C-BCB0-4826-9929-EA64927485D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{847622FF-FE1E-45CA-AE20-C933321FAD7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{847622FF-FE1E-45CA-AE20-C933321FAD7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{847622FF-FE1E-45CA-AE20-C933321FAD7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{847622FF-FE1E-45CA-AE20-C933321FAD7D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B02BEABB-5AFF-4BB1-A5A9-8C78185C3688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B02BEABB-5AFF-4BB1-A5A9-8C78185C3688}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B02BEABB-5AFF-4BB1-A5A9-8C78185C3688}.Release|Any CPU.ActiveCfg = Release|Any CPU
