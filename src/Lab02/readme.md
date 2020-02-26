@@ -249,15 +249,13 @@ This will have the dashboard runing inside Kubernetes, to access it you need to 
 kubectl proxy
 ```
 
-You will need to setup configuration file file for the dashboard to work, Execute these 2 commands 
+You will need to get the token for accessing the dashboard and that can be generated bu runing the folloing command 
 
 ```
-$TOKEN=((kubectl -n kube-system describe secret default | Select-String "token:") -split " +")[1]
-
-kubectl config set-credentials docker-desktop --token="${TOKEN}"
+ kubectl describe secret kubernetes-dashboard --namespace=kube-system
 ```
 
-Click on the below link and select the config on C:\Users<Username>.kube\config
+Click on the below link and paste the token into the login page
 
 http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
 
