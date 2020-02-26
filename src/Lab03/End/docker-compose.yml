@@ -12,7 +12,7 @@ services:
       context: .
       dockerfile: SandwichMaker/Dockerfile
     environment: 
-      - RABBITMQ__URL=172.25.0.9
+      - RABBITMQ__URL=172.25.0.2
       - RABBITMQ__USER
       - RABBITMQ__PASSWORD
 
@@ -22,7 +22,7 @@ services:
       context: .
       dockerfile: Gateway/Dockerfile
     environment: 
-      - RABBITMQ__URL=172.25.0.9
+      - RABBITMQ__URL=172.25.0.2
       - RABBITMQ__USER
       - RABBITMQ__PASSWORD
 
@@ -32,7 +32,7 @@ services:
       context: .
       dockerfile: MeatService/Dockerfile
     environment: 
-      - RABBITMQ__URL=172.25.0.9
+      - RABBITMQ__URL=172.25.0.2
       - RABBITMQ__USER
       - RABBITMQ__PASSWORD
 
@@ -42,7 +42,7 @@ services:
       context: .
       dockerfile: BreadService/Dockerfile
     environment: 
-      - RABBITMQ__URL=172.25.0.9
+      - RABBITMQ__URL=172.25.0.2
       - RABBITMQ__USER
       - RABBITMQ__PASSWORD
 
@@ -52,7 +52,7 @@ services:
       context: .
       dockerfile: CheeseService/Dockerfile
     environment: 
-      - RABBITMQ__URL=172.25.0.9
+      - RABBITMQ__URL=172.25.0.2
       - RABBITMQ__USER
       - RABBITMQ__PASSWORD
 
@@ -62,7 +62,7 @@ services:
       context: .
       dockerfile: LettuceService/Dockerfile
     environment: 
-      - RABBITMQ__URL=172.25.0.9
+      - RABBITMQ__URL=172.25.0.2
       - RABBITMQ__USER
       - RABBITMQ__PASSWORD
 
