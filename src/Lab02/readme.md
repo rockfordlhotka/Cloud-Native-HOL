@@ -259,7 +259,7 @@ kubectl config set-credentials docker-desktop --token="${TOKEN}"
 
 Click on the below link and select the config on C:\Users<Username>.kube\config
 
-[http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/]http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
 
 
 ## Cleanup
