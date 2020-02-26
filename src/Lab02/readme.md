@@ -234,6 +234,34 @@ At this point you can run `kubectl get pods` to see that two instances of the im
 
 Go ahead and explore changing the `replicas` value to 3 and then down to 1. Quickly get the list of pods after each change to see how K8s starts and stops the various pod instances.
 
+## Using Docker Desktop Kubernetes
+I applied all the steps above for docker desktop on Windows, I assume this should work the same on Docker Desktop for mac. 
+
+ONe thing that can be super useful is having Kubernetes Dashboard running on your local cluster , this can be done this way
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+```
+
+This will have the dashboard runing inside Kubernetes, to access it you need to run
+
+```
+kubectl proxy
+```
+
+You will need to setup configuration file file for the dashboard to work, Execute these 2 commands 
+
+```
+$TOKEN=((kubectl -n kube-system describe secret default | Select-String "token:") -split " +")[1]
+
+kubectl config set-credentials docker-desktop --token="${TOKEN}"
+```
+
+Click on the below link and select the config on C:\Users<Username>.kube\config
+
+[http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/]http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+
+
 ## Cleanup
 
 At the end of Lab02 it is important to do some basic cleanup to avoid conflicts with subsequent labs.
