@@ -72,7 +72,7 @@ Mac:
 
 ![shared drives mac](images/shared-drives-mac.png)
 
-## minikube and Helm
+## minikube
 
 > ⚠ Before starting minikube it is _strongly recommended_ that you close as many apps/games/browsers/etc. as possible. Between Docker and Kubernetes most computers will barely have enough memory to function. Discount this advice if your computer has 32gb RAM or more.
 
@@ -93,6 +93,8 @@ Mac:
 
 1. Back in the Git Bash CLI type `helm version`
    1. Version must be 3.0 or higher
+1. Type `helm repo add stable https://kubernetes-charts.storage.googlepis.com`
+   1. This adds the list of stable helm charts for use
 
 ### Stopping minikube
 
