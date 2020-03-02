@@ -30,7 +30,7 @@ namespace Gateway
       services.AddSingleton<WeatherForecastService>();
 
       services.AddSingleton<Services.IWorkInProgress>((e) => new Services.WorkInProgress());
-      services.AddHostedService<Services.SandwichmakerListener>();
+      //services.AddHostedService<Services.SandwichmakerListener>();
       //services.AddSingleton<Services.ISandwichRequestor>((e) =>
       //    new Services.SandwichRequestor(
       //        e.GetService<IConfiguration>(),
