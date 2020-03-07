@@ -129,6 +129,8 @@ This will download version `v1.17.2` of the tool, overwriting the older version 
 
 For Mac users you can do something similar, or change a symlink as described in this [Stackoverflow thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror).
 
+**⚠ NOTE:** If you experience long (20-30 second) delays executing kubectl commands on Windows, your system may have issues using IPV6 and the kubectl API is attempting to connect using IPV6 and waiting for a timeout before retrying as IPV4. Disabling IPV6 on both the Virtual Switch and your primary network adapter may solve the problem.
+
 ## Azure CLI
 
 1. Open Git Bash
