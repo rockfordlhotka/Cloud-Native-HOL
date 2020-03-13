@@ -93,7 +93,7 @@ Mac:
 
 1. Back in the Git Bash CLI type `helm version`
    1. Version must be 3.0 or higher
-1. Type `helm repo add stable https://kubernetes-charts.storage.googlepis.com`
+1. Type `helm repo add stable https://kubernetes-charts.storage.googleapis.com`
    1. This adds the list of stable helm charts for use
 
 ### Stopping minikube
