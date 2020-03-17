@@ -116,16 +116,10 @@ Before running your services in docker-compose it is necessary to set up a Rabbi
 
 1. Create a docker network for the demo
     1. `docker network create -d bridge --subnet 172.25.0.0/16 demonet`
-1. Install rabbitmq in the docker environment
-    1. `docker run -d rabbitmq`
-    1. Use `docker ps` to get the id of the container
-    1. Add rabbitmq to the demonet network
-        1. `docker network connect demonet <container id>`
-    1. Find the rabbitmq container's ip address in the network
-        1. `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container id>`
-        1. You'll see two addresses, choose the 172.25.0.??? address from the demonet network
+1. Install rabbitmq in the docker environment, under the recently created network, with a name that will be uset to communicate with it.
+    1. `docker run -d --name sandwichqueue --net demonet rabbitmq`
 
-At this point a RabbitMQ container is running in Docker Desktop on your workstation, and you have made note of the container's IP address _inside Docker_.
+At this point a RabbitMQ container is running in Docker Desktop on your workstation, and Docker's internal DNS will recognize it as part of the demonet network, as `sandwichqueue` _inside Docker_.
 
 ## RabbitMQ Helper Code
 
@@ -174,7 +168,7 @@ version: '3.4'
 
 services:
   gateway:
-    image: ${DOCKER_REGISTRY-}gateway
+    image: ${DOCKER_REGISTRY}gateway
     build:
       context: .
       dockerfile: Gateway/Dockerfile
@@ -195,17 +189,17 @@ One of the more important of the [12 Factors](https://12factor.net) is that conf
 
 ```yaml
   gateway:
-    image: ${DOCKER_REGISTRY-}gateway
+    image: ${DOCKER_REGISTRY}gateway
     build:
       context: .
       dockerfile: Gateway/Dockerfile
     environment: 
-      - RABBITMQ__URL=172.25.0.9
+      - RABBITMQ__URL=sandwichqueue
       - RABBITMQ__USER
       - RABBITMQ__PASSWORD
 ```
 
-> ⚠ Make sure to use the IP address of _your_ RabbitMQ instance.
+> ℹ the gateway container will connect to the rabbitmq container using its DNS name `sandwichqueue`.
 
 The `environment:` node provides a list of environment variables to be set in each container as it is initialized. These values can be easily retrieved by .NET Core code using the modern configuration subsystem using the default configuration for ASP.NET Core.
 
@@ -949,10 +943,10 @@ If you are using Visual Studio 2017 you'll have to do this process manually.
 Add a file named `Dockerfile` to the project with the following contents:
 
 ```docker
-FROM microsoft/dotnet:2.1-runtime AS base
+FROM mcr.microsoft.com/dotnet/core/runtime:3.0-buster-slim AS base
 WORKDIR /app
 
-FROM microsoft/dotnet:2.1-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 COPY BreadService/BreadService.csproj BreadService/
 COPY RabbitQueue/RabbitQueue.csproj RabbitQueue/
@@ -986,21 +980,19 @@ Make sure this file contains an entry for the new `breadservice`:
 
 ```yaml
   breadservice:
-    image: ${DOCKER_REGISTRY-}breadservice
+    image: ${DOCKER_REGISTRY}breadservice
     build:
       context: .
       dockerfile: BreadService/Dockerfile
     environment: 
-      - RABBITMQ__URL=172.25.0.9
+      - RABBITMQ__URL=sandwichqueue
       - RABBITMQ__USER
       - RABBITMQ__PASSWORD
 ```
 
 At this point your `docker-compose.yml` file contains entries only for the `gateway` and `breadservice` services. In reality it needs entries for all the services necessary to run the system in your local environment.
 
-Making note of the IP address for your RabbitMQ instance, copy the `docker-compose.yml` file from the `End` directory into your `Start` directory, replacing the current file. The result is a `docker-compose.yml` that has entries for all the services in the system.
-
-> ⚠ **IMPORTANT:** Replace the IP addresses for `RABBITMQ__URL` with the IP address for your RabbitMQ instance within Docker. This needs to be done for all the services in the file.
+Copy the `docker-compose.yml` file from the `End` directory into your `Start` directory, replacing the current file. The result is a `docker-compose.yml` that has entries for all the services in the system.
 
 ## Running in docker-compose
 
