@@ -7,7 +7,7 @@ networks:
 
 services:
   sandwichmaker:
-    image: sandwichmaker
+    image: ${DOCKER_REGISTRY}sandwichmaker
     build:
       context: .
       dockerfile: SandwichMaker/Dockerfile
@@ -17,7 +17,7 @@ services:
       - RABBITMQ__PASSWORD
 
   gateway:
-    image: gateway
+    image: ${DOCKER_REGISTRY}gateway
     build:
       context: .
       dockerfile: Gateway/Dockerfile
@@ -27,7 +27,7 @@ services:
       - RABBITMQ__PASSWORD
 
   meatservice:
-    image: meatservice
+    image: ${DOCKER_REGISTRY}meatservice
     build:
       context: .
       dockerfile: MeatService/Dockerfile
@@ -37,7 +37,7 @@ services:
       - RABBITMQ__PASSWORD
 
   breadservice:
-    image: breadservice
+    image: ${DOCKER_REGISTRY}breadservice
     build:
       context: .
       dockerfile: BreadService/Dockerfile
@@ -47,7 +47,7 @@ services:
       - RABBITMQ__PASSWORD
 
   cheeseservice:
-    image: cheeseservice
+    image: ${DOCKER_REGISTRY}cheeseservice
     build:
       context: .
       dockerfile: CheeseService/Dockerfile
@@ -57,7 +57,7 @@ services:
       - RABBITMQ__PASSWORD
 
   lettuceservice:
-    image: lettuceservice
+    image: ${DOCKER_REGISTRY}lettuceservice
     build:
       context: .
       dockerfile: LettuceService/Dockerfile
