@@ -72,7 +72,7 @@ Mac:
 
 ![shared drives mac](images/shared-drives-mac.png)
 
-## minikube and Helm
+## minikube
 
 > ⚠ Before starting minikube it is _strongly recommended_ that you close as many apps/games/browsers/etc. as possible. Between Docker and Kubernetes most computers will barely have enough memory to function. Discount this advice if your computer has 32gb RAM or more.
 
@@ -93,6 +93,8 @@ Mac:
 
 1. Back in the Git Bash CLI type `helm version`
    1. Version must be 3.0 or higher
+1. Type `helm repo add stable https://kubernetes-charts.storage.googleapis.com`
+   1. This adds the list of stable helm charts for use
 
 ### Stopping minikube
 
@@ -126,6 +128,8 @@ To fix this on Windows (if necessary):
 This will download version `v1.17.2` of the tool, overwriting the older version in the Docker directory.
 
 For Mac users you can do something similar, or change a symlink as described in this [Stackoverflow thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror).
+
+**⚠ NOTE:** If you experience long (20-30 second) delays executing kubectl commands on Windows, your system may have issues using IPV6 and the kubectl API is attempting to connect using IPV6 and waiting for a timeout before retrying as IPV4. Disabling IPV6 on both the Virtual Switch and your primary network adapter may solve the problem.
 
 ## Azure CLI
 

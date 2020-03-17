@@ -1,0 +1,46 @@
+﻿@page "/"
+
+<h3>Make a sandwich</h3>
+
+@if (request == null)
+{
+<div>Loading...</div>
+}
+else
+{
+  <EditForm Model="@request" OnSubmit="@FormSubmitted">
+    <DataAnnotationsValidator />
+    <div>Meat</div>
+    <InputText @bind-Value="request.Meat" />
+    <ValidationMessage For=@(() => request.Meat) />
+    <div>Bread</div>
+    <InputText @bind-Value="request.Bread" />
+    <ValidationMessage For=@(() => request.Bread) />
+    <div>Cheese</div>
+    <InputText @bind-Value="request.Cheese" />
+    <ValidationMessage For=@(() => request.Cheese) />
+    <div>Lettuce</div>
+    <InputCheckbox @bind-Value="request.Lettuce" />
+    <br /><br />
+    <input type="submit" value="Save" class="btn btn-primary" />
+  </EditForm>
+
+  <p></p>
+  <p>Reply from sandwich maker:</p>
+  <div style="font-size:24px">@ReplyText</div>
+}
+
+@code
+{
+  private Messages.SandwichRequest request;
+  private string ReplyText;
+
+  protected override void OnParametersSet()
+  {
+    request = new Messages.SandwichRequest();
+  }
+
+  private async void FormSubmitted(EditContext editContext)
+  {
+  }
+}
