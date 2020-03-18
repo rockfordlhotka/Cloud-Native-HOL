@@ -130,3 +130,10 @@ For Mac users you can do something similar, or change a symlink as described in 
    1. You should get see a browser window
    1. Log into your Microsoft Azure account
    1. The console should now list your subscriptions
+   
+## Notes for Using Docker Desktop Kubernetes
+I ran the whole class without using minikube , the only issue that needed to be addressed is the amount of resources available to Kubernetes. I stopped the Hypervisor manager connection to docker desktop and doubled the memory from 2048 MB to 4096 MB, Also increased the CPU available from 2 to 4GB.
+Also in Docker Desktop I increased the resources to 4 CPUs and 4GB.
+
+That allowed the whole class to run inside deocker desktop Kubernetes
+
