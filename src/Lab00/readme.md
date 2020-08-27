@@ -29,7 +29,7 @@ Close the CLI window when done.
 
 1. Open Git Bash
 1. Type `git --version`
-1. Ensure that the version is at least `2.23.0`
+1. Ensure that the version is at least `2.28.0`
 
 ## Clone/update local repo
 
@@ -49,13 +49,13 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 1. Open Git Bash
 1. Type `dotnet --version`
-1. Ensure that the version is at least `3.0.100`
+1. Ensure that the version is at least `3.1.302`
 
 ## Docker
 
 1. Open the Git Bash CLI
 1. Type `docker --version`
-1. Ensure that the version is at least `10.03.2`
+1. Ensure that the version is at least `19.03.12`
 1. Type `docker run hello-world`
    1. You should get several lines of output, starting with `Hello from Docker!`
 1. Share your local drives with Docker
@@ -78,7 +78,7 @@ Mac:
 
 1. Open the Git Bash CLI (**as admin**)
 1. Type `minikube version`
-1. Ensure that the version is at least `1.4.0`
+1. Ensure that the version is at least `1.12.3`
 1. Type `minikube status`
 1. Output should appear similar to: ![mkstatus](images/mkstatus.png)
    1. If minikube is not running follow the instructions to start minikube
@@ -101,9 +101,9 @@ Mac:
 **🛑 IMPORTANT:** Don't actually stop minikube, as you'll be using it throughout the day. However, when you do want to stop minikube this is how you do it.
 
 1. In _admin_ Git Bash CLI
-   1. Type `winpty minikube ssh "sudo poweroff"`
+   1. Type `winpty minikube stop`
 1. In _admin_ PowerShell or cmd
-   1. Type `minikube ssh "sudo poweroff"`
+   1. Type `minikube stop`
 
 Finally: Close the admin CLI window (type `exit`)
 
@@ -135,7 +135,7 @@ For Mac users you can do something similar, or change a symlink as described in 
 
 1. Open Git Bash
 1. Type `az --version`
-1. Ensure that the version is at least `2.0.74`
+1. Ensure that the version is at least `2.11.0`
 1. Type `az login`
    1. You should get see a browser window
    1. Log into your Microsoft Azure account
