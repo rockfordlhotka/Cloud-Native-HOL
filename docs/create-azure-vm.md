@@ -1,25 +1,26 @@
 # Creating an Azure VM with lab prerequisites
 
-### Before you begin
+## Before you begin
 
 You will need:
+
 * Auzure subscription, for example included with a Visual Studio subscription (formerly MSDN subscription).
-* Visual Studio 2019 Enterprise subscription (?)
-  * [Is this just for user profile info?]
+* Visual Studio 2019 Pro or Enterprise subscription
 * Docker ID username and password
-  * If you don't already have one, you can create one along the way, while waiting on a long-running process: 
+  * If you don't already have one, you can create one along the way, while waiting on a long-running process:
 browse to **https://hub.docker.com/?overlay=onboarding**, select **Create Account**, and follow the directions.
 
-### Create an Azure VM
+## Create an Azure VM
 
 This section will:
+
 * create an Azure VM
-* from a Visual Studio 2019 image 
+* from a Visual Studio 2019 image
 * using a new resource group
 * on a Standard D4_v3 VM size or higher, and
 * enable RDP access.
 
-#### Steps
+### Steps
 
 1. Log on the **[Azure portal](https://portal.azure.com)**.
 1. Select **Virtual Machines | Add**.
@@ -51,7 +52,7 @@ I tried with a D2_v3 which ran at 100% CPU utilization when installing the prere
     * This will take several minutes. This is a good time to get a Docker ID if you don't already have one.
 1. When complete, the page title will change to **Your deployment is complete**.
 
-### Remote into Azure VM
+## Remote into Azure VM
 
 1. On the **Your deployment is complete** page, select **Go to resource**.
 1. On the **CloudNativeVM0** page, in the top toolbar, select **Connect**.
@@ -71,7 +72,7 @@ select **Don't ask me again for connections to this computer**, then select **Ye
 1. In the Remote Desktop session, the **Networks** pane is shown at the right, 
 select **No** to disallow the VM from being discovered by other devices.
 
-#### Download Chrome and set as default
+### Download Chrome and set as default
 
 I had problems within an Azure VM using the **`az login`** (which launches the default browser to select credentials) 
 with Edge as the default browser, but it worked with Chrome as the default browser.
@@ -87,7 +88,7 @@ with Edge as the default browser, but it worked with Chrome as the default brows
 1. In the **Before you switch** dialog, *[Sigh. --ed.]*, select **Switch anyway**.
 1. Close all windows. 
 
-#### Initialize Visual Studio 2019
+### Initialize Visual Studio 2019
 
 1. In the Remote Desktop session, launch Visual Studio 2019.
 1. In the **Visual Studio | Welcome** dialog:
@@ -97,7 +98,7 @@ with Edge as the default browser, but it worked with Chrome as the default brows
    1. Otherwise, select **Not now, maybe later**.
       1. I believe this will give you a trial license, but I have not tried it.
 
-#### Enable Hyper-V
+### Enable Hyper-V
 
 1. In the Remote Desktop session, launch Windows PowerShell ***as administrator***.
 1. In Windows PowerShell, enable Hyper-V with this command:
@@ -106,7 +107,7 @@ with Edge as the default browser, but it worked with Chrome as the default brows
    * Restarting the VM will end the Remote Desktop session. 
 You can monitor the VM restart state in the Azure portal, if you want.
 
-#### Install Docker for Windows
+### Install Docker for Windows
 
 1. In your host computer, in Windows File Explorer, double-click on the RDP file previously downloaded.
    * If you launch RDP too soon, opening the connection will timeout and you'll get an error dialog. Try again in a little bit.
@@ -126,7 +127,7 @@ This does not stop the VM, so you can restart RDP immediately.
 1. In the Remote Desktop session, Windows will start Docker Desktop, and after a short time a Docker Welcome window will display.
 1. In the **Docker Desktop | Welcome** window, enter your Docker ID and password, then select **Log In**.
 
-#### Install Chocolatey
+### Install Chocolatey
 
 1. Continuing in the Remote Desktop session, launch Windows PowerShell ***as administrator***.
 1. In Windows PowerShell, install Chocolatey with this command:
@@ -134,7 +135,7 @@ This does not stop the VM, so you can restart RDP immediately.
    * *Source: https://chocolatey.org/install*
 1. Close the Windows PowerShell windows in order for the choco command to be available.
 
-#### Clone Cloud-Native-HOL repository
+### Clone Cloud-Native-HOL repository
 
 1. Continuing in the Remote Desktop session, launch Windows PowerShell ***as administrator***.
 1. In Windows PowerShell, enter the following two commands to clone this lab's repository to your repos folder:
@@ -142,7 +143,7 @@ This does not stop the VM, so you can restart RDP immediately.
       * *where **vm-admin-username** is replaced with your VM admin account username.*
    1. **`git clone https://github.com/rockfordlhotka/Cloud-Native-HOL.git`** 
 
-#### Install remaining prerequisites
+### Install remaining prerequisites
 
 1. Continuing in Windows PowerShell, enter this command to enable running unsigned scripts:
    * **`Set-ExecutionPolicy Unrestricted -Force`**
@@ -158,7 +159,7 @@ This does not stop the VM, so you can restart RDP immediately.
      * Minikube
      * Azure CLI 
 
-#### Start minikube, initialize helm
+### Start minikube, initialize helm
 
 1. Continuing in Windows PowerShell, enter this command to start minikube:
    * **`minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`**
@@ -167,7 +168,7 @@ This does not stop the VM, so you can restart RDP immediately.
    * **`helm init`**
 1. Leave minikube running.
 
-#### Fixing kubectl.exe to use the correct version
+### Fixing kubectl.exe to use the correct version
 
 Lab00 includes instructions (in the **Kubernetes CLI** section, under "To fix this on Windows") 
 to get the correct version of kubectl.exe. 
@@ -180,6 +181,6 @@ This is simple to address here.
    * **`C:\Program Files\Docker\Docker\resources\bin`** 
 1. In the **Replace or Skip Files** dialog, select **Replace the file in the destination**.
 
-#### Next step
+### Next step
 
 Proceed to Lab00 to validate the installed software.
