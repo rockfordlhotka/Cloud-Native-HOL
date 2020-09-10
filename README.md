@@ -5,10 +5,7 @@ If you are attending the hands on lab please review the [attendee prerequisites]
 
 You can also review the [course outline](docs/class_outline.md).
 
-Previous releases:
-
-* [Cloud & Containers Live Orlando 2019 HOL](https://github.com/rockfordlhotka/Cloud-Native-HOL/releases/tag/CCLOR19)
-* [Visual Studio Live Redmond 2019 HOL](https://github.com/rockfordlhotka/Cloud-Native-HOL/releases/tag/VSLRED19)
+See here for [previous releases](https://github.com/rockfordlhotka/Cloud-Native-HOL/releases).
 
 Made possible by [Magenic](https://magenic.com).
 
