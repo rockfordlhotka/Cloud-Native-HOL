@@ -1,5 +1,5 @@
 # Cloud-Native-HOL
-Cloud-native hands on lab content for [VS Live Las Vegas 2020](https://vslive.com/Events/Las-Vegas-2020/Home.aspx).
+Cloud-native hands on lab content for [VS Live NY Online 2020](https://vslive.com/events/training-seminars/2020/new-york/home.aspx).
 
 If you are attending the hands on lab please review the [attendee prerequisites](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/master/docs/prerequisites.md) and make sure you are prepared with the required knowledge, services, and developer workstation/laptop.
 
