@@ -34,7 +34,7 @@ get deleted when cleaning up from individual lab activities.
 1. For **Image**, select **Browse all public and private images**.
 1. On **Select an image**, on the **Marketplace** tab, in the left navigation select **Compute**.
 1. In the search box, enter **`Visual Studio 2019`**.
-1. Select **Visual Studio 2019 Enterprise on Windows 10 Enterprise N (x64)** from Microsoft.
+1. Select **Visual Studio 2019 Enterprise on Windows 10 Enterprise (x64)** from Microsoft.
 1. For **Size**, select **Change size**.
     * N.B.: only v3 VM sizes support nested Hyper-V, 
 which you will need in order to enable Hyper-V on the VM, which is required for these labs.
