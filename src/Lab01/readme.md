@@ -40,16 +40,19 @@ Lesson goals:
    1. Refresh the page in the browser
    1. Notice now the breakpoint is hit as the Index page is reloaded ![](images/breakpoint.png)
 
-
 ## Using text editor (VS-Code) with terminal
+
 in this example I am creating a WebAPi application
+
 1. Create the new app using command line 
-      ```
+
+      ```text
       dotnet new webapi --no-https
       ```
+
 1. Now add a docker file to the Project to dockerrize the application
 
-      ```
+      ```text
          FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
          WORKDIR /app
          EXPOSE 80
@@ -71,13 +74,15 @@ in this example I am creating a WebAPi application
          COPY --from=publish /app/publish .
          ENTRYPOINT ["dotnet", "newprojectname.dll"]
       ```
+
 Given that newprojectname is the name of the project
 
 Opening the folder in VS code should gives you the option to debug inside the container, but you may need to install docker extension and try to add it to the project, what it will do is configure vs-code to allow debugging. It may ask you to overwrite the Dockerfile, you can say yes or no as it basically create the same thing.
 
-
+> ℹ You may need to initialize the `UserSecretsId` element in your csproj file. If you get a build warning about this missing element, open a CLI window, navigate to the directory containing the csproj file and execute the `dotnet user-secrets init` command.
 
 ## Understanding Dockerfile
+
 Open `Dockerfile` in Visual Studio.
 
 This file defines how the container will be created. In fact, it defines not only the *final* container, but also intermediate containers that'll be used to build our .NET project on Linux.
