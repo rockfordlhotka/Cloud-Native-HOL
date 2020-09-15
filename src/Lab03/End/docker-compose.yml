@@ -17,7 +17,7 @@ services:
       - RABBITMQ__PASSWORD
 
   gateway:
-    image: ${DOCKER_REGISTRY}gateway
+    image: ${DOCKER_REGISTRY-}gateway
     build:
       context: .
       dockerfile: Gateway/Dockerfile
