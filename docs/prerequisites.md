@@ -1,5 +1,7 @@
 # Prerequisites for attendees
 
+⚠ **Arriving with a pre-configured workstation is critical.**
+
 ## What you should know
 
 We assume familiarity with
@@ -35,7 +37,7 @@ Minimum hardware required:
 1. Windows 10 2004 or later
 1. Visual Studio 2019 16.9.4 or later
 1. Install/activate the [HyperV feature](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v) in Windows
-1. (recommended) [Windows Subsystem for Linux (WSL2)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+1. [Windows Subsystem for Linux (WSL2)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
    1. The following assumes Ubuntu or Debian
    1. Inside WSL install `sudo apt install git`
    1. Inside WSL install the Azure CLI command (Use the instructions at: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
@@ -51,12 +53,16 @@ Minimum hardware required:
    1. `choco install azure-cli`
    1. `choco install vscode` (or install [Visual Studio Code](https://code.visualstudio.com/) manually)
 1. Enable Kubernetes in Docker Desktop
-   1. to-do
+   1. Open the Docker Desktop settings page
+   1. Select the Kubernetes tab
+   1. Check the option to enable Kubernetes
+   1. Restart Docker Desktop
+   1. It may take several minutes to download and initialize the Kubernetes cluster images
 1. Pull large Docker base images
-   1. `docker pull mcr.microsoft.com/dotnet/core/aspnet:5.0-buster-slim`
-   1. `docker pull mcr.microsoft.com/dotnet/core/runtime:5.0-buster-slim`
-   1. `docker pull mcr.microsoft.com/dotnet/core/sdk:5.0-buster`
+   1. `docker pull mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim`
+   1. `docker pull mcr.microsoft.com/dotnet/runtime:5.0-buster-slim`
+   1. `docker pull mcr.microsoft.com/dotnet/sdk:5.0-buster-slim`
 1. Clone this repo to your workstation: `git clone https://github.com/rockfordlhotka/Cloud-Native-HOL.git`
    1. There may be some last-minute fixes to the code so we recommend waiting to clone the repository until a day or two prior to the HOL
 
-⚠ **Arriving with a pre-configured workstation is imperative.**
+⚠ **Arriving with a pre-configured workstation is critical.**
