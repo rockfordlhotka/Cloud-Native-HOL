@@ -13,7 +13,6 @@ See this [list of prerequisites](https://github.com/rockfordlhotka/Cloud-Native-
 
 ```bash
 alias az='winpty az.cmd'
-alias minikube='winpty minikube.exe'
 alias docker='winpty docker'
 ```
 
@@ -49,7 +48,7 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 1. Open Git Bash
 1. Type `dotnet --version`
-1. Ensure that the version is at least `3.1.302`
+1. Ensure that the version is at least `5.0.204`
 
 ## Docker
 
@@ -58,36 +57,6 @@ This should ensure that you have a local copy of the latest content from GitHub.
 1. Ensure that the version is at least `19.03.12`
 1. Type `docker run hello-world`
    1. You should get several lines of output, starting with `Hello from Docker!`
-1. Share your local drives with Docker
-   1. Right-click on the Docker icon in system tray
-   1. Select Settings
-   1. Choose the Shared Drives tab
-   1. Select your working drive(s)
-
-Windows:
-
-![shared drives](images/shared-drives.png)
-
-Mac:
-
-![shared drives mac](images/shared-drives-mac.png)
-
-## minikube
-
-> ⚠ Before starting minikube it is _strongly recommended_ that you close as many apps/games/browsers/etc. as possible. Between Docker and Kubernetes most computers will barely have enough memory to function. Discount this advice if your computer has 32gb RAM or more.
-
-1. Open the Git Bash CLI (**as admin**)
-1. Type `minikube version`
-1. Ensure that the version is at least `1.12.3`
-1. Type `minikube status`
-1. Output should appear similar to: ![mkstatus](images/mkstatus.png)
-   1. If minikube is not running follow the instructions to start minikube
-
-### Starting minikube
-
-1. Open an _admin_ PowerShell or cmd window
-1. Type `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch" --cpus 6 --memory 4096`
-1. Close the window
 
 ### Initialize Helm
 
@@ -95,17 +64,6 @@ Mac:
    1. Version must be 3.0 or higher
 1. Type `helm repo add bitnami https://charts.bitnami.com/bitnami`
    1. This adds the list of stable helm charts for use
-
-### Stopping minikube
-
-**🛑 IMPORTANT:** Don't actually stop minikube, as you'll be using it throughout the day. However, when you do want to stop minikube this is how you do it.
-
-1. In _admin_ Git Bash CLI
-   1. Type `winpty minikube stop`
-1. In _admin_ PowerShell or cmd
-   1. Type `minikube stop`
-
-Finally: Close the admin CLI window (type `exit`)
 
 ## Kubernetes CLI
 
@@ -129,6 +87,9 @@ This will download version `v1.17.2` of the tool, overwriting the older version 
 
 For Mac users you can do something similar, or change a symlink as described in this [Stackoverflow thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror).
 
+1. Type `kubectl get nodes`
+1. You should see a list of one node
+
 **⚠ NOTE:** If you experience long (20-30 second) delays executing kubectl commands on Windows, your system may have issues using IPV6 and the kubectl API is attempting to connect using IPV6 and waiting for a timeout before retrying as IPV4. Disabling IPV6 on both the Virtual Switch and your primary network adapter may solve the problem.
 
 ## Azure CLI
@@ -140,10 +101,3 @@ For Mac users you can do something similar, or change a symlink as described in 
    1. You should get see a browser window
    1. Log into your Microsoft Azure account
    1. The console should now list your subscriptions
-   
-## Notes for Using Docker Desktop Kubernetes
-I ran the whole class without using minikube , the only issue that needed to be addressed is the amount of resources available to Kubernetes. I stopped the Hypervisor manager connection to docker desktop and doubled the memory from 2048 MB to 4096 MB, Also increased the CPU available from 2 to 4GB.
-Also in Docker Desktop I increased the resources to 4 CPUs and 4GB.
-
-That allowed the whole class to run inside deocker desktop Kubernetes
-
