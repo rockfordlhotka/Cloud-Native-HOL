@@ -1,12 +1,11 @@
 # Deploy pre-built software into Kubernetes
 
-In this lab we'll use `kubectl` to deploy the Gateway web site into K8s.
+In this lab we'll use `kubectl` to deploy the Gateway web site into Kubernetes (K8s).
 
 Lesson goals:
 
 1. Create ACR credentials so Kubernetes can pull images
 1. Use `kubectl` to deploy ASP.NET Core website
-1. Increase minikube resources
 
 ## Deploy Website to Kubernetes
 
@@ -91,9 +90,9 @@ Not all deployments need a service definition, but if your deployment needs an I
 
 Now that you have deployment and service definitions, you can use the `kubectl` command to apply those definitions to your Kuberentes cluster.
 
-#### Set up permissions to ACR from minikube
+#### Set up permissions to ACR from K8s
 
-Before you can have minikube (or any K8s cluster) pull images from your Azure repository you need to provide the K8s cluster with the credentials to the repository. 
+Before you can have any K8s cluster pull images from your Azure repository you need to provide the K8s cluster with the credentials to the repository.
 
 In Lab01 you did something similar by providing ACR credentials to the Azure App Service so it could pull your container image from ACR.
 
@@ -259,49 +258,12 @@ Click on the below link and paste the token into the login page
 
 http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
 
-
 ## Cleanup
 
 At the end of Lab02 it is important to do some basic cleanup to avoid conflicts with subsequent labs.
 
 1. `kubectl delete deployment gateway`
 1. `kubectl delete service gateway`
-
-# Increase Minikube Resources
-
-By default minikube is configured with very limited resources. And this is fine for simple things like Lab02. However, in subsequent labs more resources will be required.
-
-If minikube doesn't have enough memory or CPU resources allocated it will fail to start up new pods as requested. This is a feature, because it protects already running pods by not allowing more pods to start if resources aren't available. But it is problematic when trying to run your code!
-
-Using an _admin_ CLI, stop minikube:
-
-1. In Git Bash
-   * `winpty minikube ssh "sudo poweroff"`
-1. In cmd or PowerShell
-   * `minikube ssh "sudo poweroff"`
-
-Open Hyper-V Manager from the Windows start menu, then open the settings for the minikube VM (which should not be running).
-
-![hyper-v manager](images/Hyper-V-Manager.png)
-
-Change the memory to 4096 and the Virtual CPU count to 4.
-
-![hyper-v manager](images/minikube-settings.png)
-
-With those changes saved, you can restart minikube from an _admin_ CLI:
-
-1. In Git Bash
-   * `winpty minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
-1. In cmd or PowerShell
-   * `minikube start --vm-driver hyperv --hyperv-virtual-switch "Default Switch"`
-
-> ℹ There are command switches for `minikube start` to increase memory and CPU allocations. They only affect a Hyper-V VM _on the very first install/run of minikube_. Once the VM has been created you must set the memory and CPU allocations through Hyper-V Manager.
-
-* `minikube start --vm-driver-hyperv --hyperv-virtual-switch "Default Switch" --memory 4096 --cpus 4`
-
-This will provide enough resources to minikube to run the subsequent labs.
-
-> ℹ If `--cpus 4` is not sufficient, and if your physical device has more virtual CPUs (via hyperthreading) you can set the value higher.
 
 ## References
 
