@@ -30,6 +30,22 @@ Close the CLI window when done.
 1. Type `git --version`
 1. Ensure that the version is at least `2.28.0`
 
+## Windows Terminal and Git Bash
+
+> ℹ You can use Git Bash in its own window, but your experience will be far better from Windows Terminal. This is true for "cmd" and PowerShell as well, they are all a better experience when accessed via Windows Terminal.
+
+> ℹ I will be using the Git Bash CLI via Windows Terminal throughout the remainder of the workshop.
+
+1. Open Windows Terminal
+1. Open the Settings page
+1. Add a new profile as shown
+
+![](images/git-bash-wt.png)
+
+You may optionally set the Appearance to customize the profile. For example, here is mine:
+
+![](images/git-bash-wt-appearance.png)
+
 ## Clone/update local repo
 
 If you have not yet cloned the repo
