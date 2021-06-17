@@ -32,7 +32,6 @@ Minimum hardware required:
 **Before arriving at the event** you should make sure your laptop workstation has the following:
 
 > ℹ Assuming PC, but if you have a Mac you should have [comparable tooling installed](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/master/docs/prerequisites-mac.md).
-> ℹ If you are unable to configure your laptop as shown here, you _might_ be able to use an Azure VM into which you remote desktop from the venue. Here are instructions on [setting up an Azure VM](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/master/docs/create-azure-vm.md) for the labs.
 
 1. Windows 10 2004 or later
 1. Visual Studio 2019 16.9.4 or later
@@ -47,6 +46,7 @@ Minimum hardware required:
 1. Using Chocolatey from an _admin_ command line (cmd or PowerShell)
    1. `choco install dotnetcore-sdk` (or install the latest [.NET Core SDK](https://dotnet.microsoft.com/download) manually)
    1. `choco install git`
+   1. `choco install microsoft-windows-terminal`
    1. `choco install docker-desktop`
    1. `choco install kubernetes-cli`
    1. `choco install kubernetes-helm`
@@ -59,9 +59,9 @@ Minimum hardware required:
    1. Restart Docker Desktop
    1. It may take several minutes to download and initialize the Kubernetes cluster images
 1. Pull large Docker base images
-   1. `docker pull mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim`
-   1. `docker pull mcr.microsoft.com/dotnet/runtime:5.0-buster-slim`
-   1. `docker pull mcr.microsoft.com/dotnet/sdk:5.0-buster-slim`
+   1. `docker pull mcr.microsoft.com/dotnet/aspnet:5.0`
+   1. `docker pull mcr.microsoft.com/dotnet/runtime:5.0`
+   1. `docker pull mcr.microsoft.com/dotnet/sdk:5.0`
 1. Clone this repo to your workstation: `git clone https://github.com/rockfordlhotka/Cloud-Native-HOL.git`
    1. There may be some last-minute fixes to the code so we recommend waiting to clone the repository until a day or two prior to the HOL
 

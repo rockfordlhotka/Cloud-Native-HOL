@@ -12,10 +12,11 @@ Lesson goals:
 
 ## Create Website
 
-## Using Visual Studio 
+### Using Visual Studio
 
 1. Open Visual Studio
 1. Create new ASP.NET Core project named `Gateway` ![](images/newproj.png) ![](images/newproj2.png) ![](images/newproj3.png)
+   1. Choose .NET 5.0 as the Target Framework
    1. Use the *Web Application* template
    1. Uncheck the *Configure for HTTPS* option (to simplify for demo/lab purposes)
    1. Check the *Enable Docker Support* option (For Mac: Right click on project within solution explorer, choose add, choose         Docker Support
@@ -35,16 +36,16 @@ Lesson goals:
       1. The result is a container being created based on `Dockerfile`
       1. The web page in the browser is hosted by ASP.NET Core *in a Linux container*
 1. The VS debugger is attached to the code running in the container
-   1. Open the `Index.cshtml.cs` file
+   1. Open the `Pages\Index.cshtml.cs` file
    1. Set a breakpoint on the close brace of `OnGet`
    1. Refresh the page in the browser
    1. Notice now the breakpoint is hit as the Index page is reloaded ![](images/breakpoint.png)
 
-## Using text editor (VS-Code) with terminal
+### Using text editor (VS-Code) with terminal
 
 in this example I am creating a WebAPi application
 
-1. Create the new app using command line 
+1. Create the new app using command line
 
       ```text
       dotnet new webapi --no-https
@@ -53,12 +54,12 @@ in this example I am creating a WebAPi application
 1. Now add a docker file to the Project to dockerrize the application
 
       ```text
-         FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+         FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
          WORKDIR /app
          EXPOSE 80
          EXPOSE 443
 
-         FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+         FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
          WORKDIR /src
          COPY ["newprojectname.csproj", "./"]
          RUN dotnet restore "./newprojectname.csproj"
@@ -75,15 +76,15 @@ in this example I am creating a WebAPi application
          ENTRYPOINT ["dotnet", "newprojectname.dll"]
       ```
 
-Given that newprojectname is the name of the project
+Given that *newprojectname* is the name of the project
 
-Opening the folder in VS code should gives you the option to debug inside the container, but you may need to install docker extension and try to add it to the project, what it will do is configure vs-code to allow debugging. It may ask you to overwrite the Dockerfile, you can say yes or no as it basically create the same thing.
+Opening the folder in VS code should gives you the option to debug inside the container, but you may need to install docker extension and try to add it to the project, what it will do is configure vs-code to allow debugging. It may ask you to overwrite the Dockerfile, you can say yes or no as it basically creates the same thing.
 
 > ℹ You may need to initialize the `UserSecretsId` element in your csproj file. If you get a build warning about this missing element, open a CLI window, navigate to the directory containing the csproj file and execute the `dotnet user-secrets init` command.
 
 ## Understanding Dockerfile
 
-Open `Dockerfile` in Visual Studio.
+Open `Dockerfile` in your editor.
 
 This file defines how the container will be created. In fact, it defines not only the *final* container, but also intermediate containers that'll be used to build our .NET project on Linux.
 
@@ -92,7 +93,7 @@ This file defines how the container will be created. In fact, it defines not onl
 The first code block defines the "base image" to be used when creating the final container.
 
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
 ```
@@ -108,7 +109,7 @@ The `EXPOSE` statement indicates that this image will listen on port 80.
 The next code block defines an "intermediate image" used to build the ASP.NET Core project. This intermediate image only exists long enough to do the build, and then it is discarded. It isn't part of the final image, and isn't deployed.
 
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["Gateway/Gateway.csproj", "Gateway/"]
 RUN dotnet restore "Gateway/Gateway.csproj"
@@ -177,7 +178,7 @@ Now that you've run some things via Docker, you can view the images on your work
 $ docker image ls
 REPOSITORY                                 TAG                      IMAGE ID            CREATED             SIZE
 gateway                                    dev                      6c6a43d12ad4        About an hour ago   260MB
-mcr.microsoft.com/dotnet/core/aspnet       3.1-buster-slim          fe1db87517ca        5 hours ago         260MB
+mcr.microsoft.com/dotnet/aspnet            5.0                      fe1db87517ca        5 hours ago         260MB
 hello-world                                latest                   4ab4c602aa5e        10 months ago       1.84kB
 ```
 
@@ -191,9 +192,9 @@ CONTAINER ID        IMAGE               COMMAND               CREATED           
 bef043ed046c        gateway:dev         "tail -f /dev/null"   About an hour ago   Up About an hour    0.0.0.0:57786->80/tcp   tender_panini
 ```
 
-This container is hosting the gateway web server. 
+This container is hosting the gateway web server.
 
-Notice the port mapping: `0.0.0.0:57786->80/tcp`. This indicates that port 80 from *inside* the container is being mapped to our workstation's port 57786. 
+Notice the port mapping: `0.0.0.0:57786->80/tcp`. This indicates that port 80 from *inside* the container is being mapped to our workstation's port 57786.
 
 > ℹ Note that this image is the one created and managed by Visual Studio. You need to build your own image to move forward.
 
@@ -204,12 +205,14 @@ To build the image for use outside the context of the Visual Studio experience d
 1. Change directory to the location of your `Gateway.sln` file
 1. Type `docker build -t gateway:lab01 -f Gateway/Dockerfile .`
 
+> ℹ The trailing `.` is important, so make sure to include it in the command line.
+
 In the console window you'll see the build process as each code block in the docker file is exected. Now do `docker image ls` and see something like this:
 
 ```text
 $ docker image ls
 REPOSITORY                                 TAG                      IMAGE ID            CREATED             SIZE
-gateway                                    lab01                    a018ebd40e6a        6 minutes ago       265MB
+gateway                                    lab01                    a018ebd40e6a        6 minutes ago       210MB
 ```
 
 You can now execute this image on your local workstation:
@@ -255,12 +258,12 @@ Replace `MyGroup` with your own resource group name.
 From the CLI you can run a command like this:
 
 ```text
-az acr create --name MyRepository --resource-group MyGroup --sku Basic --admin-enabled true
+az acr create --name myrepository --resource-group MyGroup --sku Basic --admin-enabled true
 ```
 
 > ⚠ You should use a totally lowercase name for your repository, as some commands and URLs are case-sensitive and it is simpler if everything is lower case.
 
-Replace `MyRepository` and `MyGroup` with values appropriate for your subscription.
+Replace `myrepository` and `MyGroup` with values appropriate for your subscription.
 
 In the [Azure web portal](https://portal.azure.com) click *Create a resource*, pick *Containers* and then *Container Registry*. ![](images/azurecontainerregistry.png)
 
@@ -273,7 +276,7 @@ In either case we're enabling the Admin user. That's probably not something you'
 The admin credentials can be retrieved using the following command line (or via the web portal):
 
 ```text
-az acr credential show -n MyRepository
+az acr credential show -n myrepository
 ```
 
 Now you can use those credentials to provide the username and password values to log into the repo from Docker:
@@ -284,7 +287,7 @@ docker login myrepository.azurecr.io --username username --password-stdin
 
 Replace `myrepository`, `username` with your values. Also, once you press enter you'll be on an empty line. Type in (or paste) the password, press ctl-z, then enter. That'll provide the password to the command and you should be logged in.
 
-> ℹ Note that Git Bash defaults to shift-insert for paste, and ctl-insert for copy.
+> ℹ If the login fails, try the other password shown from the `credential show` command. Sometimes special characters in the password cause a problem.
 
 At this point you have a remote image repo and Docker can talk to it.
 
@@ -358,15 +361,15 @@ lab01: digest: sha256:c9607f26fce7216e073073d066c0292cfec85f7234de4505f2e2614ff9
 You can now list the images in the Azure registry:
 
 ```text
-az acr repository list -n MyRepository
+az acr repository list -n myrepository
 ```
 
-Again, replace `MyRepository` with your repo name.
+Again, replace `myrepository` with your repo name.
 
 The result should be something like this:
 
 ```text
-$ az acr repository list -n RockyRepo
+$ az acr repository list -n myrepository
 [
   "lab01/gateway"
 ]
@@ -375,7 +378,7 @@ $ az acr repository list -n RockyRepo
 You can dive even deeper with the `az acr repository show` command. For example:
 
 ```text
-$ az acr repository show -n RockyRepo --image lab01/gateway:lab01
+$ az acr repository show -n myrepository --image lab01/gateway:lab01
 {
   "changeableAttributes": {
     "deleteEnabled": true,
@@ -419,9 +422,9 @@ If you are using the CLI, when the plan has been created you'll see the details 
   "kind": "linux",
 ```
 
-> ⚠ The 1st deployment will fail, but after setting the credentials on the app (see below) and it should retry and then succeed in deploying and starting your app
-
 Now you can run a container in this plan:
+
+> ⚠ The 1st deployment _may_ fail, but after setting the credentials on the app (see below) and it should retry and then succeed in deploying and starting your app
 
 ```text
 az webapp create --resource-group MyGroup --plan myAppServicePlan --name MyAppName --deployment-container-image-name myrepository.azurecr.io/lab01/gateway:lab01
@@ -429,7 +432,13 @@ az webapp create --resource-group MyGroup --plan myAppServicePlan --name MyAppNa
 
 Replace `MyGroup`, `myAppServicePlan`, `MyAppName`, and `myrepository` with appropriate values. `MyAppName` just needs to be something unique for this app (and within the `*.azurewebsites.net` domain).
 
-The last (and important) step is to give the App Service the credentials so it can pull the container image from your private repository.
+It may take a minute or two for the App Service to pull the container image from the repository and get it running. You should be able to open a browser tab and navigate to `http://MyAppName.azurewebsites.net` to interact with your container (replacing `MyAppName` with your chosen name).
+
+### Repository Credentials for the App Service
+
+**If the container does not start up** it is because the Azure App Service was unable to automatically discover the credentials for the repository. The following steps will provide those credentials.
+
+This step gives the App Service the credentials so it can pull the container image from your private repository.
 
 ```text
 az webapp config container set --name MyAppName --resource-group MyGroup --docker-custom-image-name myrepository.azurecr.io/lab01/gateway:lab01 --docker-registry-server-url https://myrepository.azurecr.io --docker-registry-server-user repositoryusername --docker-registry-server-password repositorypassword
@@ -437,7 +446,7 @@ az webapp config container set --name MyAppName --resource-group MyGroup --docke
 
 Replace `MyGroup`, `myAppServicePlan`, `MyAppName`, and `myrepository` with appropriate values just like in the last step.
 
-The `repositoryusername` and `repositorypassword` values are the ones from way back in this lab when we created the container repository. If you've forgotten, you can run `az acr credential show -n MyRepository` (replacing `MyRepository` with your name).
+The `repositoryusername` and `repositorypassword` values are the ones from way back in this lab when we created the container repository. If you've forgotten, you can run `az acr credential show -n myrepository` (replacing `myrepository` with your name).
 
 > ⚠ If you are unable to get this to work, it may be because the CLI is doing something odd with the special characters in the password value. In this case you can set the password via the Azure web portal.
 
