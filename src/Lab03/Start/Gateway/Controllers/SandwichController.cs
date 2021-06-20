@@ -7,12 +7,13 @@ namespace Gateway.Controllers
   [ApiController]
   public class SandwichController : ControllerBase
   {
-    readonly Services.ISandwichRequestor _requestor;
+    // TODO: uncomment
+    //readonly Services.ISandwichRequestor _requestor;
 
-    public SandwichController(Services.ISandwichRequestor requestor)
-    {
-      _requestor = requestor;
-    }
+    //public SandwichController(Services.ISandwichRequestor requestor)
+    //{
+    //  _requestor = requestor;
+    //}
 
     [HttpGet]
     public string OnGet()
@@ -23,7 +24,10 @@ namespace Gateway.Controllers
     [HttpPut]
     public async Task<Messages.SandwichResponse> OnPut(Messages.SandwichRequest request)
     {
-      return await _requestor.RequestSandwich(request);
+      // TODO: uncomment
+      //return await _requestor.RequestSandwich(request);
+      // TODO: comment
+      return null;
     }
   }
 }

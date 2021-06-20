@@ -30,11 +30,12 @@ namespace Gateway
       services.AddSingleton<WeatherForecastService>();
 
       services.AddSingleton<Services.IWorkInProgress>((e) => new Services.WorkInProgress());
-      services.AddHostedService<Services.SandwichmakerListener>();
-      services.AddSingleton<Services.ISandwichRequestor>((e) =>
-          new Services.SandwichRequestor(
-              e.GetService<IConfiguration>(),
-              e.GetService<Services.IWorkInProgress>()));
+      // TODO: uncomment
+      //services.AddHostedService<Services.SandwichmakerListener>();
+      //services.AddSingleton<Services.ISandwichRequestor>((e) =>
+      //    new Services.SandwichRequestor(
+      //        e.GetService<IConfiguration>(),
+      //        e.GetService<Services.IWorkInProgress>()));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

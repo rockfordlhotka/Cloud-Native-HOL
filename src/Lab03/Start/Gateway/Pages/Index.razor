@@ -1,5 +1,6 @@
 ﻿@page "/"
-@inject Services.ISandwichRequestor requestor
+@*TODO: uncomment*@
+@*@inject Services.ISandwichRequestor requestor*@
 
 <h3>Make a sandwich</h3>
 
@@ -47,11 +48,12 @@ else
   {
     ReplyText = "Processing request...";
     IsWorking = true;
-    var result = await requestor.RequestSandwich(request);
-    if (result.Success)
-      ReplyText = result.Description;
-    else
-      ReplyText = result.Error;
+    // TODO: uncomment
+    //var result = await requestor.RequestSandwich(request);
+    //if (result.Success)
+    //  ReplyText = result.Description;
+    //else
+    //  ReplyText = result.Error;
     IsWorking = false;
     StateHasChanged();
   }
