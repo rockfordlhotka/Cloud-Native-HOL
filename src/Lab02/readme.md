@@ -118,7 +118,7 @@ As in Lab01, the admin credentials can be retrieved using the following command 
 az acr credential show -n myrepository
 ```
 
-Now use those values to enter the following `kubectl` command. Make sure to use a local CLI window that is connected to your minikube.
+Now use those values to enter the following `kubectl` command. Make sure to use a local CLI window that is connected to your k8s cluster.
 
 ```bash
 kubectl create secret docker-registry acr-auth --docker-server myrepository.azurecr.io --docker-username <username> --docker-password <password> --docker-email <your@email.com>
@@ -126,7 +126,7 @@ kubectl create secret docker-registry acr-auth --docker-server myrepository.azur
 
 > ⚠ Make sure to replace "myrepository", "\<username\>", "\<password\>", and "\<your\@email.com\>" with your real values.
 
-That'll create a secret in minikube named `acr-auth` that contains read-only credentials for your Azure repository.
+That'll create a secret in k8s named `acr-auth` that contains read-only credentials for your Azure repository.
 
 Now edit the `src/Lab02/Start/Gateway/deploy.yaml` file and add
 
@@ -254,7 +254,7 @@ You can see that just one replica of the image is running at this time.
 
 One of the advantages of Kubernetes is that you can easily spin up multiple instances (replicas) of a deployment.
 
-In a production environment your K8s cluster will normally have multiple nodes, and K8s will attempt to balance the load of your replicas across all available nodes. With minikube there is only one node, but that doesn't stop us from spinning up multiple replicas of a deployment.
+In a production environment your K8s cluster will normally have multiple nodes, and K8s will attempt to balance the load of your replicas across all available nodes. With Docker Desktop Kubernetes there is only one node, but that doesn't stop us from spinning up multiple replicas of a deployment.
 
 Edit the `deploy.yaml` file and edit the `replicas` value to a value of 2.
 

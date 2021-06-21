@@ -23,6 +23,9 @@ Open a CLI window.
    1. Type `kubectl get pods` to list running instances
    1. Type `kubectl get services` to list exposed services
 
+0dBM4C4yNU
+y2YIXAmTNN67eJaNWiujJlFpojOPtXFF
+
 At this point you should have an instance of RabbitMQ running in minikube. The output from `kubectl get services` should be something like this:
 
 ```text
@@ -41,19 +44,13 @@ In a production environment you (or your IT ops team) will create one or more us
 
 For the purposes of the next lab, to keep things as simple as possible, it is necessary to enable the guest user in RabbitMQ. This is done using the administrative web GUI provided by RabbitMQ.
 
-In the CLI window, enable the RabbitMQ management plugin:
+Use the `kubectl port-forward` comamnd to create a network tunnel from localhost to the RabbitMQ container running in Kubernetes.
 
 ```text
-rabbitmq-plugins enable rabbitmq_management
+kubectl port-forward svc/my-rabbitmq 15672:15672
 ```
 
-Now use the `kubectl port-forward` comamnd to create a network tunnel from localhost to the RabbitMQ container running in Kubernetes.
-
-```text
-kubectl port-forward svc/my-rabbit-rabbitmq 15672:15672
-```
-
-> ⚠ Make sure `my-rabbit-rabbitmq` matches the service name from Kubernetes.
+> ⚠ Make sure `my-rabbitmq` matches the service name from Kubernetes.
 
 Now open a browser and navigate to `localhost:15672`. Use the credentials provided for RabbitMQ from when you ran the Helm chart ealier to log into the web portal.
 
@@ -64,6 +61,14 @@ Click the Admin option.
 On the admin screen, click Users, then Add a user, then add a user with the username `guest` and password `guest` and the tag `administrator`.
 
 ![Add user](images/rabbit-add-user.png)
+
+At this point the user list should include guest and admin. It is possible that guest will not have access to any virtual hosts. In this case, click `guest` to edit the user profile and add the default (global) virtual host.
+
+![Add user](images/rabbit-add-permission.png)
+
+The result should be that the guest user has access to the `/` virtual host.
+
+Now RabbitMQ is running in the k8s clusted, and has a cluster IP address so it can be used by others services running inside the cluster. The next lab will make use of this new service.
 
 ## References
 

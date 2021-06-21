@@ -1,26 +1,26 @@
 # Run Microservices in Kubernetes
 
-In this lab we'll run the microservices system from Lab03 in Kubernetes.
+In this lab we'll run the microservices system from Lab03 in Kubernetes, and make use of the RabbitMQ service configured in Lab04.
 
 Lesson goals:
 
 1. Use a gateway server to provide user access to a service-based system
-   1. Understand how to implement a "synchronous" user experience to external users
-   1. Discuss how SignalR _could_ be used to provide an asynchronous experience to external users
-1. Updating a running container in Kubernetes
+   1. Discuss how to implement a "synchronous" user experience to external users
+   1. Use Blazor (and SignalR) to provide an interactive and asynchronous experience to external users
+1. Update a running container in Kubernetes
 1. Implement retry policies for potential network failures
 
 ## Deploy to Kubernetes
 
-The final step in this lab is to deploy the services to K8s. The docker-compose environment is convenient for the F5 experience and debugging, but ultimately most production systems will run on K8s or something similar.
+The final step in this lab is to deploy the services to K8s. The docker-compose environment is convenient for the F5 experience and debugging, but ultimately most production systems will run on k8s or something similar.
 
 ### Replace myrepository With the Real Name
 
-Most of the files in the `deploy/k8s` directory refer to `myrepository` instead of the real name of your ACR repository. Fortunately it is possible to use bash to quickly fix them all up with the correct name.
+Most of the files in the `Lab03/deploy/k8s` directory refer to `myrepository` instead of the real name of your ACR repository. Fortunately it is possible to use bash to quickly fix them all up with the correct name.
 
 1. Open a Git Bash CLI
-1. Change directory to `deploy/k8s`
-1. Type `grep -rl --include=*.sh --include=*.yaml --include=*.yml 'myrepository' | tee | xargs sed -i 's/myrepository/realname/g'`
+1. Change directory to `Lab03/deploy/k8s`
+1. Type `grep -rl --include=*.sh --include=*.yaml --include=*.yml 'myrepository' | xargs sed -i 's/myrepository/realname/g'`
    * ⚠ Replace `realname` with your real ACR repository name!
 
 ### Deployment and Service Configuration Files

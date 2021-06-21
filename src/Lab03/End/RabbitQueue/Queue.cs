@@ -91,7 +91,7 @@ namespace RabbitQueue
       var consumer = new EventingBasicConsumer(channel);
       consumer.Received += (model, ea) =>
       {
-        var message = Encoding.UTF8.GetString(ea.Body);
+        var message = Encoding.UTF8.GetString(ea.Body.ToArray());
         handleMessage(ea, message);
       };
       channel.BasicConsume(queue: serviceName, autoAck: true, consumer: consumer);

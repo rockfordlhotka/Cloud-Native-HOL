@@ -335,11 +335,14 @@ Using this `requestor` field it is possible to implement the `FormSubmitted` met
 ```c#
   private async void FormSubmitted(EditContext editContext)
   {
+    ReplyText = "Processing request...";
+    IsWorking = true;
     var result = await requestor.RequestSandwich(request);
     if (result.Success)
       ReplyText = result.Description;
     else
       ReplyText = result.Error;
+    IsWorking = false;
     StateHasChanged();
   }
 ```
@@ -545,7 +548,7 @@ At this point your code can send and receive messages, enabling full interaction
 
 ### Examine the SandwichController Class
 
-In the `Gateway` project's `Controllers` folder you'll find a `SandwichController` class. You can uncomment this code, as all the types it uses how exist in your project. The controller code should look like this:
+In the `Gateway` project's `Controllers` folder you'll find a `SandwichController` class. You can uncomment the commented code indicated. All the types it uses now exist in your project. The controller code should look like this:
 
 ```c#
 using System.Threading.Tasks;
@@ -776,7 +779,7 @@ Now that you've seen how the more complex sandwichmaker service is implemented i
 
 ### Create the Project
 
-Add a new .NET Core Console App project to the solution named `BreadService`.
+Add a new .NET Core Console App project to the solution named `BreadService`. Make sure it targets .NET 5.0.
 
 It needs the following NuGet references:
 
@@ -789,25 +792,13 @@ It needs the following project references:
 
 * `RabbitQueue`
 
+> 💡 You can copy-paste the reference `ItemGroup` blocks from LettuceService csproj file into the new `BreadService.csproj` file to save time with adding references.
+
 At this point you might be asking why it is OK to reference the RabbitQueue project when earlier we so strongly recommended _against_ referencing a common message definition assembly.
 
 The difference is that the `RabbitQueue` project, much like .NET itself, or `Newtonsoft.Json`, contain no business logic. They are "horizontal frameworks" in that they cut across many apps or services, providing common platform-level functionality.
 
 It is important to minimize or avoid reuse of _vertical_ code: code that is part of any given business implementation. That includes UI components, viewmodels, controllers, message or document definitions, and data access layers. Those are all examples of app-specific code, where reuse will almost certainly lead to coupling. And coupling prevents independent deployment of services and apps - this defeating the primary value of being service-based.
-
-### Setting the Compiler Version
-
-> ⚠ You can skip this step if you are using Visual Studio 2019.
-
-In Visual Studio 2017 the default C# compiler version is probably lower than version 7.1. However this lab uses code which relies on version 7.1 features.
-
-Edit the `BreadService.csproj` file and add this line to the `PropertyGroup` section:
-
-```xml
-    <LangVersion>7.1</LangVersion>
-```
-
-That'll require the use of the version 7.1 compiler.
 
 ### Message Definitions
 
@@ -847,6 +838,7 @@ Like the sandwichmaker service, this is a console app, and so the entrypoint for
 It will need these `using` statements:
 
 ```c#
+using System;
 using Microsoft.Extensions.Configuration;
 using RabbitQueue;
 using System.Threading.Tasks;
@@ -875,7 +867,8 @@ The `Program` class needs to contain this code:
     }
 ```
 
-In a real app the inventory would be maintained in a database. For this lab the inventory will be maintained in memory. 
+In a real app the inventory would be maintained in a database. For this lab the inventory will be maintained in memory.
+
 Add this class-level field:
 
 ```c#
@@ -916,9 +909,9 @@ The `HandleMessage` method is invoked for each message received from the queue. 
 
 Notice that a `lock` statement is used to prevent multi-threading reentrancy issues with this code. Again, this is only necessary due to the use of shared state (the `_inventory` field). In most service implementations the `HandleMessage` method will be only interacting with fields scoped to the method, so reentrancy is not a concern.
 
-There are two possible workflows to handle. 
+There are two possible workflows to handle.
 
-One is that the caller is returning bread to inventory, in which case the inventory quantity is incremented. 
+One is that the caller is returning bread to inventory, in which case the inventory quantity is incremented.
 
 The other is that the caller is requesting bread. In this case the inventory is checked. If there's bread in inventory the value is decremented and a success response is sent. Otherwise a failure message is sent so the caller knows no bread is available.
 
@@ -935,40 +928,6 @@ Visual Studio 2019 provides support for adding Docker support to a Console App p
 ![add docker](images/add-docker-console.png)
 
 Selecting this option, and choosing Linux, will result in Visual Studio adding a `Dockerfile` to your project.
-
-#### Visual Studio 2017
-
-If you are using Visual Studio 2017 you'll have to do this process manually.
-
-Add a file named `Dockerfile` to the project with the following contents:
-
-```docker
-FROM mcr.microsoft.com/dotnet/core/runtime:3.0-buster-slim AS base
-WORKDIR /app
-
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
-WORKDIR /src
-COPY BreadService/BreadService.csproj BreadService/
-COPY RabbitQueue/RabbitQueue.csproj RabbitQueue/
-RUN dotnet restore BreadService/BreadService.csproj
-COPY . .
-WORKDIR /src/BreadService
-RUN dotnet build BreadService.csproj -c Release -o /app
-
-FROM build AS publish
-RUN dotnet publish BreadService.csproj -c Release -o /app
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "BreadService.dll"]
-```
-
-Then edit the `csproj` file and add the following to the `PropertyGroup` node:
-
-```xml
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-```
 
 At this point your project can be built into a Docker container.
 
@@ -999,3 +958,11 @@ Copy the `docker-compose.yml` file from the `End` directory into your `Start` di
 At this point you should be able to press F5 or ctrl-F5 to run the solution in docker-compose.
 
 If you request a sandwich with lettuce it'll fail right away, because that service has an inventory level of 0 to start. You should be able to request other sandwich combinations until running out of inventory.
+
+Notice the output of the Build window in Visual Studio and how it varies from a regular build process. Because the build is creating container images and launching them via Docker, the process is quite different.
+
+Once the services are running, notice the Containers window in Visual Studio.
+
+![container window](images/container-window.png)
+
+You can use this window to explore each of the containers running in Docker, including their configuration, ports, file systems, logs, and more.

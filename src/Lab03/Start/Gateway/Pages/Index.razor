@@ -1,4 +1,6 @@
 ﻿@page "/"
+@*TODO: uncomment*@
+@*@inject Services.ISandwichRequestor requestor*@
 
 <h3>Make a sandwich</h3>
 
@@ -22,7 +24,8 @@ else
     <div>Lettuce</div>
     <InputCheckbox @bind-Value="request.Lettuce" />
     <br /><br />
-    <input type="submit" value="Save" class="btn btn-primary" />
+    <input type="submit" value="Save" class="btn btn-primary"
+           disabled="@IsWorking"/>
   </EditForm>
 
   <p></p>
@@ -34,6 +37,7 @@ else
 {
   private Messages.SandwichRequest request;
   private string ReplyText;
+  private bool IsWorking;
 
   protected override void OnParametersSet()
   {
@@ -42,5 +46,15 @@ else
 
   private async void FormSubmitted(EditContext editContext)
   {
+    ReplyText = "Processing request...";
+    IsWorking = true;
+    // TODO: uncomment
+    //var result = await requestor.RequestSandwich(request);
+    //if (result.Success)
+    //  ReplyText = result.Description;
+    //else
+    //  ReplyText = result.Error;
+    IsWorking = false;
+    StateHasChanged();
   }
 }
