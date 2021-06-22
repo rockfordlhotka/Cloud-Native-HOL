@@ -279,13 +279,13 @@ The admin credentials can be retrieved using the following command line (or via 
 az acr credential show -n myrepository
 ```
 
-Now you can use those credentials to provide the username and password values to log into the repo from Docker:
+Now you can use those credentials to provide the username and password values to log into the repo from Docker. The username is the _name of your repository_ and the password is one of the values from the `credential show` comamnd:
 
 ```text
 docker login myrepository.azurecr.io --username username --password-stdin
 ```
 
-Replace `myrepository`, `username` with your values. Also, once you press enter you'll be on an empty line. Type in (or paste) the password, press ctl-z, then enter. That'll provide the password to the command and you should be logged in.
+Replace `myrepository` and `username` with your values. Also, once you press enter you'll be on an empty line. Type in (or paste) the password, press ctl-z, then enter. That'll provide the password to the command and you should be logged in.
 
 > ℹ If the login fails, try the other password shown from the `credential show` command. Sometimes special characters in the password cause a problem.
 
@@ -435,6 +435,8 @@ Replace `MyGroup`, `myAppServicePlan`, `MyAppName`, and `myrepository` with appr
 It may take a minute or two for the App Service to pull the container image from the repository and get it running. You should be able to open a browser tab and navigate to `http://MyAppName.azurewebsites.net` to interact with your container (replacing `MyAppName` with your chosen name).
 
 ### Repository Credentials for the App Service
+
+> ⚠ This step may not be required, because Azure now appears to try and automatically find the credentials. Only follow these steps if the web site doesn't load.
 
 **If the container does not start up** it is because the Azure App Service was unable to automatically discover the credentials for the repository. The following steps will provide those credentials.
 
