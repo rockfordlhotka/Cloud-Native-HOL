@@ -16,9 +16,8 @@ In this section of the lab you'll build a Docker image, create a definition file
 1. Open a CLI window
 1. Change directory to src/Lab02/Start/Gateway
 1. Build the image `docker build -t gateway:lab02 -f Gateway/Dockerfile .`
+   * > ℹ Remember that the trailing `.` is important for the `docker build` command
 1. Type `docker image ls` and you should see your new `gateway:lab02` image
-
-> ℹ Remember that the trailing `.` is important for the `docker build` command.
 
 Because this new project is identical to the Gateway project from Lab01, the `docker build` command may actually do no work. Docker is smart enough to realize that this "new image" is identical to an existing image, and so it may just add the `lab02` tag to the existing image.
 
@@ -118,7 +117,7 @@ As in Lab01, the admin credentials can be retrieved using the following command 
 az acr credential show -n myrepository
 ```
 
-Now use those values to enter the following `kubectl` command. Make sure to use a local CLI window that is connected to your k8s cluster.
+Now use those values to enter the following `kubectl` command.
 
 ```bash
 kubectl create secret docker-registry acr-auth --docker-server myrepository.azurecr.io --docker-username <username> --docker-password <password> --docker-email <your@email.com>
