@@ -202,8 +202,6 @@ The "CLUSTER-IP" value is the IP address of the service _inside the cluster_. Th
 
 > ℹ Creating actual external IP addresses for a service requires configuration of the k8s cluster. Most development and production clusters will have been configured to automatically provision a public IP address. This is an infrastructure IT issue, and normally developers just rely on the k8s cluster being properly configured.
 
-Notice xxx
-
 ## Kubernetes Dashboard
 
 Most interaction with k8s is through the command line, but there are graphical tools to view a cluster. For example, the [Lens](https://k8slens.dev/) app.
