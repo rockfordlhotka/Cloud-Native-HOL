@@ -202,8 +202,10 @@ kubectl get services
 To gain access to pods running in the cluster, start the kubectl proxy.
 
 ```text
-kubectl proxy
+kubectl port-forward svc/gateway 31919:80
 ```
+
+> ℹ Replace `31919` with the port number of your service.
 
 Open a browser to `localhost` using the port of the Gateway service.
 
