@@ -193,21 +193,15 @@ Make sure (via `kubectl get pods`) that all your services are running before mov
 
 ### Interacting with the System
 
-Use `kubectl` to find the port of the Gateway service.
-
-```text
-kubectl get services
-```
-
-To gain access to pods running in the cluster, start the kubectl proxy.
+To gain access to pods running in the cluster, use kubectl to set up a port forwarding tunnel.
 
 ```text
 kubectl port-forward svc/gateway 31919:80
 ```
 
-> ℹ Replace `31919` with the port number of your service.
+The `31919` port is arbitrary, so you can use any high number you'd like. This makes `localhost:31919` on your computer forward to port 80 of the `gateway` service.
 
-Open a browser to `localhost` using the port of the Gateway service.
+Open a browser to `localhost:31919` using the port of the Gateway service.
 
 You should be able to request sandwiches from the system. Notice that there's no shared state (such as inventory) between the services running in docker-compose and those running in k8s. In a real scenario any such state would typically be maintained in a database, and the various service implementations would be interacting with the database instead of in-memory data.
 
