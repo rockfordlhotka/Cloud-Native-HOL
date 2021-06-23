@@ -193,15 +193,21 @@ Make sure (via `kubectl get pods`) that all your services are running before mov
 
 ### Interacting with the System
 
-1. Open a CLI window _as administrator_
-1. Type `minikube service gateway --url`
-   1. This will show the localhost URL provided by minikube to access the service
-1. Type `minikube service gateway`
-   1. This will open your default browser to the URL for the service - it is a shortcut provided by minikube for testing
+Use `kubectl` to find the port of the Gateway service.
 
-> ⚠ An Admin CLI window (e.g. run as administrator) is required because interacting with the `minikube` command always needs elevated permissions.
+```text
+kubectl get services
+```
 
-As with the docker-compose instance, you should be able to request sandwiches from the system. Notice that there's no shared state (such as inventory) between the services running in docker-compose and those running in minikube. In a real scenario any such state would typically be maintained in a database, and the various service implementations would be interacting with the database instead of in-memory data.
+To gain access to pods running in the cluster, start the kubectl proxy.
+
+```text
+kubectl proxy
+```
+
+Open a browser to `localhost` using the port of the Gateway service.
+
+You should be able to request sandwiches from the system. Notice that there's no shared state (such as inventory) between the services running in docker-compose and those running in k8s. In a real scenario any such state would typically be maintained in a database, and the various service implementations would be interacting with the database instead of in-memory data.
 
 ## Implementing Retry Policies
 
