@@ -23,9 +23,6 @@ Open a CLI window.
    1. Type `kubectl get pods` to list running instances
    1. Type `kubectl get services` to list exposed services
 
-0dBM4C4yNU
-y2YIXAmTNN67eJaNWiujJlFpojOPtXFF
-
 At this point you should have an instance of RabbitMQ running in minikube. The output from `kubectl get services` should be something like this:
 
 ```text
