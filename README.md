@@ -1,6 +1,6 @@
 # Cloud-Native-HOL
 
-Cloud-native hands on lab content for [VS Live Online June 2021](https://vslive.com/events/training-seminars/2021/jun22/home.aspx).
+Cloud-native hands on lab content for [VS Live Orlando 2021](https://live360events.com/Events/Orlando-2021/Sessions/Monday/CCLM01-HandsOn-Learn-to-Build-and-Run-CloudNative-NET-Code.aspx).
 
 If you are attending the hands on lab please review the [attendee prerequisites](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/main/docs/prerequisites.md) and make sure you are prepared with the required knowledge, services, and developer workstation/laptop.
 
