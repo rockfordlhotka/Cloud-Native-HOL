@@ -292,11 +292,12 @@ At this point you've updated the gateway service to a newer version, and it is r
 
 ## Tearing Down the System
 
-Once you are done interacting with the system you can shut it down. In the `deploy/k8s` directory there's a `teardown.sh` bash script that uses `kubectl` to delete the deployment and service items from the cluster:
+Once you are done interacting with the system you can shut it down. In the `Lab03/End/deploy/k8s` directory there's a `teardown.sh` bash script that uses `kubectl` to delete the deployment and service items from the cluster:
 
 ```bash
 #!/bin/bash
 
+helm uninstall my-rabbitmq
 kubectl delete deployment gateway
 kubectl delete service gateway
 kubectl delete deployment breadservice

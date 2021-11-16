@@ -1,5 +1,6 @@
 #!/bin/bash
 
+helm uninstall my-rabbitmq
 kubectl delete deployment gateway
 kubectl delete service gateway
 kubectl delete deployment breadservice
