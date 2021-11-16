@@ -16,10 +16,10 @@ The final step in this lab is to deploy the services to K8s. The docker-compose 
 
 ### Replace myrepository With the Real Name
 
-Most of the files in the `Lab03/deploy/k8s` directory refer to `myrepository` instead of the real name of your ACR repository. Fortunately it is possible to use bash to quickly fix them all up with the correct name.
+Most of the files in the `Lab03/Start/deploy/k8s` directory refer to `myrepository` instead of the real name of your ACR repository. Fortunately it is possible to use bash to quickly fix them all up with the correct name.
 
 1. Open a Git Bash CLI
-1. Change directory to `Lab03/deploy/k8s`
+1. Change directory to `Lab03/Start/deploy/k8s`
 1. Type `grep -rl --include=*.sh --include=*.yaml --include=*.yml 'myrepository' | xargs sed -i 's/myrepository/realname/g'`
    * ⚠ Replace `realname` with your real ACR repository name!
 
