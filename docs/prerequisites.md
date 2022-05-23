@@ -15,7 +15,7 @@ We assume familiarity with
 We will use some cloud-based services
 
 1. You should have an active GitHub account
-1. You must have an active Azure subscription with credits remaining (your Visual Studio Subscription provides some number of free Azure credits)
+1. You **must have** an active Azure subscription with credits remaining (your Visual Studio Subscription typically provides some number of free Azure credits)
 
 ## The workstation you should bring
 
@@ -59,9 +59,9 @@ Minimum hardware required:
    1. Restart Docker Desktop
    1. It may take several minutes to download and initialize the Kubernetes cluster images
 1. Pull large Docker base images
-   1. `docker pull mcr.microsoft.com/dotnet/aspnet:5.0`
-   1. `docker pull mcr.microsoft.com/dotnet/runtime:5.0`
-   1. `docker pull mcr.microsoft.com/dotnet/sdk:5.0`
+   1. `docker pull mcr.microsoft.com/dotnet/aspnet:6.0`
+   1. `docker pull mcr.microsoft.com/dotnet/runtime:6.0`
+   1. `docker pull mcr.microsoft.com/dotnet/sdk:6.0`
 1. Clone this repo to your workstation: `git clone https://github.com/rockfordlhotka/Cloud-Native-HOL.git`
    1. There may be some last-minute fixes to the code so we recommend waiting to clone the repository until a day or two prior to the HOL
 
