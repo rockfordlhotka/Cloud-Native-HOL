@@ -779,7 +779,7 @@ Now that you've seen how the more complex sandwichmaker service is implemented i
 
 ### Create the Project
 
-Add a new .NET Core Console App project to the solution named `BreadService`. Make sure it targets .NET 5.0.
+Add a new .NET Core Console App project to the solution named `BreadService`. Make sure it targets .NET 6.0.
 
 It needs the following NuGet references:
 

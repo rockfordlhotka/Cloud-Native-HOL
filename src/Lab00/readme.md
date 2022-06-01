@@ -64,7 +64,7 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 1. Open Git Bash
 1. Type `dotnet --version`
-1. Ensure that the version is at least `5.0.204`
+1. Ensure that the version is at least `6.0.100`
 
 ## Docker
 
