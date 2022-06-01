@@ -16,7 +16,7 @@ Lesson goals:
 
 1. Open Visual Studio
 1. Create new ASP.NET Core project named `Gateway` ![](images/newproj.png) ![](images/newproj2.png) ![](images/newproj3.png)
-   1. Choose .NET 5.0 as the Target Framework
+   1. Choose .NET 6.0 as the Target Framework
    1. Use the *Web Application* template
    1. Uncheck the *Configure for HTTPS* option (to simplify for demo/lab purposes)
    1. Check the *Enable Docker Support* option (For Mac: Right click on project within solution explorer, choose add, choose         Docker Support
@@ -54,12 +54,12 @@ in this example I am creating a WebAPi application
 1. Now add a docker file to the Project to dockerrize the application
 
       ```text
-         FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+         FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
          WORKDIR /app
          EXPOSE 80
          EXPOSE 443
 
-         FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+         FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
          WORKDIR /src
          COPY ["newprojectname.csproj", "./"]
          RUN dotnet restore "./newprojectname.csproj"
@@ -93,7 +93,7 @@ This file defines how the container will be created. In fact, it defines not onl
 The first code block defines the "base image" to be used when creating the final container.
 
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
 ```
@@ -109,7 +109,7 @@ The `EXPOSE` statement indicates that this image will listen on port 80.
 The next code block defines an "intermediate image" used to build the ASP.NET Core project. This intermediate image only exists long enough to do the build, and then it is discarded. It isn't part of the final image, and isn't deployed.
 
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["Gateway/Gateway.csproj", "Gateway/"]
 RUN dotnet restore "Gateway/Gateway.csproj"
@@ -178,7 +178,7 @@ Now that you've run some things via Docker, you can view the images on your work
 $ docker image ls
 REPOSITORY                                 TAG                      IMAGE ID            CREATED             SIZE
 gateway                                    dev                      6c6a43d12ad4        About an hour ago   260MB
-mcr.microsoft.com/dotnet/aspnet            5.0                      fe1db87517ca        5 hours ago         260MB
+mcr.microsoft.com/dotnet/aspnet            6.0                      fe1db87517ca        5 hours ago         260MB
 hello-world                                latest                   4ab4c602aa5e        10 months ago       1.84kB
 ```
 
