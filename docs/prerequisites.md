@@ -34,7 +34,7 @@ Minimum hardware required:
 > ℹ Assuming PC, but if you have a Mac you should have [comparable tooling installed](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/master/docs/prerequisites-mac.md).
 
 1. Windows 10 2004 or later
-1. Visual Studio 2019 16.9.4 or later
+1. Visual Studio 2022
 1. Install/activate the [HyperV feature](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v) in Windows
 1. [Windows Subsystem for Linux (WSL2)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
    1. The following assumes Ubuntu or Debian
