@@ -58,7 +58,7 @@ Minimum hardware required:
    1. Check the option to enable Kubernetes
    1. Restart Docker Desktop
    1. It may take several minutes to download and initialize the Kubernetes cluster images
-      * ⚠️ You **MUST** see two green boxes in the lower-left of the Docker Desktop window. The top indicates Docker is working, the bottom indicates Kubernetes is working.
+      * ⚠️ You **MUST** see two green boxes in the lower-left of the Docker Desktop window. The first indicates Docker is working, the second indicates Kubernetes is working. ![](images/docker-k8s.png)
 1. Pull large Docker base images
    1. `docker pull mcr.microsoft.com/dotnet/aspnet:6.0`
    1. `docker pull mcr.microsoft.com/dotnet/runtime:6.0`
