@@ -5,8 +5,8 @@ In this lab we'll build a message-based service-based system that runs in docker
 Lesson goals:
 
 1. Use a gateway server to provide user access to a service-based system
-   1. Understand how to implement a "synchronous" user experience to external users
-   1. Discuss how SignalR _could_ be used to provide an asynchronous experience to external users
+   1. Understand how to implement a server-side Blazor user experience that leverages SignalR to provide an asynchronous experience to users
+   1. Discuss how to implement a "synchronous" user experience to external users using MVC or Razor Pages
 1. Implement message-based services that work together to provide business functionality
 1. Install RabbitMQ into docker-compose
 1. See how docker-compose provides a convenient developer inner-loop experience
