@@ -92,7 +92,7 @@ This should ensure that you have a local copy of the latest content from GitHub.
 1. Type `kubectl version`
 1. The result will be version numbers for numerous components
    1. Client versions are for the Kubernetes CLI
-   2. Server versions are for minikube
+   2. Server versions are for the Kubernetes server
 
 ![kubectl version](images/kubectlversion.png)
 
