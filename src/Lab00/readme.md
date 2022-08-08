@@ -70,14 +70,19 @@ This should ensure that you have a local copy of the latest content from GitHub.
 
 1. Open the Git Bash CLI
 1. Type `docker --version`
-1. Ensure that the version is at least `19.03.12`
+1. Ensure that the version is at least `20.10.17`
 1. Type `docker run hello-world`
    1. You should get several lines of output, starting with `Hello from Docker!`
+
+### Confirm Kubernetes is Running
+
+1. Open the Docker Desktop GUI app by double-clicking on the Docker icon in the Windows system tray
+1. You should see two green boxes in the lower-left indicating that Docker and Kubernetes are both running. ![](images/docker-k8s.png)
 
 ### Initialize Helm
 
 1. Back in the Git Bash CLI type `helm version`
-   1. Version must be 3.0 or higher
+   1. Version must be 3.9 or higher
 1. Type `helm repo add bitnami https://charts.bitnami.com/bitnami`
    1. This adds the list of stable helm charts for use
 
@@ -87,19 +92,19 @@ This should ensure that you have a local copy of the latest content from GitHub.
 1. Type `kubectl version`
 1. The result will be version numbers for numerous components
    1. Client versions are for the Kubernetes CLI
-   2. Server versions are for minikube
+   2. Server versions are for the Kubernetes server
 
 ![kubectl version](images/kubectlversion.png)
 
-**⚠ NOTE:** The minimum version we need is at least `v1.17.2`.
+**⚠ NOTE:** The minimum version we need is at least `v1.24.1`.
 
 To fix this on Windows (if necessary):
 
 1. Open a Git Bash CLI window _as administrator_
 1. Change directory to `/c/Program\ Files/Docker/Docker/resources/bin`
-1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.2/bin/windows/amd64/kubectl.exe`
+1. Type `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/windows/amd64/kubectl.exe`
 
-This will download version `v1.17.2` of the tool, overwriting the older version in the Docker directory.
+This will download the current version of the tool, overwriting the older version in the Docker directory.
 
 For Mac users you can do something similar, or change a symlink as described in this [Stackoverflow thread](https://stackoverflow.com/questions/55417410/kubernetes-create-deployment-unexpected-schemaerror).
 
@@ -112,7 +117,7 @@ For Mac users you can do something similar, or change a symlink as described in 
 
 1. Open Git Bash
 1. Type `az --version`
-1. Ensure that the version is at least `2.11.0`
+1. Ensure that the version is at least `3.38.0`
 1. Type `az login`
    1. You should get see a browser window
    1. Log into your Microsoft Azure account

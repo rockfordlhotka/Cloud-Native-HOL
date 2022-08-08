@@ -25,9 +25,11 @@ Lesson goals:
    1. Notice how it is a normal ASP.NET Core Razor Pages project
    1. *Except* for `Dockerfile`
 1. Look at the run/debug options in the VS toolbar ![](images/rundebug.png)
-   1. Notice it defaults to *Docker*
+   1. Notice it defaults to *Docker*, which runs the app in a Docker container, hosted by the Kestrel web server
+   1. You can directly run the app in a console window, in which case it is hosted by the Kestrel web server
+   1. You can run the app in WSL, in which case it will be hosted by the Kestrel web server running in a Linux console window
    1. You can still switch to *IIS Express* if desired
-1. Press *F5* to debug
+1. Press *F5* to debug within Docker
    1. The app should build and run "as normal"
 1. Look at the Build Output window ![](images/buildoutput.png)
    1. Notice how the build output looks very different
@@ -279,7 +281,7 @@ The admin credentials can be retrieved using the following command line (or via 
 az acr credential show -n myrepository
 ```
 
-Now you can use those credentials to provide the username and password values to log into the repo from Docker. The username is the _name of your repository_ and the password is one of the values from the `credential show` comamnd:
+Now you can use those credentials to provide the username and password values to log into the repo from Docker. The username is the _name of your repository_ and the password is one of the values from the `credential show` command:
 
 ```text
 docker login myrepository.azurecr.io --username username --password-stdin
