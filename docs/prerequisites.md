@@ -2,6 +2,16 @@
 
 ⚠ **Arriving with a pre-configured workstation is critical.**
 
+Building cloud-native apps requires a powerful developer device, and quite a lot of software tooling. Although it would be ideal to install all the required tools as part of the in-person lab, hotel wifi is usually not fast enough to support an entire classroom of people downloading gigabytes of installers.
+
+As a result, you should plan on spending some time prior to traveling to the event so you can install the required tools.
+
+Also be aware that restrictive IT policies may interfere with installing or running some of the required tools. Restrictive IT policies are not compatible with cloud-native software development, because many of the required cloud-native tools are too new for some IT groups to recognize their value and utility.
+
+If you find that you can not install the required software, or do not have a sufficiently powerful developer laptop, you might consider creating a [virtual machine in Azure or another cloud provider](cloud-based-workstation.md) where you can run Windows 11 and install the required tooling.
+
+⚠ **Arriving with a pre-configured workstation is critical.**
+
 ## What you should know
 
 We assume familiarity with
@@ -16,6 +26,7 @@ We will use some cloud-based services
 
 1. You should have an active GitHub account
 1. You **must have** an active Azure subscription with credits remaining (your Visual Studio Subscription typically provides some number of free Azure credits)
+   * If you do not have an Azure subscription, or if you are using your organization's subscription and do not have the rights to create an Azure Resource Group, please consider creating a free trial subscription for use during the hands-on lab.
 
 ## The workstation you should bring
 
@@ -33,7 +44,7 @@ Minimum hardware required:
 
 > ℹ Assuming PC, but if you have a Mac you should have [comparable tooling installed](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/master/docs/prerequisites-mac.md).
 
-1. Windows 10 2004 or later
+1. Windows 11 (or Windows 10 2004 or later)
 1. Visual Studio 2022
 1. Install/activate the [HyperV feature](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v) in Windows
 1. [Windows Subsystem for Linux (WSL2)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
