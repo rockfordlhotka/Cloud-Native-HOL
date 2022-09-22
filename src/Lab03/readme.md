@@ -221,10 +221,10 @@ The `Lock` property maintains a reference to an `AsyncManualResetEvent`. The use
 
 This workflow will become more clear as you implement the code to send and receive messages, as that code will make use of this work in progress implementation.
 
-The `WorkInProgress` instance is made available to other code in the `Gateway` project via dependency injection. In the `Startup` class's `ConfigureServices` method there's a singleton declaration for the type:
+The `WorkInProgress` instance is made available to other code in the `Gateway` project via dependency injection. In the `Program.cs` file there's a singleton declaration for the type:
 
 ```c#
-      services.AddSingleton<Services.IWorkInProgress>((e) => new Services.WorkInProgress());
+      builder.Services.AddSingleton<Services.IWorkInProgress>((e) => new Services.WorkInProgress());
 ```
 
 Classes requiring access to work in progress information can gain access to this singleton via standard .NET Core dependency injection.
@@ -457,10 +457,10 @@ In all cases the code is waiting for a callback via some sort of network IO, and
 
 #### Adding the Service to IServiceCollection
 
-With the `SandwichRequestor` service implemented, it is possible to make it available for use in the `Index` page via dependency injection. This is done by adding some code to the `Startup` class:
+With the `SandwichRequestor` service implemented, it is possible to make it available for use in the `Index` page via dependency injection. This is done by adding some code to the `Program.cs` file:
 
 ```c#
-      services.AddSingleton<Services.ISandwichRequestor>((e) =>
+      builder.Services.AddSingleton<Services.ISandwichRequestor>((e) =>
           new Services.SandwichRequestor(
               e.GetService<IConfiguration>(), 
               e.GetService<Services.IWorkInProgress>()));
@@ -536,10 +536,10 @@ Inside the callback code the work in progress item is updated via the `CompleteW
 
 #### Adding the Service to IServiceCollection
 
-A Hosted Service is added to ASP.NET Core in the `Startup` class like any other dependency injection service. Add the following line of code to the `ConfigureServices` method:
+A Hosted Service is added to ASP.NET Core in the `Program.cs` file like any other dependency injection service. Add the following line of code:
 
 ```c#
-      services.AddHostedService<Services.SandwichmakerListener>();
+    builder.Services.AddHostedService<Services.SandwichmakerListener>();
 ```
 
 As the web server starts up it'll automatically create and start an instance of this type.
