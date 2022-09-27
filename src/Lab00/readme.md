@@ -117,7 +117,7 @@ For Mac users you can do something similar, or change a symlink as described in 
 
 1. Open Git Bash
 1. Type `az --version`
-1. Ensure that the version is at least `3.38.0`
+1. Ensure that the version is at least `2.40.0`
 1. Type `az login`
    1. You should get see a browser window
    1. Log into your Microsoft Azure account

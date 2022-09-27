@@ -207,7 +207,7 @@ In other words, your ASP.NET Core code can easily access the three variables def
 
 ### Examine the WorkInProgress Class
 
-Open the `Services/WorkInProgress.cs` file. This simple code exists because it is necessary to keep track of outstanding user requests (browser postback requests) that have requested a sandwich. Remember the overall workflow:
+Open the `Services/WorkInProgress.cs` file from the `Gateway` project. This simple code exists because it is necessary to keep track of outstanding user requests (browser postback requests) that have requested a sandwich. Remember the overall workflow:
 
 1. User requests a sandwich in their browser
 1. Gateway app handles postback, sending a request to the sandwichmaker service
