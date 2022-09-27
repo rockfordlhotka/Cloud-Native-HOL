@@ -1,6 +1,6 @@
 # Cloud-Native-HOL
 
-Cloud-native hands on lab content for [VS Live San Diego 2022](https://vslive.com/Events/San-Diego-2022/Sessions/Sunday/S02-HandsOn-Lab-Learn-to-Build-and-Run-CloudNative-NET-Code.aspx).
+Cloud-native hands on lab content for [Cloud & Containers Live Orlando 2022](https://live360events.com/Events/Orlando-2022/Sessions/Monday/CCM01-HandsOn-Workshop-Learn-to-Build-and-Run-CloudNative-NET-Code.aspx).
 
 If you are attending the hands on lab please review the [attendee prerequisites](https://github.com/rockfordlhotka/Cloud-Native-HOL/blob/main/docs/prerequisites.md) and make sure you are prepared with the required knowledge, services, and developer workstation/laptop.
 
