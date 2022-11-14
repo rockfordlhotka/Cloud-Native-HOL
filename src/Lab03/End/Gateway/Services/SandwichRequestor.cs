@@ -10,9 +10,9 @@ namespace Gateway.Services
   {
     readonly IConfiguration _config;
     readonly IWorkInProgress _wip;
-    readonly Policy _retryPolicy = Policy.
-      Handle<Exception>().
-      WaitAndRetry(3, r => TimeSpan.FromSeconds(Math.Pow(2, r)));
+    readonly Policy _retryPolicy = Policy
+      .Handle<Exception>()
+      .WaitAndRetry(3, r => TimeSpan.FromSeconds(Math.Pow(2, r)));
 
     public SandwichRequestor(IConfiguration config, IWorkInProgress wip)
     {
