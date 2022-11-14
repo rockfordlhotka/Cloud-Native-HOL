@@ -195,8 +195,8 @@ One of the more important of the [12 Factors](https://12factor.net) is that conf
       dockerfile: Gateway/Dockerfile
     environment: 
       - RABBITMQ__URL=sandwichqueue
-      - RABBITMQ__USER
-      - RABBITMQ__PASSWORD
+      - RABBITMQ__USER=
+      - RABBITMQ__PASSWORD=
 ```
 
 > ℹ the gateway container will connect to the rabbitmq container using its DNS name `sandwichqueue`.
@@ -945,8 +945,8 @@ Make sure this file contains an entry for the new `breadservice`:
       dockerfile: BreadService/Dockerfile
     environment: 
       - RABBITMQ__URL=sandwichqueue
-      - RABBITMQ__USER
-      - RABBITMQ__PASSWORD
+      - RABBITMQ__USER=
+      - RABBITMQ__PASSWORD=
 ```
 
 At this point your `docker-compose.yml` file contains entries only for the `gateway` and `breadservice` services. In reality it needs entries for all the services necessary to run the system in your local environment.
