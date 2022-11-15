@@ -13,8 +13,8 @@ services:
       dockerfile: SandwichMaker/Dockerfile
     environment: 
       - RABBITMQ__URL=sandwichqueue
-      - RABBITMQ__USER
-      - RABBITMQ__PASSWORD
+      - RABBITMQ__USER=
+      - RABBITMQ__PASSWORD=
 
   gateway:
     image: ${DOCKER_REGISTRY-}gateway
@@ -23,8 +23,8 @@ services:
       dockerfile: Gateway/Dockerfile
     environment: 
       - RABBITMQ__URL=sandwichqueue
-      - RABBITMQ__USER
-      - RABBITMQ__PASSWORD
+      - RABBITMQ__USER=
+      - RABBITMQ__PASSWORD=
 
   meatservice:
     image: ${DOCKER_REGISTRY}meatservice
@@ -33,8 +33,8 @@ services:
       dockerfile: MeatService/Dockerfile
     environment: 
       - RABBITMQ__URL=sandwichqueue
-      - RABBITMQ__USER
-      - RABBITMQ__PASSWORD
+      - RABBITMQ__USER=
+      - RABBITMQ__PASSWORD=
 
   breadservice:
     image: ${DOCKER_REGISTRY}breadservice
@@ -43,8 +43,8 @@ services:
       dockerfile: BreadService/Dockerfile
     environment: 
       - RABBITMQ__URL=sandwichqueue
-      - RABBITMQ__USER
-      - RABBITMQ__PASSWORD
+      - RABBITMQ__USER=
+      - RABBITMQ__PASSWORD=
 
   cheeseservice:
     image: ${DOCKER_REGISTRY}cheeseservice
@@ -53,8 +53,8 @@ services:
       dockerfile: CheeseService/Dockerfile
     environment: 
       - RABBITMQ__URL=sandwichqueue
-      - RABBITMQ__USER
-      - RABBITMQ__PASSWORD
+      - RABBITMQ__USER=
+      - RABBITMQ__PASSWORD=
 
   lettuceservice:
     image: ${DOCKER_REGISTRY}lettuceservice
@@ -63,6 +63,6 @@ services:
       dockerfile: LettuceService/Dockerfile
     environment: 
       - RABBITMQ__URL=sandwichqueue
-      - RABBITMQ__USER
-      - RABBITMQ__PASSWORD
+      - RABBITMQ__USER=
+      - RABBITMQ__PASSWORD=
 
